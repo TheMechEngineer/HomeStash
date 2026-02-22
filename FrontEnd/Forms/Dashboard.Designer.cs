@@ -53,7 +53,6 @@
             testToolStripMenuItem.Name = "testToolStripMenuItem";
             testToolStripMenuItem.Size = new Size(40, 20);
             testToolStripMenuItem.Text = "Test";
-            testToolStripMenuItem.DropDownOpening += testToolStripMenuItem_DropDownOpening;
             // 
             // tsmiUserSelect
             // 

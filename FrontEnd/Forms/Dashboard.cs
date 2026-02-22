@@ -18,12 +18,25 @@ namespace FrontEnd.Forms
         {
             InitializeComponent();
 
+            InitializeForm();
+            WireUpForm();
+
+            OpenUserSelection();
+        }
+        
+        private void InitializeForm()
+        {
             this.WindowState = FormWindowState.Maximized;
 
             ViewPortPanel = this.pnlDashboard;
             ViewPortPanel.Controls.Clear();
 
-            OpenUserSelection();
+            tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
+        }
+
+        private void WireUpForm()
+        {
+            RootManagerInstance.ActiveUserChanged += RootManagerInstance_ActiveUserChanged;
         }
 
         public void OpenUserSelection()
@@ -96,9 +109,10 @@ namespace FrontEnd.Forms
             OpenBuildingSelection();
         }
 
-        private void testToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        private void RootManagerInstance_ActiveUserChanged()
         {
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
         }
+
     }
 }
