@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    partial class AddNewUser
+    internal partial class AddNewUser
     {
         /// <summary> 
         /// Required designer variable.

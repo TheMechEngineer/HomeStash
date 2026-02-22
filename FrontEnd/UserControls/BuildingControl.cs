@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class BuildingControl : UserControl
+    internal partial class BuildingControl : UserControl
     {
         private RootManager RootManagerInstance;
         int ScaleFactor;
@@ -19,7 +19,7 @@ namespace FrontEnd.UserControls
         public int InitialWidth { get; }
         public int InitialHeight { get; }
 
-        public BuildingControl(ref RootManager _ProgramRoot, int _ScaleFactor)
+        internal BuildingControl(ref RootManager _ProgramRoot, int _ScaleFactor)
         {
             InitializeComponent();
 

@@ -1,5 +1,6 @@
 ﻿using BackEnd.DataContinuity;
 using BackEnd.ModelClasses;
+using FrontEnd.Adapters;
 using FrontEnd.Forms;
 using System;
 using System.Collections;
@@ -15,29 +16,23 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class Selection : UserControl
+    internal partial class Selection : UserControl
     {
         public event Action<Selection>? SelectionMade;
         public event Action<Selection>? AddRequestMade;
 
-        private RootManager RootManagerInstance;
-        private IReadOnlyList<object> SelectionList;
-        public Type SelectionType { get; }
+        private IReadOnlyList<ASelection>? SelectionList;
+        private int InitialFLPClientWidth;
 
         private Color UnselectedLabelColor = Color.White;
         private Color SelectedLabelColor = Color.Beige;
-
         private Label? SelectedLabel;
-
-        private int InitialFLPClientWidth;
-
-        public Selection(ref RootManager _ProgramRoot, IReadOnlyList<object> _SelectionList)
+        
+        internal Selection(IReadOnlyList<ASelection> _SelectionList)
         {
             InitializeComponent();
-            
-            RootManagerInstance = _ProgramRoot;
+
             SelectionList = _SelectionList;
-            SelectionType = _SelectionList.GetType().GetGenericArguments()[0];
             InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
 
             InitializeVisuals();

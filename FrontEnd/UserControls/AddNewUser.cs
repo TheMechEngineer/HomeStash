@@ -13,11 +13,11 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class AddNewUser : UserControl
+    internal partial class AddNewUser : UserControl
     {
         private RootManager RootManagerInstance;
 
-        public AddNewUser(ref RootManager _ProgramRoot)
+        internal AddNewUser(ref RootManager _ProgramRoot)
         {
             InitializeComponent();
 

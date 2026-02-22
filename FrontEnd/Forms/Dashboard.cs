@@ -8,14 +8,14 @@ using System.Windows.Forms;
 
 namespace FrontEnd.Forms
 {
-    public partial class Dashboard : Form
+    internal partial class Dashboard : Form
     {
         private List<Item> _items;
 
         private RootManager RootManagerInstance = Startup.TempItemStatup2();
         private Panel ViewPortPanel;
 
-        public Dashboard()
+        internal Dashboard()
         {
             InitializeComponent();
 

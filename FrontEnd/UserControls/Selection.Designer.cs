@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    partial class Selection
+    internal partial class Selection
     {
         /// <summary> 
         /// Required designer variable.

@@ -11,14 +11,14 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class TopDownBuildingView : UserControl
+    internal partial class TopDownBuildingView : UserControl
     {
         private RootManager RootManagerInstance;
 
         private const int ScaleFactor = 10;
         private float currentZoom = 1.0f;
 
-        public TopDownBuildingView(ref RootManager _ProgramRoot)
+        internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
             this.Load += TopDownBuildingView_Load;
 

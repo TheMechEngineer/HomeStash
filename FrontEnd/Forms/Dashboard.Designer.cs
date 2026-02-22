@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.Forms
 {
-    partial class Dashboard
+    internal partial class Dashboard
     {
         /// <summary>
         ///  Required designer variable.

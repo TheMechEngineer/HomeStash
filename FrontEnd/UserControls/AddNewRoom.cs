@@ -13,12 +13,12 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class AddNewRoom : UserControl
+    internal partial class AddNewRoom : UserControl
     {
         private RootManager RootManagerInstance;
         private TopDownBuildingView RootView;
 
-        public AddNewRoom(ref RootManager _ProgramRoot, TopDownBuildingView _RootView)
+        internal AddNewRoom(ref RootManager _ProgramRoot, TopDownBuildingView _RootView)
         {
             InitializeComponent();
 

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace FrontEnd.Adapters
 {
-    internal class ASelection<T>
+    internal class ASelection
     {
         public string DisplayText { get; }
-        public T Value { get; }
+        public object Value { get; }
 
-        public ASelection(string _DisplayText, T _Value)
+        public ASelection(string _DisplayText, object _Value)
         {
             DisplayText = _DisplayText;
             Value = _Value;

@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    partial class TopDownBuildingView
+    internal partial class TopDownBuildingView
     {
         /// <summary> 
         /// Required designer variable.
