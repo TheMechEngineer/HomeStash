@@ -46,7 +46,6 @@ namespace FrontEnd.UserControls
                 };
 
                 RootManagerInstance.ActiveUser.AddBuilding(NewBuilding);
-                (this.Parent.Controls["BuildingSelection"] as Selection).PopulateSelectionList();
 
                 CloseAndReturnControl();
             }

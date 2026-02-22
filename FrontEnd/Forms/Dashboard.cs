@@ -18,6 +18,8 @@ namespace FrontEnd.Forms
         {
             InitializeComponent();
 
+            ViewPortPanel = this.pnlDashboard;
+
             InitializeForm();
             WireUpForm();
 
@@ -28,7 +30,6 @@ namespace FrontEnd.Forms
         {
             this.WindowState = FormWindowState.Maximized;
 
-            ViewPortPanel = this.pnlDashboard;
             ViewPortPanel.Controls.Clear();
 
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
@@ -44,7 +45,6 @@ namespace FrontEnd.Forms
             Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.UserList);
 
             NewControl.Dock = DockStyle.None;
-            NewControl.PopulateSelectionList();
             NewControl.Name = "UserSelection";
 
             ViewPortPanel.Controls.Add(NewControl);
@@ -68,7 +68,6 @@ namespace FrontEnd.Forms
             Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList);
 
             NewControl.Dock = DockStyle.None;
-            NewControl.PopulateSelectionList();
             NewControl.Name = "BuildingSelection";
 
             ViewPortPanel.Controls.Add(NewControl);

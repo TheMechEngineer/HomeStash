@@ -36,9 +36,30 @@ namespace FrontEnd.UserControls
             SelectionList = _SelectionList;
             SelectionType = _SelectionList.GetType().GetGenericArguments()[0];
 
+            InitializeForm();
+            WireUpForm();
+        }
+
+        private void InitializeForm()
+        {
             InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
 
             SetDisplayText();
+            PopulateSelectionList();
+        }
+
+        private void WireUpForm()
+        {
+            
+            switch (SelectionType)
+            {
+                case Type CurrentType when SelectionType == typeof(User):
+                    RootManagerInstance.UserListChanged += PopulateSelectionList;
+                    break;
+                case Type CurrentType when SelectionType == typeof(Building):
+                    RootManagerInstance.ActiveUser.BuildingListChanged += PopulateSelectionList;
+                    break;
+            }
         }
 
         private void SetDisplayText() {
@@ -63,7 +84,7 @@ namespace FrontEnd.UserControls
             btnSelect.Text = "Select " + ControlText;
         }
 
-        public void PopulateSelectionList()
+        private void PopulateSelectionList()
         {
             string DisplayName;
 
@@ -174,7 +195,6 @@ namespace FrontEnd.UserControls
                 }
 
                 SelectedLabel = null;
-                PopulateSelectionList();
             }
 
         }

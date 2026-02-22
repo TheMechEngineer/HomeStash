@@ -39,7 +39,6 @@ namespace FrontEnd.UserControls
             User NewUser = new User { UserName = txtUserNameInput.Text };
 
             RootManagerInstance.AddUser(NewUser);
-            (this.Parent.Controls["UserSelection"] as Selection).PopulateSelectionList();
 
             CloseAndReturnControl();
         }
