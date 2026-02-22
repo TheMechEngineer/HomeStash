@@ -1,0 +1,21 @@
+﻿using BackEnd.ModelInterfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BackEnd.ModelClasses
+{
+    public class Item : IStored
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double Value { get; set; }
+        public int Quantity { get; set; }
+        public IStorage? ImmediateParent { get; set; }
+        public Room RoomParent { get; set; }
+
+    }
+}
