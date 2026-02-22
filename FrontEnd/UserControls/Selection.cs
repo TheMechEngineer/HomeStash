@@ -36,11 +36,11 @@ namespace FrontEnd.UserControls
             SelectionList = _SelectionList;
             SelectionType = _SelectionList.GetType().GetGenericArguments()[0];
 
-            InitializeForm();
-            WireUpForm();
+            InitializeVisuals();
+            Wire();
         }
 
-        private void InitializeForm()
+        private void InitializeVisuals()
         {
             InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
 
@@ -48,9 +48,8 @@ namespace FrontEnd.UserControls
             PopulateSelectionList();
         }
 
-        private void WireUpForm()
+        private void Wire()
         {
-            
             switch (SelectionType)
             {
                 case Type CurrentType when SelectionType == typeof(User):
@@ -60,6 +59,24 @@ namespace FrontEnd.UserControls
                     RootManagerInstance.ActiveUser.BuildingListChanged += PopulateSelectionList;
                     break;
             }
+
+            this.HandleDestroyed += UnWire;
+        }
+
+        private void UnWire(object? sender, EventArgs e)
+        {
+
+            switch (SelectionType)
+            {
+                case Type CurrentType when SelectionType == typeof(User):
+                    RootManagerInstance.UserListChanged -= PopulateSelectionList;
+                    break;
+                case Type CurrentType when SelectionType == typeof(Building):
+                    RootManagerInstance.ActiveUser.BuildingListChanged -= PopulateSelectionList;
+                    break;
+            }
+
+            this.HandleDestroyed -= UnWire;
         }
 
         private void SetDisplayText() {

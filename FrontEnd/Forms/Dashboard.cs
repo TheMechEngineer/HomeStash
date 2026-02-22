@@ -20,13 +20,13 @@ namespace FrontEnd.Forms
 
             ViewPortPanel = this.pnlDashboard;
 
-            InitializeForm();
-            WireUpForm();
+            InitializeVisuals();
+            Wire();
 
             OpenUserSelection();
         }
         
-        private void InitializeForm()
+        private void InitializeVisuals()
         {
             this.WindowState = FormWindowState.Maximized;
 
@@ -35,7 +35,7 @@ namespace FrontEnd.Forms
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
         }
 
-        private void WireUpForm()
+        private void Wire()
         {
             RootManagerInstance.ActiveUserChanged += RootManagerInstance_ActiveUserChanged;
         }
