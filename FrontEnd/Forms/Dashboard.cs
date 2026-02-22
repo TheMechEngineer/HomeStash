@@ -2,6 +2,7 @@ using BackEnd.DataContinuity;
 using BackEnd.ModelClasses;
 using BackEnd.Utilities;
 using FrontEnd.UserControls;
+using System.ComponentModel.Design;
 using System.Net.PeerToPeer;
 using System.Windows.Forms;
 
@@ -43,6 +44,8 @@ namespace FrontEnd.Forms
         public void OpenUserSelection()
         {
             Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.UserList);
+            NewControl.SelectionMade += SelectionControl_SelectionMade;
+            NewControl.AddRequestMade += SelectionControl_AddRequestMade;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "UserSelection";
@@ -66,6 +69,8 @@ namespace FrontEnd.Forms
         public void OpenBuildingSelection()
         {
             Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList);
+            NewControl.SelectionMade += SelectionControl_SelectionMade;
+            NewControl.AddRequestMade += SelectionControl_AddRequestMade;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "BuildingSelection";
@@ -111,6 +116,41 @@ namespace FrontEnd.Forms
         private void RootManagerInstance_ActiveUserChanged()
         {
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
+        }
+
+        private void SelectionControl_SelectionMade(Selection CurrentControl)
+        {
+            switch (CurrentControl.SelectionType)
+            {
+                case Type CurrentType when CurrentControl.SelectionType == typeof(User):
+                    OpenBuildingSelection();
+                    break;
+                case Type CurrentType when CurrentControl.SelectionType == typeof(Building):
+                    OpenTopDownBuildingView();
+                    break;
+            }
+
+            CurrentControl.SelectionMade -= SelectionControl_SelectionMade;
+            CurrentControl.AddRequestMade -= SelectionControl_AddRequestMade;
+
+            ViewPortPanel.Controls.Remove(CurrentControl);
+            CurrentControl.Dispose();
+
+        }
+
+        private void SelectionControl_AddRequestMade(Selection CurrentControl)
+        {
+            switch (CurrentControl.SelectionType)
+            {
+                case Type CurrentType when CurrentControl.SelectionType == typeof(User):
+                    OpenAddNewUser();
+                    break;
+                case Type CurrentType when CurrentControl.SelectionType == typeof(Building):
+                    OpenAddNewBuilding();
+                    break;
+            }
+
+            CurrentControl.Enabled = false;
         }
 
     }

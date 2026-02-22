@@ -17,16 +17,19 @@ namespace FrontEnd.UserControls
 {
     public partial class Selection : UserControl
     {
+        public event Action<Selection>? SelectionMade;
+        public event Action<Selection>? AddRequestMade;
+
         private RootManager RootManagerInstance;
         private IReadOnlyList<object> SelectionList;
-        private Type SelectionType;
+        public Type SelectionType { get; }
 
-        Color UnselectedLabelColor = Color.White;
-        Color SelectedLabelColor = Color.Beige;
+        private Color UnselectedLabelColor = Color.White;
+        private Color SelectedLabelColor = Color.Beige;
 
-        Label? SelectedLabel;
+        private Label? SelectedLabel;
 
-        int InitialFLPClientWidth;
+        private int InitialFLPClientWidth;
 
         public Selection(ref RootManager _ProgramRoot, IReadOnlyList<object> _SelectionList)
         {
@@ -35,6 +38,7 @@ namespace FrontEnd.UserControls
             RootManagerInstance = _ProgramRoot;
             SelectionList = _SelectionList;
             SelectionType = _SelectionList.GetType().GetGenericArguments()[0];
+            InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
 
             InitializeVisuals();
             Wire();
@@ -42,8 +46,6 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
-
             SetDisplayText();
             PopulateSelectionList();
         }
@@ -100,7 +102,6 @@ namespace FrontEnd.UserControls
             btnDelete.Text = "Delete " + ControlText;
             btnSelect.Text = "Select " + ControlText;
         }
-
         private void PopulateSelectionList()
         {
             string DisplayName;
@@ -147,47 +148,24 @@ namespace FrontEnd.UserControls
         }
         private void buttonSelect_Click(object sender, EventArgs e)
         {
-
             if (SelectedLabel != null)
             {
                 switch (SelectionType)
                 {
                     case Type CurrentType when SelectionType == typeof(User):
                         RootManagerInstance.ActiveUser = SelectedLabel.Tag as User;
-                        
-                        (this.FindForm() as Dashboard).OpenBuildingSelection();
-
-                        this.Parent.Controls.Remove(this);
-                        this.Dispose();
-
                         break;
                     case Type CurrentType when SelectionType == typeof(Building):
                         RootManagerInstance.ActiveUser.ActiveBuilding = SelectedLabel.Tag as Building;
-
-                        (this.FindForm() as Dashboard).OpenTopDownBuildingView();
-
-                        this.Parent.Controls.Remove(this);
-                        this.Dispose();
-
                         break;
                 }
+                SelectionMade?.Invoke(this);
             }
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            switch (SelectionType)
-            {
-                case Type CurrentType when SelectionType == typeof(User):
-                    (this.FindForm() as Dashboard).OpenAddNewUser();
-
-                    break;
-                case Type CurrentType when SelectionType == typeof(Building):
-                    (this.FindForm() as Dashboard).OpenAddNewBuilding();
-                    break;
-            }
-            
-            this.Enabled = false;
+            AddRequestMade?.Invoke(this);
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
@@ -220,20 +198,20 @@ namespace FrontEnd.UserControls
         {
 
             // This is pattern matching. Alternate Approach:
-            // Label clickedLabel = sender as Label
-            if (sender is Label clickedLabel)
+            // Label ClickedLabel = sender as Label
+            if (sender is Label ClickedLabel)
             {
                 if (SelectedLabel != null)
                 {
                     SelectedLabel.BackColor = UnselectedLabelColor;
                 }
 
-                SelectedLabel = clickedLabel;
+                SelectedLabel = ClickedLabel;
                 SelectedLabel.BackColor = SelectedLabelColor;
 
                 // Get index in the FlowLayoutPanel
-                //int index = flpUserList.Controls.IndexOf(clickedLabel);
-                //MessageBox.Show($"Clicked label at index {index}: {clickedLabel.Text}");
+                //int index = flpUserList.Controls.IndexOf(ClickedLabel);
+                //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
             }
 
         }
