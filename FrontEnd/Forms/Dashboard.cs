@@ -1,7 +1,9 @@
 using BackEnd.DataContinuity;
 using BackEnd.ModelClasses;
 using BackEnd.Utilities;
+using FrontEnd.Adapters;
 using FrontEnd.UserControls;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Net.PeerToPeer;
 using System.Windows.Forms;
@@ -43,9 +45,13 @@ namespace FrontEnd.Forms
 
         public void OpenUserSelection()
         {
-            Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.UserList);
-            NewControl.SelectionMade += SelectionControl_SelectionMade;
-            NewControl.AddRequestMade += SelectionControl_AddRequestMade;
+            ASelection SelectionAdapter = new ASelection(ref RootManagerInstance, RootManagerInstance.UserList, "User");
+
+            Selection NewControl = new Selection(SelectionAdapter);
+
+            NewControl.ChooseSelection += SelectionControl_ChooseSelection;
+            NewControl.AddNewSelection += SelectionControl_AddNewSelection;
+            NewControl.DeleteSelection += SelectionControl_DeleteSelection;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "UserSelection";
@@ -65,19 +71,23 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
-
+        
         public void OpenBuildingSelection()
         {
-            Selection NewControl = new Selection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList);
-            NewControl.SelectionMade += SelectionControl_SelectionMade;
-            NewControl.AddRequestMade += SelectionControl_AddRequestMade;
+            ASelection SelectionAdapter = new ASelection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList, "Building");
+
+            Selection NewControl = new Selection(SelectionAdapter);
+
+            NewControl.ChooseSelection += SelectionControl_ChooseSelection;
+            NewControl.AddNewSelection += SelectionControl_AddNewSelection;
+            NewControl.DeleteSelection += SelectionControl_DeleteSelection;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "BuildingSelection";
 
             ViewPortPanel.Controls.Add(NewControl);
         }
-
+    
         public void OpenAddNewBuilding()
         {
             AddNewBuilding NewControl = new AddNewBuilding(ref RootManagerInstance);
@@ -118,39 +128,58 @@ namespace FrontEnd.Forms
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
         }
 
-        private void SelectionControl_SelectionMade(Selection CurrentControl)
+        private void SelectionControl_ChooseSelection(Selection _CurrentControl, Type _CurrentType, object _SelectedObject)
         {
-            switch (CurrentControl.SelectionType)
+            switch (_CurrentType)
             {
-                case Type CurrentType when CurrentControl.SelectionType == typeof(User):
+                case Type CurrentType when _CurrentType == typeof(User):
+                    //need to unwire the populate list event
+                    RootManagerInstance.ActiveUser = _SelectedObject as User;
                     OpenBuildingSelection();
+
                     break;
-                case Type CurrentType when CurrentControl.SelectionType == typeof(Building):
+                case Type CurrentType when _CurrentType == typeof(Building):
+                    //need to unwire the populate list event
+                    RootManagerInstance.ActiveUser.ActiveBuilding = _SelectedObject as Building;
                     OpenTopDownBuildingView();
                     break;
             }
 
-            CurrentControl.SelectionMade -= SelectionControl_SelectionMade;
-            CurrentControl.AddRequestMade -= SelectionControl_AddRequestMade;
+            _CurrentControl.ChooseSelection -= SelectionControl_ChooseSelection;
+            _CurrentControl.AddNewSelection -= SelectionControl_AddNewSelection;
+            _CurrentControl.DeleteSelection -= SelectionControl_DeleteSelection;
 
-            ViewPortPanel.Controls.Remove(CurrentControl);
-            CurrentControl.Dispose();
-
+            ViewPortPanel.Controls.Remove(_CurrentControl);
+            _CurrentControl.Dispose();
         }
 
-        private void SelectionControl_AddRequestMade(Selection CurrentControl)
+        private void SelectionControl_AddNewSelection(Selection _CurrentControl, Type _CurrentType)
         {
-            switch (CurrentControl.SelectionType)
+            switch (_CurrentType)
             {
-                case Type CurrentType when CurrentControl.SelectionType == typeof(User):
+                case Type CurrentType when _CurrentType == typeof(User):
                     OpenAddNewUser();
                     break;
-                case Type CurrentType when CurrentControl.SelectionType == typeof(Building):
+                case Type CurrentType when _CurrentType == typeof(Building):
                     OpenAddNewBuilding();
                     break;
             }
 
-            CurrentControl.Enabled = false;
+            _CurrentControl.Enabled = false;
+        }
+
+        private void SelectionControl_DeleteSelection(Type _CurrentType, object _SelectedObject)
+        {
+            switch (_CurrentType)
+            {
+                case Type CurrentType when _CurrentType == typeof(User):
+                    RootManagerInstance.RemoveUser(_SelectedObject as User);
+
+                    break;
+                case Type CurrentType when _CurrentType == typeof(Building):
+                    RootManagerInstance.ActiveUser.RemoveBuilding(_SelectedObject as Building);
+                    break;
+            }
         }
 
     }

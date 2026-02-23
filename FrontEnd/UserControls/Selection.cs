@@ -18,21 +18,22 @@ namespace FrontEnd.UserControls
 {
     internal partial class Selection : UserControl
     {
-        public event Action<Selection>? SelectionMade;
-        public event Action<Selection>? AddRequestMade;
+        public event Action<Selection, Type, object>? ChooseSelection;
+        public event Action<Selection, Type>? AddNewSelection;
+        public event Action<Type, object>? DeleteSelection;
 
-        private IReadOnlyList<ASelection>? SelectionList;
+        private ASelection SelectionAdapter;
         private int InitialFLPClientWidth;
 
         private Color UnselectedLabelColor = Color.White;
         private Color SelectedLabelColor = Color.Beige;
         private Label? SelectedLabel;
-        
-        internal Selection(IReadOnlyList<ASelection> _SelectionList)
+
+        internal Selection(ASelection _SelectionAdapter)
         {
             InitializeComponent();
 
-            SelectionList = _SelectionList;
+            SelectionAdapter = _SelectionAdapter;
             InitialFLPClientWidth = flpSelectionList.ClientSize.Width;
 
             InitializeVisuals();
@@ -47,50 +48,18 @@ namespace FrontEnd.UserControls
 
         private void Wire()
         {
-            switch (SelectionType)
-            {
-                case Type CurrentType when SelectionType == typeof(User):
-                    RootManagerInstance.UserListChanged += PopulateSelectionList;
-                    break;
-                case Type CurrentType when SelectionType == typeof(Building):
-                    RootManagerInstance.ActiveUser.BuildingListChanged += PopulateSelectionList;
-                    break;
-            }
-
+            SelectionAdapter.SourceUpdated += PopulateSelectionList;
+            //Leaving Wire And UnWire In Case I End Up Wiring Selection Up To Something
             this.HandleDestroyed += UnWire;
         }
-
         private void UnWire(object? sender, EventArgs e)
         {
-
-            switch (SelectionType)
-            {
-                case Type CurrentType when SelectionType == typeof(User):
-                    RootManagerInstance.UserListChanged -= PopulateSelectionList;
-                    break;
-                case Type CurrentType when SelectionType == typeof(Building):
-                    RootManagerInstance.ActiveUser.BuildingListChanged -= PopulateSelectionList;
-                    break;
-            }
-
+            //Leaving Wire And UnWire In Case I End Up Wiring Selection Up To Something
+            SelectionAdapter.SourceUpdated -= PopulateSelectionList;
             this.HandleDestroyed -= UnWire;
         }
-
         private void SetDisplayText() {
-            string ControlText;
-
-            switch (SelectionType)
-            {
-                case Type CurrentType when SelectionType == typeof(User):
-                    ControlText = "User";
-                    break;
-                case Type CurrentType when SelectionType == typeof(Building):
-                    ControlText = "Building";
-                    break;
-                default:
-                    ControlText = "Default";
-                    break;
-            }
+            string ControlText = SelectionAdapter.ButtonText;
 
             lblSelectionTitle.Text = ControlText + " Selection Menu";
             btnAdd.Text = "Add " + ControlText;
@@ -103,20 +72,9 @@ namespace FrontEnd.UserControls
 
             flpSelectionList.Controls.Clear();
 
-            foreach (object CurrentSelection in SelectionList)
+            foreach (ASelectionItem CurrentSelection in SelectionAdapter.GetAList())
             {
-                switch (CurrentSelection)
-                {
-                    case User CurrentUser:
-                        DisplayName = CurrentUser.UserName;
-                        break;
-                    case Building CurrentBuilding:
-                        DisplayName = CurrentBuilding.Name;
-                        break;
-                    default:
-                        DisplayName = "Invalid Class";
-                        break;
-                }
+                DisplayName = CurrentSelection.DisplayText;
 
                 Label NewUser = new Label();
                 NewUser.Name = DisplayName;
@@ -127,7 +85,7 @@ namespace FrontEnd.UserControls
                 NewUser.BackColor = Color.White;
                 NewUser.Height = 40;
                 NewUser.Click += Label_Click!;
-                NewUser.Tag = CurrentSelection;
+                NewUser.Tag = CurrentSelection.Value;
                 flpSelectionList.Controls.Add(NewUser);
 
                 if (flpSelectionList.HorizontalScroll.Visible == true && flpSelectionList.VerticalScroll.Visible == true)
@@ -145,24 +103,13 @@ namespace FrontEnd.UserControls
         {
             if (SelectedLabel != null)
             {
-                switch (SelectionType)
-                {
-                    case Type CurrentType when SelectionType == typeof(User):
-                        RootManagerInstance.ActiveUser = SelectedLabel.Tag as User;
-                        break;
-                    case Type CurrentType when SelectionType == typeof(Building):
-                        RootManagerInstance.ActiveUser.ActiveBuilding = SelectedLabel.Tag as Building;
-                        break;
-                }
-                SelectionMade?.Invoke(this);
+                ChooseSelection?.Invoke(this, SelectionAdapter.SelectionType, SelectedLabel.Tag);
             }
         }
-
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            AddRequestMade?.Invoke(this);
+            AddNewSelection?.Invoke(this, SelectionAdapter.SelectionType);
         }
-
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             if (SelectedLabel != null)
@@ -171,17 +118,11 @@ namespace FrontEnd.UserControls
 
                 if (MessageBox.Show(MessagePrompt, "Confirm Deletion", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    switch (SelectionType)
-                    {
-                        case Type CurrentType when SelectionType == typeof(User):
-                            RootManagerInstance.RemoveUser(SelectedLabel.Tag as User);
-
-                            break;
-                        case Type CurrentType when SelectionType == typeof(Building):
-                            RootManagerInstance.ActiveUser.RemoveBuilding(SelectedLabel.Tag as Building);
-                            break;
-                    }
-                    
+                    DeleteSelection.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
+                }
+                else
+                {
+                    SelectedLabel.BackColor = UnselectedLabelColor;
                 }
 
                 SelectedLabel = null;
