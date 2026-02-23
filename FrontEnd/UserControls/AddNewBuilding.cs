@@ -15,27 +15,18 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewBuilding : UserControl
     {
+        public event Action<AddNewBuilding, Building> AddConfirmed;
+        public event Action<AddNewBuilding> AddCanceled;
+
         private RootManager RootManagerInstance;
 
-        internal AddNewBuilding(ref RootManager _ProgramRoot)
+        internal AddNewBuilding()
         {
             InitializeComponent();
-
-            RootManagerInstance = _ProgramRoot;
-
-        }
-
-        private void CloseAndReturnControl()
-        {
-            this.Parent.Controls["BuildingSelection"].Enabled = true;
-            this.Parent.Controls.Remove(this);
-            this.Dispose();
         }
 
         private void btnConfirmAdd_Click(object sender, EventArgs e)
         {
-            //troublshooting because this.Parent was coming back null
-            //MessageBox.Show($"Parent is null: {this.Parent == null}\nParent type: {this.Parent?.GetType().Name}");
 
             try
             {
@@ -46,9 +37,8 @@ namespace FrontEnd.UserControls
                     Width = Convert.ToInt32(txtWidthInput.Text)
                 };
 
-                RootManagerInstance.ActiveUser.AddBuilding(NewBuilding);
+                AddConfirmed.Invoke(this, NewBuilding);
 
-                CloseAndReturnControl();
             }
             catch (FormatException Exc)
             {
@@ -59,7 +49,7 @@ namespace FrontEnd.UserControls
 
         private void btnCancelAdd_Click(object sender, EventArgs e)
         {
-            CloseAndReturnControl();
+            AddCanceled.Invoke(this);
         }
 
         private void AddNewBuilding_Load(object sender, EventArgs e)

@@ -93,7 +93,10 @@ namespace FrontEnd.Forms
     
         public void OpenAddNewBuilding()
         {
-            AddNewBuilding NewControl = new AddNewBuilding(ref RootManagerInstance);
+            AddNewBuilding NewControl = new AddNewBuilding();
+
+            NewControl.AddConfirmed += AddNewBuildingControl_AddConfirmed;
+            NewControl.AddCanceled += AddNewBuildingControl_AddCanceled;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Left = ViewPortPanel.Controls["BuildingSelection"].Left + (ViewPortPanel.Controls["BuildingSelection"].Width - NewControl.Width) / 2;
@@ -193,7 +196,26 @@ namespace FrontEnd.Forms
 
         private void AddNewUserControl_AddCanceled(AddNewUser _CurrentControl)
         {
+            _CurrentControl.AddConfirmed -= AddNewUserControl_AddConfirmed;
+            _CurrentControl.AddCanceled -= AddNewUserControl_AddCanceled;
+
             ViewPortPanel.Controls["UserSelection"].Enabled = true;
+            ViewPortPanel.Controls.Remove(_CurrentControl);
+            _CurrentControl.Dispose();
+        }
+
+        private void AddNewBuildingControl_AddConfirmed(AddNewBuilding _CurrentControl, Building _AddedBuilding)
+        {
+            RootManagerInstance.ActiveUser.AddBuilding(_AddedBuilding);
+            AddNewBuildingControl_AddCanceled(_CurrentControl);
+        }
+
+        private void AddNewBuildingControl_AddCanceled(AddNewBuilding _CurrentControl)
+        {
+            _CurrentControl.AddConfirmed -= AddNewBuildingControl_AddConfirmed;
+            _CurrentControl.AddCanceled -= AddNewBuildingControl_AddCanceled;
+
+            ViewPortPanel.Controls["BuildingSelection"].Enabled = true;
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
