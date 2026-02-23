@@ -10,8 +10,11 @@ namespace FrontEnd.Adapters
 {
     internal class ASelection
     {
-        private string __ButtonText;
-        public string ButtonText
+        internal event Action? SourceUpdated;
+
+        internal Type SelectionType { get; }
+
+        internal string ButtonText
         {
             get
             {
@@ -19,13 +22,11 @@ namespace FrontEnd.Adapters
             }
         }
 
+        private IReadOnlyList<object> SourceList;
         private List<ASelectionItem> ConvertedList = new List<ASelectionItem>();
 
-        internal Type SelectionType { get; }
-        internal readonly RootManager RootManagerInstance;
-
-        private IReadOnlyList<object> SourceList;
-        internal event Action? SourceUpdated;
+        private readonly RootManager RootManagerInstance;
+        private string __ButtonText;
 
         internal ASelection(ref RootManager _RootManagerInstance, IReadOnlyList<object> _SourceList, string _ButtonText)
         {

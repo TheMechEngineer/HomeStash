@@ -61,7 +61,10 @@ namespace FrontEnd.Forms
 
         public void OpenAddNewUser()
         {
-            AddNewUser NewControl = new AddNewUser(ref RootManagerInstance);
+            AddNewUser NewControl = new AddNewUser();
+
+            NewControl.AddConfirmed += AddNewUserControl_AddConfirmed;
+            NewControl.AddCanceled += AddNewUserControl_AddCanceled;
 
             NewControl.Dock = DockStyle.None;
             NewControl.Left = ViewPortPanel.Controls["UserSelection"].Left + (ViewPortPanel.Controls["UserSelection"].Width - NewControl.Width) / 2;
@@ -71,7 +74,7 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
-        
+
         public void OpenBuildingSelection()
         {
             ASelection SelectionAdapter = new ASelection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList, "Building");
@@ -180,6 +183,19 @@ namespace FrontEnd.Forms
                     RootManagerInstance.ActiveUser.RemoveBuilding(_SelectedObject as Building);
                     break;
             }
+        }
+
+        private void AddNewUserControl_AddConfirmed(AddNewUser _CurrentControl, User _AddedUser)
+        {
+            RootManagerInstance.AddUser(_AddedUser);
+            AddNewUserControl_AddCanceled(_CurrentControl);
+        }
+
+        private void AddNewUserControl_AddCanceled(AddNewUser _CurrentControl)
+        {
+            ViewPortPanel.Controls["UserSelection"].Enabled = true;
+            ViewPortPanel.Controls.Remove(_CurrentControl);
+            _CurrentControl.Dispose();
         }
 
     }
