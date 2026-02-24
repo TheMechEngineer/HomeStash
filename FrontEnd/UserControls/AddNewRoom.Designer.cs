@@ -31,17 +31,18 @@
         {
             btnConfirm = new Button();
             btnCancel = new Button();
-            lblBuildingName = new Label();
+            lblRoomName = new Label();
             txtNameInput = new TextBox();
             txtWidthInput = new TextBox();
-            lblBuildingWidth = new Label();
+            lblRoomWidth = new Label();
             txtHeightInput = new TextBox();
-            lblBuildingHeight = new Label();
-            textBox1 = new TextBox();
-            label1 = new Label();
-            textBox2 = new TextBox();
-            label2 = new Label();
-            textBox3 = new TextBox();
+            lblRoomHeight = new Label();
+            txtYCoordInput = new TextBox();
+            lblRoomColor = new Label();
+            txtXCoordInput = new TextBox();
+            lblRoomLocation = new Label();
+            txtColorInput = new TextBox();
+            cldRoomColor = new ColorDialog();
             SuspendLayout();
             // 
             // btnConfirm
@@ -66,14 +67,14 @@
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancelAdd_Click;
             // 
-            // lblBuildingName
+            // lblRoomName
             // 
-            lblBuildingName.AutoSize = true;
-            lblBuildingName.Location = new Point(22, 46);
-            lblBuildingName.Name = "lblBuildingName";
-            lblBuildingName.Size = new Size(152, 32);
-            lblBuildingName.TabIndex = 3;
-            lblBuildingName.Text = "Room Name:";
+            lblRoomName.AutoSize = true;
+            lblRoomName.Location = new Point(22, 46);
+            lblRoomName.Name = "lblRoomName";
+            lblRoomName.Size = new Size(152, 32);
+            lblRoomName.TabIndex = 3;
+            lblRoomName.Text = "Room Name:";
             // 
             // txtNameInput
             // 
@@ -89,14 +90,14 @@
             txtWidthInput.Size = new Size(243, 39);
             txtWidthInput.TabIndex = 6;
             // 
-            // lblBuildingWidth
+            // lblRoomWidth
             // 
-            lblBuildingWidth.AutoSize = true;
-            lblBuildingWidth.Location = new Point(22, 116);
-            lblBuildingWidth.Name = "lblBuildingWidth";
-            lblBuildingWidth.Size = new Size(152, 32);
-            lblBuildingWidth.TabIndex = 5;
-            lblBuildingWidth.Text = "Room Width:";
+            lblRoomWidth.AutoSize = true;
+            lblRoomWidth.Location = new Point(22, 116);
+            lblRoomWidth.Name = "lblRoomWidth";
+            lblRoomWidth.Size = new Size(152, 32);
+            lblRoomWidth.TabIndex = 5;
+            lblRoomWidth.Text = "Room Width:";
             // 
             // txtHeightInput
             // 
@@ -105,53 +106,60 @@
             txtHeightInput.Size = new Size(243, 39);
             txtHeightInput.TabIndex = 8;
             // 
-            // lblBuildingHeight
+            // lblRoomHeight
             // 
-            lblBuildingHeight.AutoSize = true;
-            lblBuildingHeight.Location = new Point(22, 190);
-            lblBuildingHeight.Name = "lblBuildingHeight";
-            lblBuildingHeight.Size = new Size(160, 32);
-            lblBuildingHeight.TabIndex = 7;
-            lblBuildingHeight.Text = "Room Height:";
+            lblRoomHeight.AutoSize = true;
+            lblRoomHeight.Location = new Point(22, 190);
+            lblRoomHeight.Name = "lblRoomHeight";
+            lblRoomHeight.Size = new Size(160, 32);
+            lblRoomHeight.TabIndex = 7;
+            lblRoomHeight.Text = "Room Height:";
             // 
-            // textBox1
+            // txtYCoordInput
             // 
-            textBox1.Location = new Point(335, 263);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(114, 39);
-            textBox1.TabIndex = 12;
+            txtYCoordInput.Location = new Point(335, 263);
+            txtYCoordInput.Name = "txtYCoordInput";
+            txtYCoordInput.Size = new Size(114, 39);
+            txtYCoordInput.TabIndex = 12;
             // 
-            // label1
+            // lblRoomColor
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(22, 340);
-            label1.Name = "label1";
-            label1.Size = new Size(145, 32);
-            label1.TabIndex = 11;
-            label1.Text = "Room Color:";
+            lblRoomColor.AutoSize = true;
+            lblRoomColor.Location = new Point(22, 340);
+            lblRoomColor.Name = "lblRoomColor";
+            lblRoomColor.Size = new Size(145, 32);
+            lblRoomColor.TabIndex = 11;
+            lblRoomColor.Text = "Room Color:";
             // 
-            // textBox2
+            // txtXCoordInput
             // 
-            textBox2.Location = new Point(206, 263);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 39);
-            textBox2.TabIndex = 10;
+            txtXCoordInput.Location = new Point(206, 263);
+            txtXCoordInput.Name = "txtXCoordInput";
+            txtXCoordInput.Size = new Size(100, 39);
+            txtXCoordInput.TabIndex = 10;
             // 
-            // label2
+            // lblRoomLocation
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(22, 266);
-            label2.Name = "label2";
-            label2.Size = new Size(159, 32);
-            label2.TabIndex = 9;
-            label2.Text = "Room Center:";
+            lblRoomLocation.AutoSize = true;
+            lblRoomLocation.Location = new Point(22, 266);
+            lblRoomLocation.Name = "lblRoomLocation";
+            lblRoomLocation.Size = new Size(159, 32);
+            lblRoomLocation.TabIndex = 9;
+            lblRoomLocation.Text = "Room Center:";
             // 
-            // textBox3
+            // txtColorInput
             // 
-            textBox3.Location = new Point(206, 337);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(243, 39);
-            textBox3.TabIndex = 13;
+            txtColorInput.Location = new Point(206, 337);
+            txtColorInput.Name = "txtColorInput";
+            txtColorInput.Size = new Size(243, 39);
+            txtColorInput.TabIndex = 13;
+            txtColorInput.TabStop = false;
+            txtColorInput.MouseDown += txtColorInput_MouseDown;
+            // 
+            // cldRoomColor
+            // 
+            cldRoomColor.AnyColor = true;
+            cldRoomColor.FullOpen = true;
             // 
             // AddNewRoom
             // 
@@ -159,17 +167,17 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
             BorderStyle = BorderStyle.Fixed3D;
-            Controls.Add(textBox3);
-            Controls.Add(textBox1);
-            Controls.Add(label1);
-            Controls.Add(textBox2);
-            Controls.Add(label2);
+            Controls.Add(txtColorInput);
+            Controls.Add(lblRoomColor);
+            Controls.Add(txtYCoordInput);
+            Controls.Add(txtXCoordInput);
+            Controls.Add(lblRoomLocation);
             Controls.Add(txtHeightInput);
-            Controls.Add(lblBuildingHeight);
+            Controls.Add(lblRoomHeight);
             Controls.Add(txtWidthInput);
-            Controls.Add(lblBuildingWidth);
+            Controls.Add(lblRoomWidth);
             Controls.Add(txtNameInput);
-            Controls.Add(lblBuildingName);
+            Controls.Add(lblRoomName);
             Controls.Add(btnCancel);
             Controls.Add(btnConfirm);
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -185,16 +193,17 @@
         #endregion
         private Button btnConfirm;
         private Button btnCancel;
-        private Label lblBuildingName;
+        private Label lblRoomName;
         private TextBox txtNameInput;
         private TextBox txtWidthInput;
-        private Label lblBuildingWidth;
+        private Label lblRoomWidth;
         private TextBox txtHeightInput;
-        private Label lblBuildingHeight;
-        private TextBox textBox1;
-        private Label label1;
-        private TextBox textBox2;
-        private Label label2;
-        private TextBox textBox3;
+        private Label lblRoomHeight;
+        private TextBox txtYCoordInput;
+        private Label lblRoomColor;
+        private TextBox txtXCoordInput;
+        private Label lblRoomLocation;
+        private TextBox txtColorInput;
+        private ColorDialog cldRoomColor;
     }
 }

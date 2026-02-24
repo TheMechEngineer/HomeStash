@@ -11,7 +11,7 @@ namespace BackEnd.ModelClasses
         public event Action? ActiveBuildingChanged;
         public event Action? BuildingListChanged;
 
-        public string UserName { get; set; }
+        public string UserName { get; }
 
         private List<Building> __BuildingList = new List<Building>();
 
@@ -20,9 +20,7 @@ namespace BackEnd.ModelClasses
         public Building? ActiveBuilding
         {
             get
-            {
-                return __ActiveBuilding;
-            }
+            { return __ActiveBuilding; }
 
             set
             {
@@ -34,10 +32,27 @@ namespace BackEnd.ModelClasses
         public IReadOnlyList<Building> BuildingList
         {
             get
+            { return __BuildingList.AsReadOnly(); }
+        }
+
+        private User(string userName)
+        {
+            UserName = userName;
+        }
+
+        public static bool TryCreate(string _Username, out User? _CreatedUser, out string? _ErrorMessage)
+        {
+            _CreatedUser = null;
+            _ErrorMessage = null;
+
+            if (string.IsNullOrEmpty(_Username))
             {
-                return __BuildingList.AsReadOnly();
+                _ErrorMessage = "Username Must Contain Characters";
+                return false;
             }
 
+            _CreatedUser = new User(_Username);
+            return true;
         }
 
         public void AddBuilding(Building _BuildingToAdd)

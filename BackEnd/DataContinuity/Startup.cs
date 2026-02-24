@@ -30,6 +30,8 @@ namespace BackEnd.DataContinuity
             ReturnItem.AddUser(new User { UserName = "John" });
             ReturnItem.AddUser(new User { UserName = "Caleb" });
 
+            ReturnItem.ActiveUser = ReturnItem.UserList[3];
+
             ReturnItem.UserList[3].AddBuilding(new Building { Name = "Home", Height = 3, Width = 3 });
             ReturnItem.UserList[3].AddBuilding(new Building { Name = "1000", Height = 1000, Width = 1000 });
 

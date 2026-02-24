@@ -15,9 +15,7 @@ namespace BackEnd.ModelClasses
 
         public User? ActiveUser {
             get
-            {
-                return __ActiveUser;
-            }
+            { return __ActiveUser; }
 
             set
             {
@@ -29,15 +27,27 @@ namespace BackEnd.ModelClasses
         public IReadOnlyList<User> UserList
         {
             get
-            {
-                return __UserList;
-            }
+            { return __UserList; }
         }
 
-        public void AddUser(User _UserToAdd)
+        public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {
-            __UserList.Add(_UserToAdd);
+            if(__UserList.Any(CurrentUser => CurrentUser.UserName == _Username))
+            {
+                _ErrorMessage = $"{_Username} Already Exists. No Duplicate Usernames.";
+                return false;
+            }
+
+            User? NewUser;
+
+            if(!User.TryCreate(_Username,out NewUser,out _ErrorMessage))
+            {
+                return false;
+            }
+
+            __UserList.Add(NewUser);
             UserListChanged?.Invoke();
+            return true;
         }
 
         public void RemoveUser(User _UserToRemove)

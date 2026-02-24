@@ -188,10 +188,17 @@ namespace FrontEnd.Forms
             }
         }
 
-        private void AddNewUserControl_AddConfirmed(AddNewUser _CurrentControl, User _AddedUser)
+        private (bool, string?) AddNewUserControl_AddConfirmed(AddNewUser _CurrentControl, string _AddedUsername)
         {
-            RootManagerInstance.AddUser(_AddedUser);
-            AddNewUserControl_AddCanceled(_CurrentControl);
+            string? _OutputMessage;
+
+            if (RootManagerInstance.TryAddUser(_AddedUsername, out _OutputMessage))
+            {
+                AddNewUserControl_AddCanceled(_CurrentControl);
+                return (true, _OutputMessage);
+            }
+
+            return (false, _OutputMessage); 
         }
 
         private void AddNewUserControl_AddCanceled(AddNewUser _CurrentControl)

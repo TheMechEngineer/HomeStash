@@ -118,7 +118,7 @@ namespace FrontEnd.UserControls
 
                 if (MessageBox.Show(MessagePrompt, "Confirm Deletion", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    DeleteSelection.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
+                    DeleteSelection?.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
                 }
                 else
                 {

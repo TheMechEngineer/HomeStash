@@ -15,55 +15,77 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewRoom : UserControl
     {
-        private RootManager RootManagerInstance;
-        private TopDownBuildingView RootView;
+        public event Action<AddNewRoom, Room>? AddConfirmed;
+        public event Action<AddNewRoom>? AddCanceled;
 
-        internal AddNewRoom(ref RootManager _ProgramRoot, TopDownBuildingView _RootView)
+        //private RootManager RootManagerInstance;
+        //private TopDownBuildingView RootView;
+
+        //internal AddNewRoom(ref RootManager _ProgramRoot, TopDownBuildingView _RootView)
+        internal AddNewRoom()
         {
             InitializeComponent();
 
-            RootManagerInstance = _ProgramRoot;
-            RootView = _RootView;
+            //RootManagerInstance = _ProgramRoot;
+            //RootView = _RootView;
+
+            InitializeVisuals();
         }
 
-        private void CloseAndReturnControl()
+        private void InitializeVisuals()
         {
-            RootView.CloseAddNewRoom();
+            txtColorInput.Text = Color.Green.ToArgb().ToString();
+            txtColorInput.BackColor = Color.FromArgb(Convert.ToInt32(txtColorInput.Text));
+            txtColorInput.ForeColor = Color.FromArgb(Convert.ToInt32(txtColorInput.Text));
         }
 
         private void btnConfirmAdd_Click(object sender, EventArgs e)
         {
-            //troublshooting because this.Parent was coming back null
-            //MessageBox.Show($"Parent is null: {this.Parent == null}\nParent type: {this.Parent?.GetType().Name}");
-
             try
             {
-                Building NewBuilding = new Building
+                Room NewRoom = new Room
                 {
                     Name = txtNameInput.Text,
                     Height = Convert.ToInt32(txtHeightInput.Text),
-                    Width = Convert.ToInt32(txtWidthInput.Text)
+                    Width = Convert.ToInt32(txtWidthInput.Text),
+                    CenterX = Convert.ToInt32(txtXCoordInput.Text),
+                    CenterY = Convert.ToInt32(txtXCoordInput.Text),
+                    RoomColor = Convert.ToInt32(txtColorInput.Text)
                 };
 
-                RootManagerInstance.ActiveUser.AddBuilding(NewBuilding);
-
-                CloseAndReturnControl();
+                AddConfirmed?.Invoke(this, NewRoom);
             }
             catch (FormatException Exc)
             {
-                MessageBox.Show("Height, Width, And Location Must Be Whole Numbers", "Invalid Input");
+                MessageBox.Show("Height, Width, And Coordinates Must Be Whole Numbers", "Invalid Input");
             }
 
         }
 
         private void btnCancelAdd_Click(object sender, EventArgs e)
         {
-            CloseAndReturnControl();
+            AddCanceled?.Invoke(this);
         }
 
         private void AddNewRoom_Load(object sender, EventArgs e)
         {
             txtNameInput.Focus();
+        }
+
+        private void txtColorInput_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.ActiveControl = null;
+            if (cldRoomColor.ShowDialog() == DialogResult.OK)
+            {
+                txtColorInput.Text = cldRoomColor.Color.ToArgb().ToString();
+            }
+            else
+            {
+                txtColorInput.Text = Color.Green.ToArgb().ToString();
+            }
+
+            txtColorInput.BackColor = Color.FromArgb(Convert.ToInt32(txtColorInput.Text));
+            txtColorInput.ForeColor = Color.FromArgb(Convert.ToInt32(txtColorInput.Text));
         }
     }
 }

@@ -20,17 +20,16 @@ namespace FrontEnd.UserControls
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
-            this.Load += TopDownBuildingView_Load;
-
+            
             InitializeComponent();
 
             RootManagerInstance = _ProgramRoot;
 
-            DrawBuilding();
+            InitializeVisuals();
 
         }
 
-        private void DrawBuilding()
+        private void InitializeVisuals()
         {
             BuildingControl DisplayedBuilding = new BuildingControl(ref RootManagerInstance, ScaleFactor);
 
@@ -40,6 +39,17 @@ namespace FrontEnd.UserControls
             DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
             splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Add(DisplayedBuilding);
+        }
+
+        private void Wire()
+        {
+            this.Load += TopDownBuildingView_Load;
+            this.HandleDestroyed += UnWire;
+        }
+        private void UnWire(object? sender, EventArgs e)
+        {
+            this.Load -= TopDownBuildingView_Load;
+            this.HandleDestroyed -= UnWire;
         }
 
         private void CenterCameraView()
@@ -72,7 +82,10 @@ namespace FrontEnd.UserControls
 
         private void OpenAddNewRoom()
         {
-            AddNewRoom NewControl = new AddNewRoom(ref RootManagerInstance, this);
+            AddNewRoom NewControl = new AddNewRoom();
+
+            NewControl.AddConfirmed += AddNewRoomControl_AddConfirmed;
+            NewControl.AddCanceled += AddNewRoomControl_AddCanceled;
 
             NewControl.Dock = DockStyle.Fill;
             NewControl.Name = "AddNewRoom";
@@ -152,6 +165,16 @@ namespace FrontEnd.UserControls
 
             OpenAddNewRoom();
 
+        }
+
+        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, Room _AddedRoom)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddNewRoomControl_AddCanceled(AddNewRoom _CurrentControl)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -15,8 +15,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewBuilding : UserControl
     {
-        public event Action<AddNewBuilding, Building> AddConfirmed;
-        public event Action<AddNewBuilding> AddCanceled;
+        public event Action<AddNewBuilding, Building>? AddConfirmed;
+        public event Action<AddNewBuilding>? AddCanceled;
 
         private RootManager RootManagerInstance;
 
@@ -37,7 +37,7 @@ namespace FrontEnd.UserControls
                     Width = Convert.ToInt32(txtWidthInput.Text)
                 };
 
-                AddConfirmed.Invoke(this, NewBuilding);
+                AddConfirmed?.Invoke(this, NewBuilding);
 
             }
             catch (FormatException Exc)
@@ -49,7 +49,7 @@ namespace FrontEnd.UserControls
 
         private void btnCancelAdd_Click(object sender, EventArgs e)
         {
-            AddCanceled.Invoke(this);
+            AddCanceled?.Invoke(this);
         }
 
         private void AddNewBuilding_Load(object sender, EventArgs e)
