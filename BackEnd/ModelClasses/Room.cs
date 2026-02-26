@@ -21,10 +21,13 @@ namespace BackEnd.ModelClasses
         public IReadOnlyList<IStored> StoredItems
         {
             get
-            {
-                return RoomStorage.StoredItems;
-            }
+            { return RoomStorage.StoredItems; }
         }
+
+        //private Room()
+        //{
+
+        //}
 
         public int TotalItemCount()
         {

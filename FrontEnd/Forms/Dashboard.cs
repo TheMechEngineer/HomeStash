@@ -43,7 +43,7 @@ namespace FrontEnd.Forms
             RootManagerInstance.ActiveUserChanged += RootManagerInstance_ActiveUserChanged;
         }
 
-        public void OpenUserSelection()
+        private void OpenUserSelection()
         {
             ASelection SelectionAdapter = new ASelection(ref RootManagerInstance, RootManagerInstance.UserList, "User");
 
@@ -59,7 +59,7 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Add(NewControl);
         }
 
-        public void OpenAddNewUser()
+        private void OpenAddNewUser()
         {
             AddNewUser NewControl = new AddNewUser();
 
@@ -75,7 +75,7 @@ namespace FrontEnd.Forms
             NewControl.BringToFront();
         }
 
-        public void OpenBuildingSelection()
+        private void OpenBuildingSelection()
         {
             ASelection SelectionAdapter = new ASelection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList, "Building");
 
@@ -91,7 +91,7 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Add(NewControl);
         }
     
-        public void OpenAddNewBuilding()
+        private void OpenAddNewBuilding()
         {
             AddNewBuilding NewControl = new AddNewBuilding();
 
@@ -107,7 +107,7 @@ namespace FrontEnd.Forms
             NewControl.BringToFront();
         }
 
-        public void OpenTopDownBuildingView()
+        private void OpenTopDownBuildingView()
         {
             TopDownBuildingView NewControl = new TopDownBuildingView(ref RootManagerInstance);
 
@@ -136,18 +136,31 @@ namespace FrontEnd.Forms
 
         private void SelectionControl_ChooseSelection(Selection _CurrentControl, Type _CurrentType, object _SelectedObject)
         {
+            string? _ErrorMessage;
+
             switch (_CurrentType)
             {
                 case Type CurrentType when _CurrentType == typeof(User):
-                    //need to unwire the populate list event
-                    RootManagerInstance.ActiveUser = _SelectedObject as User;
-                    OpenBuildingSelection();
-
+                    if (RootManagerInstance.TryChangeActiveUser(_SelectedObject as User, out _ErrorMessage))
+                    {
+                        OpenBuildingSelection();
+                    }
+                    else
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                     break;
                 case Type CurrentType when _CurrentType == typeof(Building):
-                    //need to unwire the populate list event
-                    RootManagerInstance.ActiveUser.ActiveBuilding = _SelectedObject as Building;
-                    OpenTopDownBuildingView();
+                    if (RootManagerInstance.ActiveUser.TryChangeActiveBuilding(_SelectedObject as Building, out _ErrorMessage))
+                    {
+                        OpenTopDownBuildingView();
+                    }
+                    else
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                     break;
             }
 
@@ -176,29 +189,38 @@ namespace FrontEnd.Forms
 
         private void SelectionControl_DeleteSelection(Type _CurrentType, object _SelectedObject)
         {
+            string? _ErrorMessage;
+
             switch (_CurrentType)
             {
                 case Type CurrentType when _CurrentType == typeof(User):
-                    RootManagerInstance.RemoveUser(_SelectedObject as User);
-
+                    if(!RootManagerInstance.TryRemoveUser(_SelectedObject as User, out _ErrorMessage))
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     break;
                 case Type CurrentType when _CurrentType == typeof(Building):
-                    RootManagerInstance.ActiveUser.RemoveBuilding(_SelectedObject as Building);
+                    if (!RootManagerInstance.ActiveUser.TryRemoveBuilding(_SelectedObject as Building, out _ErrorMessage))
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     break;
             }
         }
 
-        private (bool, string?) AddNewUserControl_AddConfirmed(AddNewUser _CurrentControl, string _AddedUsername)
+        private void AddNewUserControl_AddConfirmed(AddNewUser _CurrentControl, string _AddedUsername)
         {
-            string? _OutputMessage;
+            string? _ErrorMessage;
 
-            if (RootManagerInstance.TryAddUser(_AddedUsername, out _OutputMessage))
+            if (RootManagerInstance.TryAddUser(_AddedUsername, out _ErrorMessage))
             {
                 AddNewUserControl_AddCanceled(_CurrentControl);
-                return (true, _OutputMessage);
+            }
+            else
+            {
+                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            return (false, _OutputMessage); 
         }
 
         private void AddNewUserControl_AddCanceled(AddNewUser _CurrentControl)
@@ -211,10 +233,18 @@ namespace FrontEnd.Forms
             _CurrentControl.Dispose();
         }
 
-        private void AddNewBuildingControl_AddConfirmed(AddNewBuilding _CurrentControl, Building _AddedBuilding)
+        private void AddNewBuildingControl_AddConfirmed(AddNewBuilding _CurrentControl, (string _Name, int _Height, int _Width) _BuildingValues)
         {
-            RootManagerInstance.ActiveUser.AddBuilding(_AddedBuilding);
-            AddNewBuildingControl_AddCanceled(_CurrentControl);
+            string? _ErrorMessage = null;
+
+            if(RootManagerInstance.ActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Height, _BuildingValues._Width, out _ErrorMessage))
+            {
+                AddNewBuildingControl_AddCanceled(_CurrentControl);
+            }
+            else
+            {
+                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }   
         }
 
         private void AddNewBuildingControl_AddCanceled(AddNewBuilding _CurrentControl)

@@ -16,12 +16,6 @@ namespace BackEnd.ModelClasses
         public User? ActiveUser {
             get
             { return __ActiveUser; }
-
-            set
-            {
-                __ActiveUser = value;
-                ActiveUserChanged?.Invoke();
-            }
         }
 
         public IReadOnlyList<User> UserList
@@ -32,28 +26,67 @@ namespace BackEnd.ModelClasses
 
         public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {
-            if(__UserList.Any(CurrentUser => CurrentUser.UserName == _Username))
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
             {
                 _ErrorMessage = $"{_Username} Already Exists. No Duplicate Usernames.";
-                return false;
+                CreationSuccess = false;
             }
 
-            User? NewUser;
-
-            if(!User.TryCreate(_Username,out NewUser,out _ErrorMessage))
+            if (CreationSuccess)
             {
+                User? _NewUser;
+
+                if (User.TryCreate(_Username, out _NewUser, out _ErrorMessage))
+                {
+                    __UserList.Add(_NewUser);
+                    UserListChanged?.Invoke(); 
+                }
+                else
+                {
+                    CreationSuccess = false;
+                }
+
+            }
+
+            return CreationSuccess;
+        }
+
+        public bool TryRemoveUser(User _UserToRemove, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!__UserList.Contains(_UserToRemove))
+            {
+                _ErrorMessage = "User To Remove Must Exist In The User List";
                 return false;
             }
 
-            __UserList.Add(NewUser);
+            if (_UserToRemove == __ActiveUser) { 
+                __ActiveUser = null;
+                ActiveUserChanged?.Invoke();
+            }
+
+            __UserList.Remove(_UserToRemove);
             UserListChanged?.Invoke();
             return true;
         }
 
-        public void RemoveUser(User _UserToRemove)
+        public bool TryChangeActiveUser(User _NewActiveUser, out string? _ErrorMessage)
         {
-            __UserList.Remove(_UserToRemove);
-            UserListChanged?.Invoke();
+            _ErrorMessage = null;
+
+            if (!__UserList.Contains(_NewActiveUser))
+            {
+                _ErrorMessage = "New Active User Must Exist In The User List";
+                return false;
+            }
+
+            __ActiveUser = _NewActiveUser;
+            ActiveUserChanged?.Invoke();
+            return true;
         }
     }
 }

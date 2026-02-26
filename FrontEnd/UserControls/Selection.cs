@@ -18,9 +18,9 @@ namespace FrontEnd.UserControls
 {
     internal partial class Selection : UserControl
     {
-        public event Action<Selection, Type, object>? ChooseSelection;
-        public event Action<Selection, Type>? AddNewSelection;
-        public event Action<Type, object>? DeleteSelection;
+        internal event Action<Selection, Type, object>? ChooseSelection;
+        internal event Action<Selection, Type>? AddNewSelection;
+        internal event Action<Type, object>? DeleteSelection;
 
         private ASelection SelectionAdapter;
         private int InitialFLPClientWidth;
@@ -49,12 +49,10 @@ namespace FrontEnd.UserControls
         private void Wire()
         {
             SelectionAdapter.SourceUpdated += PopulateSelectionList;
-            //Leaving Wire And UnWire In Case I End Up Wiring Selection Up To Something
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
-            //Leaving Wire And UnWire In Case I End Up Wiring Selection Up To Something
             SelectionAdapter.SourceUpdated -= PopulateSelectionList;
             this.HandleDestroyed -= UnWire;
         }
@@ -116,7 +114,7 @@ namespace FrontEnd.UserControls
             {
                 string MessagePrompt = $"Do You Want To Delete {SelectedLabel.Text}\nThis Is Permanent And Cannot Be Undone";
 
-                if (MessageBox.Show(MessagePrompt, "Confirm Deletion", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show(MessagePrompt, "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     DeleteSelection?.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
                 }
@@ -149,7 +147,6 @@ namespace FrontEnd.UserControls
                 //int index = flpUserList.Controls.IndexOf(ClickedLabel);
                 //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
             }
-
         }
     }
 }

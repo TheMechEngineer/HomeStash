@@ -11,7 +11,7 @@ namespace BackEnd.ModelClasses
         public event Action? ActiveBuildingChanged;
         public event Action? BuildingListChanged;
 
-        public string UserName { get; }
+        public string Username { get; private set; }
 
         private List<Building> __BuildingList = new List<Building>();
 
@@ -21,12 +21,6 @@ namespace BackEnd.ModelClasses
         {
             get
             { return __ActiveBuilding; }
-
-            set
-            {
-                __ActiveBuilding = value;
-                ActiveBuildingChanged?.Invoke();
-            }
         }
 
         public IReadOnlyList<Building> BuildingList
@@ -35,12 +29,12 @@ namespace BackEnd.ModelClasses
             { return __BuildingList.AsReadOnly(); }
         }
 
-        private User(string userName)
+        private User(string _Username)
         {
-            UserName = userName;
+            this.Username = _Username;
         }
 
-        public static bool TryCreate(string _Username, out User? _CreatedUser, out string? _ErrorMessage)
+        internal static bool TryCreate(string _Username, out User? _CreatedUser, out string? _ErrorMessage)
         {
             _CreatedUser = null;
             _ErrorMessage = null;
@@ -55,21 +49,88 @@ namespace BackEnd.ModelClasses
             return true;
         }
 
-        public void AddBuilding(Building _BuildingToAdd)
+        internal bool TryModifyName(string _NewUsername, out string? _ErrorMessage)
         {
-            __BuildingList.Add(_BuildingToAdd);
-            BuildingListChanged?.Invoke();
+            _ErrorMessage = null;
+
+            if (string.IsNullOrEmpty(_NewUsername))
+            {
+                _ErrorMessage = "Username Must Contain Characters";
+                return false;
+            }
+
+            this.Username = _NewUsername;
+            return true;
         }
 
-        public void RemoveBuilding(Building _BuildingToRemove)
+        public bool TryAddBuilding(string _BuildingName, int _Height, int _Width, out string? _ErrorMessage)
         {
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
+            {
+                _ErrorMessage = $"{_BuildingName} Already Exists. No Duplicate Building Names.";
+                CreationSuccess = false;
+            }
+
+            if (CreationSuccess)
+            {
+                Building? NewBuilding;
+
+                if (Building.TryCreate(_BuildingName, _Height, _Width, out NewBuilding, out _ErrorMessage))
+                {
+                    __BuildingList.Add(NewBuilding);
+                    BuildingListChanged?.Invoke();
+                }
+                else
+                {
+                    CreationSuccess = false;
+                }
+            }
+
+            return CreationSuccess;
+        }
+
+        public bool TryRemoveBuilding(Building _BuildingToRemove, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!__BuildingList.Contains(_BuildingToRemove))
+            {
+                _ErrorMessage = "Building To Be Removed Must Exist In The Building List";
+                return false;
+            }
+
+            if (_BuildingToRemove == __ActiveBuilding)
+            {
+                __ActiveBuilding = null;
+                ActiveBuildingChanged?.Invoke();
+            }
+
             __BuildingList.Remove(_BuildingToRemove);
             BuildingListChanged?.Invoke();
+            return true;
         }
+
         public void CopyBuilding(Building _BuildingToCopy)
         {
             //stub
         }
-        
+
+        public bool TryChangeActiveBuilding(Building _NewActiveBuilding, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!__BuildingList.Contains(_NewActiveBuilding))
+            {
+                _ErrorMessage = "New Active Building Must Exist In The Building List";
+                return false;
+            }
+
+            __ActiveBuilding = _NewActiveBuilding;
+            ActiveBuildingChanged?.Invoke();
+            return true;
+        }
     }
 }

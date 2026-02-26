@@ -13,12 +13,10 @@ namespace BackEnd.ModelClasses
     {
         private List<IStored> __StoredItems = new List<IStored>();
 
-        public IReadOnlyList<IStored> StoredItems {
+        public IReadOnlyList<IStored> StoredItems
+        {
             get
-            {
-                return __StoredItems.AsReadOnly();
-            }
-        
+            { return __StoredItems.AsReadOnly(); }
         }
         public int TotalItemCount()
         {

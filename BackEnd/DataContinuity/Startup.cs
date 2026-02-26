@@ -25,15 +25,16 @@ namespace BackEnd.DataContinuity
         {
             RootManager ReturnItem = new RootManager();
 
-            ReturnItem.AddUser(new User { UserName = "Bill" });
-            ReturnItem.AddUser(new User { UserName = "Ted" });
-            ReturnItem.AddUser(new User { UserName = "John" });
-            ReturnItem.AddUser(new User { UserName = "Caleb" });
 
-            ReturnItem.ActiveUser = ReturnItem.UserList[3];
+            ReturnItem.TryAddUser("Bill", out _); // _ Is a special placeholder meant to discard unwanted output
+            ReturnItem.TryAddUser("Ted", out _);
+            ReturnItem.TryAddUser("John", out _);
+            ReturnItem.TryAddUser("Caleb", out _);
 
-            ReturnItem.UserList[3].AddBuilding(new Building { Name = "Home", Height = 3, Width = 3 });
-            ReturnItem.UserList[3].AddBuilding(new Building { Name = "1000", Height = 1000, Width = 1000 });
+            ReturnItem.TryChangeActiveUser(ReturnItem.UserList[3], out _);
+
+            ReturnItem.UserList[3].TryAddBuilding("Home", 3, 3, out _ );
+            ReturnItem.UserList[3].TryAddBuilding("1000", 1000, 1000, out _ );
 
             return ReturnItem;
         }

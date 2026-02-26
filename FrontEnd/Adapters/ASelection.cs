@@ -17,9 +17,7 @@ namespace FrontEnd.Adapters
         internal string ButtonText
         {
             get
-            {
-                return __ButtonText;
-            }
+            { return __ButtonText; }
         }
 
         private IReadOnlyList<object> SourceList;
@@ -67,7 +65,7 @@ namespace FrontEnd.Adapters
                 {
                     case Type CurrentType when SelectionType == typeof(User):
                         User CurrentUser = CurrentObject as User;
-                        ConvertedList.Add(new ASelectionItem(CurrentUser.UserName, CurrentUser));
+                        ConvertedList.Add(new ASelectionItem(CurrentUser.Username, CurrentUser));
                         break;
                     case Type CurrentType when SelectionType == typeof(Building):
                         Building CurrentBuilding = CurrentObject as Building;

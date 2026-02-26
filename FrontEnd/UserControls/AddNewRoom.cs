@@ -15,8 +15,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewRoom : UserControl
     {
-        public event Action<AddNewRoom, Room>? AddConfirmed;
-        public event Action<AddNewRoom>? AddCanceled;
+        internal event Action<AddNewRoom, Room>? AddConfirmed;
+        internal event Action<AddNewRoom>? AddCanceled;
 
         //private RootManager RootManagerInstance;
         //private TopDownBuildingView RootView;

@@ -15,8 +15,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewUser : UserControl
     {
-        public event Func<AddNewUser, string, (bool, string?)>? AddConfirmed;
-        public event Action<AddNewUser>? AddCanceled;
+        internal event Action<AddNewUser, string>? AddConfirmed;
+        internal event Action<AddNewUser>? AddCanceled;
 
         internal AddNewUser()
         {
@@ -25,12 +25,7 @@ namespace FrontEnd.UserControls
 
         private void btnConfirmAdd_Click(object sender, EventArgs e)
         {
-            (bool, string?)? AddResult = AddConfirmed?.Invoke(this, txtUserNameInput.Text);
-
-            if (AddResult.Value.Item1 == false)
-            {
-                MessageBox.Show(AddResult.Value.Item2);
-            }
+            AddConfirmed?.Invoke(this, txtUserNameInput.Text);
         }
 
         private void btnCancelAdd_Click(object sender, EventArgs e)

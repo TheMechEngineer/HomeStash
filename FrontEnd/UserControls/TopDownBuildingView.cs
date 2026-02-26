@@ -15,7 +15,7 @@ namespace FrontEnd.UserControls
     {
         private RootManager RootManagerInstance;
 
-        private const int ScaleFactor = 10;
+        private const int DefaultScaleFactor = 10;
         private float currentZoom = 1.0f;
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
@@ -31,7 +31,7 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            BuildingControl DisplayedBuilding = new BuildingControl(ref RootManagerInstance, ScaleFactor);
+            BuildingControl DisplayedBuilding = new BuildingControl(ref RootManagerInstance, DefaultScaleFactor);
 
             DisplayedBuilding.Dock = DockStyle.None;
             DisplayedBuilding.Name = "DisplayedBuilding";
@@ -99,7 +99,7 @@ namespace FrontEnd.UserControls
             //need to name the controls in addnew room
         }
 
-        public void CloseAddNewRoom()
+        private void CloseAddNewRoom()
         {
             tsrTopDown.Enabled = true;
             splTopView.Panel1.Enabled = true;

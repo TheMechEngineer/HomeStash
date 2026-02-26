@@ -15,8 +15,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewBuilding : UserControl
     {
-        public event Action<AddNewBuilding, Building>? AddConfirmed;
-        public event Action<AddNewBuilding>? AddCanceled;
+        internal event Action<AddNewBuilding, (string Name, int Height, int Length)>? AddConfirmed;
+        internal event Action<AddNewBuilding>? AddCanceled;
 
         private RootManager RootManagerInstance;
 
@@ -27,22 +27,13 @@ namespace FrontEnd.UserControls
 
         private void btnConfirmAdd_Click(object sender, EventArgs e)
         {
-
             try
             {
-                Building NewBuilding = new Building
-                {
-                    Name = txtNameInput.Text,
-                    Height = Convert.ToInt32(txtHeightInput.Text),
-                    Width = Convert.ToInt32(txtWidthInput.Text)
-                };
-
-                AddConfirmed?.Invoke(this, NewBuilding);
-
+                AddConfirmed?.Invoke(this, (txtNameInput.Text, Convert.ToInt32(txtHeightInput.Text), Convert.ToInt32(txtWidthInput.Text)));
             }
             catch (FormatException Exc)
             {
-                MessageBox.Show("Height And Width Must Be Whole Numbers", "Invalid Input");
+                MessageBox.Show("Height And Width Must Be Whole Numbers", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
