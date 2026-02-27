@@ -33,6 +33,8 @@
             tsbtnScaleDown = new ToolStripButton();
             tsbtnScaleUp = new ToolStripButton();
             tsbtnCenter = new ToolStripButton();
+            tsbtnAddRoom = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
             splTopView = new SplitContainer();
             pnlTopViewCamera = new Panel();
             ClickHoldTimer = new System.Windows.Forms.Timer(components);
@@ -46,7 +48,7 @@
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnAddRoom, toolStripSeparator1 });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 25);
@@ -56,7 +58,7 @@
             // tsbtnScaleDown
             // 
             tsbtnScaleDown.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsbtnScaleDown.Image = Properties.Resources.downarrow;
+            tsbtnScaleDown.Image = Properties.Resources.shrink;
             tsbtnScaleDown.ImageTransparentColor = Color.Magenta;
             tsbtnScaleDown.Name = "tsbtnScaleDown";
             tsbtnScaleDown.Size = new Size(23, 22);
@@ -69,7 +71,7 @@
             // tsbtnScaleUp
             // 
             tsbtnScaleUp.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsbtnScaleUp.Image = Properties.Resources.uparrow;
+            tsbtnScaleUp.Image = Properties.Resources.grow;
             tsbtnScaleUp.ImageTransparentColor = Color.Magenta;
             tsbtnScaleUp.Name = "tsbtnScaleUp";
             tsbtnScaleUp.Size = new Size(23, 22);
@@ -89,6 +91,21 @@
             tsbtnCenter.Text = "toolStripButton1";
             tsbtnCenter.ToolTipText = "Center View If Building Larger Than View";
             tsbtnCenter.Click += tsbtnCenter_Click;
+            // 
+            // tsbtnAddRoom
+            // 
+            tsbtnAddRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnAddRoom.Image = Properties.Resources.add;
+            tsbtnAddRoom.ImageTransparentColor = Color.Magenta;
+            tsbtnAddRoom.Name = "tsbtnAddRoom";
+            tsbtnAddRoom.Size = new Size(23, 22);
+            tsbtnAddRoom.Text = "toolStripButton1";
+            tsbtnAddRoom.Click += tsbtnAddRoom_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
             // splTopView
             // 
@@ -150,5 +167,7 @@
         private ToolStripButton tsbtnScaleUp;
         private System.Windows.Forms.Timer ClickHoldTimer;
         private ToolStripButton tsbtnCenter;
+        private ToolStripButton tsbtnAddRoom;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }

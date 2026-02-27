@@ -15,19 +15,12 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewRoom : UserControl
     {
-        internal event Action<AddNewRoom, Room>? AddConfirmed;
+        internal event Action<AddNewRoom, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue)>? AddConfirmed;
         internal event Action<AddNewRoom>? AddCanceled;
 
-        //private RootManager RootManagerInstance;
-        //private TopDownBuildingView RootView;
-
-        //internal AddNewRoom(ref RootManager _ProgramRoot, TopDownBuildingView _RootView)
         internal AddNewRoom()
         {
             InitializeComponent();
-
-            //RootManagerInstance = _ProgramRoot;
-            //RootView = _RootView;
 
             InitializeVisuals();
         }
@@ -43,23 +36,22 @@ namespace FrontEnd.UserControls
         {
             try
             {
-                Room NewRoom = new Room
-                {
-                    Name = txtNameInput.Text,
-                    Height = Convert.ToInt32(txtHeightInput.Text),
-                    Width = Convert.ToInt32(txtWidthInput.Text),
-                    CenterX = Convert.ToInt32(txtXCoordInput.Text),
-                    CenterY = Convert.ToInt32(txtXCoordInput.Text),
-                    RoomColor = Convert.ToInt32(txtColorInput.Text)
-                };
 
-                AddConfirmed?.Invoke(this, NewRoom);
+                AddConfirmed?.Invoke(this, 
+                    (
+                        txtNameInput.Text, 
+                        Convert.ToInt32(txtHeightInput.Text), 
+                        Convert.ToInt32(txtWidthInput.Text), 
+                        Convert.ToInt32(txtXCoordInput.Text), 
+                        Convert.ToInt32(txtYCoordInput.Text), 
+                        Convert.ToInt32(txtColorInput.Text)
+                    )
+                );
             }
             catch (FormatException Exc)
             {
                 MessageBox.Show("Height, Width, And Coordinates Must Be Whole Numbers", "Invalid Input");
             }
-
         }
 
         private void btnCancelAdd_Click(object sender, EventArgs e)

@@ -29,7 +29,13 @@ namespace FrontEnd.UserControls
         {
             try
             {
-                AddConfirmed?.Invoke(this, (txtNameInput.Text, Convert.ToInt32(txtHeightInput.Text), Convert.ToInt32(txtWidthInput.Text)));
+                AddConfirmed?.Invoke(this, 
+                    (
+                    txtNameInput.Text, 
+                    Convert.ToInt32(txtHeightInput.Text), 
+                    Convert.ToInt32(txtWidthInput.Text)
+                    )
+                );
             }
             catch (FormatException Exc)
             {

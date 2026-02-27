@@ -1,3 +1,4 @@
-﻿up-arrow: https://www.flaticon.com/free-icons/up-arrow
-down-arrow: https://www.flaticon.com/free-icons/down-arrow
-focus : https://www.flaticon.com/free-icons/focus
+﻿shrink: <a href="https://www.flaticon.com/free-icons/shrink" title="shrink icons">Shrink icons created by Freepik - Flaticon</a>
+grow: <a href="https://www.flaticon.com/free-icons/resize" title="resize icons">Resize icons created by Freepik - Flaticon</a>
+focus : <a href="https://www.flaticon.com/free-icons/focus" title="focus icons">Focus icons created by Roundicons Premium - Flaticon</a>
+plus-sign: <a href="https://www.flaticon.com/free-icons/plus" title="plus icons">Plus icons created by dmitri13 - Flaticon</a>

@@ -63,9 +63,9 @@ namespace FrontEnd.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap downarrow {
+        internal static System.Drawing.Bitmap add {
             get {
-                object obj = ResourceManager.GetObject("downarrow", resourceCulture);
+                object obj = ResourceManager.GetObject("add", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -76,6 +76,16 @@ namespace FrontEnd.Properties {
         internal static System.Drawing.Bitmap focus {
             get {
                 object obj = ResourceManager.GetObject("focus", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap grow {
+            get {
+                object obj = ResourceManager.GetObject("grow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +103,9 @@ namespace FrontEnd.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap uparrow {
+        internal static System.Drawing.Bitmap shrink {
             get {
-                object obj = ResourceManager.GetObject("uparrow", resourceCulture);
+                object obj = ResourceManager.GetObject("shrink", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -13,24 +13,29 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
-        private RootManager RootManagerInstance;
+        private Building CurrentBuilding;
         private int DefaultScaleFactor;
 
-        internal int InitialWidth { get; }
-        internal int InitialHeight { get; }
+        internal int InitialDisplayWidth;
+        internal int InitialDisplayHeight;
 
-        internal BuildingControl(ref RootManager _ProgramRoot, int _DefaultScaleFactor)
+        internal BuildingControl(ref Building _CurrentBuilding, int _DefaultScaleFactor)
         {
             InitializeComponent();
 
-            RootManagerInstance = _ProgramRoot;
+            CurrentBuilding = _CurrentBuilding;
             DefaultScaleFactor = _DefaultScaleFactor;
 
-            InitialWidth = RootManagerInstance.ActiveUser.ActiveBuilding.Width * DefaultScaleFactor;
-            InitialHeight = RootManagerInstance.ActiveUser.ActiveBuilding.Height * DefaultScaleFactor;
+            InitialDisplayWidth = CurrentBuilding.Width * DefaultScaleFactor;
+            InitialDisplayHeight = CurrentBuilding.Height * DefaultScaleFactor;
 
-            this.Width = InitialWidth;
-            this.Height = InitialHeight;
+            InitializeVisuals();
+        }
+
+        private void InitializeVisuals()
+        {
+            this.Width = InitialDisplayWidth;
+            this.Height = InitialDisplayHeight;
         }
     }
 }

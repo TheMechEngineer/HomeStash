@@ -14,24 +14,28 @@ namespace FrontEnd.UserControls
     internal partial class TopDownBuildingView : UserControl
     {
         private RootManager RootManagerInstance;
+        Building CurrentBuilding;
 
         private const int DefaultScaleFactor = 10;
         private float currentZoom = 1.0f;
 
+
+
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
-            
+
             InitializeComponent();
 
             RootManagerInstance = _ProgramRoot;
+            CurrentBuilding = RootManagerInstance.ActiveUser.ActiveBuilding;
 
             InitializeVisuals();
-
+            Wire();
         }
 
         private void InitializeVisuals()
         {
-            BuildingControl DisplayedBuilding = new BuildingControl(ref RootManagerInstance, DefaultScaleFactor);
+            BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding, DefaultScaleFactor);
 
             DisplayedBuilding.Dock = DockStyle.None;
             DisplayedBuilding.Name = "DisplayedBuilding";
@@ -75,8 +79,8 @@ namespace FrontEnd.UserControls
             //Set building
             BuildingControl CurrentBuilding = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["DisplayedBuilding"] as BuildingControl;
 
-            CurrentBuilding.Width = Convert.ToInt32(CurrentBuilding.InitialWidth * currentZoom);
-            CurrentBuilding.Height = Convert.ToInt32(CurrentBuilding.InitialHeight * currentZoom);
+            CurrentBuilding.Width = Convert.ToInt32(CurrentBuilding.InitialDisplayWidth * currentZoom);
+            CurrentBuilding.Height = Convert.ToInt32(CurrentBuilding.InitialDisplayHeight * currentZoom);
 
         }
 
@@ -135,16 +139,7 @@ namespace FrontEnd.UserControls
         private void ClickHoldTimer_Tick(object sender, EventArgs e)
         {
             ToolStripButton CurrentButton = ClickHoldTimer.Tag as ToolStripButton;
-
-            if (CurrentButton.Name == "tsbtnScaleDown")
-            {
-                ScaleCameraView(.9f);
-            }
-            else if (CurrentButton.Name == "tsbtnScaleUp")
-            {
-                ScaleCameraView(1.1f);
-            }
-
+            tsbtnScale_Click(CurrentButton, e);
         }
 
         private void tsbtnScale_MouseDown(object sender, MouseEventArgs e)
@@ -162,12 +157,15 @@ namespace FrontEnd.UserControls
         private void tsbtnCenter_Click(object sender, EventArgs e)
         {
             CenterCameraView();
-
-            OpenAddNewRoom();
-
+            
         }
 
-        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, Room _AddedRoom)
+        private void tsbtnAddRoom_Click(object sender, EventArgs e)
+        {
+            OpenAddNewRoom();
+        }
+
+        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue) _RoomValues)
         {
             throw new NotImplementedException();
         }
@@ -176,5 +174,7 @@ namespace FrontEnd.UserControls
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
