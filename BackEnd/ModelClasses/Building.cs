@@ -10,18 +10,20 @@ namespace BackEnd.ModelClasses
 {
     public class Building
     {
+        public event Action? RoomListChanged;
+
         public string Name { get; private set; }
         public int Height { get; private set; }
         public int Width { get; private set; }
 
         private Storage UnsortedItems = new Storage();
 
-        private List<Room> __Rooms = new List<Room>();
+        private List<Room> __RoomList = new List<Room>();
 
         public IReadOnlyList<Room> Rooms
         {
             get
-            { return __Rooms.AsReadOnly(); }
+            { return __RoomList.AsReadOnly(); }
         }
 
         public IReadOnlyList<IStored> StoredItems
@@ -121,14 +123,38 @@ namespace BackEnd.ModelClasses
             UnsortedItems.MoveItem(_ItemToMove, _Destination);
         }
 
-        public void AddRoom(Room _RoomToAdd)
+        public bool TryAddRoom(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, int _RoomColor, out string? _ErrorMessage)
         {
-            __Rooms.Add(_RoomToAdd);
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (!true) //logic or boolean function here for system level validation on room creation
+            {
+                _ErrorMessage = "System Level Check Failed";
+                CreationSuccess = false;
+            }
+
+            if (CreationSuccess)
+            {
+                Room? NewRoom;
+
+                if (Room.TryCreate(_RoomName, _Height, _Width, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
+                {
+                    __RoomList.Add(NewRoom);
+                    RoomListChanged?.Invoke();
+                }
+                else
+                {
+                    CreationSuccess = false;
+                }
+            }
+
+            return CreationSuccess;
         }
 
         public void RemoveRoom(Room _RoomToRemove)
         {
-            __Rooms.Remove(_RoomToRemove);
+            __RoomList.Remove(_RoomToRemove);
         }
     }
 }

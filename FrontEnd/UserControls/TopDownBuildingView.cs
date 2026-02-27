@@ -88,6 +88,7 @@ namespace FrontEnd.UserControls
         {
             AddNewRoom NewControl = new AddNewRoom();
 
+            //Need To Unwire These
             NewControl.AddConfirmed += AddNewRoomControl_AddConfirmed;
             NewControl.AddCanceled += AddNewRoomControl_AddCanceled;
 
