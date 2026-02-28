@@ -34,6 +34,9 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
+            Panel BufferPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"] as Panel;
+            BufferPanel.Padding = new Padding(BuildingOffsetBuffer);
+
             BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding, DefaultPixelsPerUnit);
 
             DisplayedBuilding.Dock = DockStyle.None;
@@ -41,10 +44,7 @@ namespace FrontEnd.UserControls
             DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
             DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Width = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit)) + 2 * BuildingOffsetBuffer;
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Height = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit)) + 2 * BuildingOffsetBuffer;
-
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Controls.Add(DisplayedBuilding);
+            BufferPanel.Controls.Add(DisplayedBuilding);
         }
 
         private void Wire()
@@ -60,18 +60,19 @@ namespace FrontEnd.UserControls
 
         private void CenterCameraView()
         {
+   
             Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
-            int BuildingWidth = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"].Width;
-            int BuildingHeight = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"].Height;
+            int BufferedWidth = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Width;
+            int BufferedHeight = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Height;
 
             int CameraWidth = CameraPanel.ClientSize.Width;
             int CameraHeight = CameraPanel.ClientSize.Height;
 
-            int CenterX = (BuildingWidth - CameraWidth) / 2;
-            int CenterY = (BuildingHeight - CameraHeight) / 2;
+            int ViewLeftBound = (BufferedWidth - CameraWidth) / 2;
+            int ViewTopBound = (BufferedHeight - CameraHeight) / 2;
 
-            CameraPanel.AutoScrollPosition = new Point(CenterX, CenterY);
+            CameraPanel.AutoScrollPosition = new Point(ViewLeftBound, ViewTopBound);
         }
 
         private void ScaleCameraView(float ScaleModifier)
@@ -79,10 +80,10 @@ namespace FrontEnd.UserControls
             currentZoom *= ScaleModifier;
 
             //Set building
-            BuildingControl CurrentBuilding = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"] as BuildingControl;
+            BuildingControl CurrentBuildingControl = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"] as BuildingControl;
 
-            CurrentBuilding.Width = Convert.ToInt32(CurrentBuilding.InitialDisplayWidth * currentZoom);
-            CurrentBuilding.Height = Convert.ToInt32(CurrentBuilding.InitialDisplayHeight * currentZoom);
+            CurrentBuildingControl.Width = Convert.ToInt32(CurrentBuildingControl.InitialDisplayWidth * currentZoom);
+            CurrentBuildingControl.Height = Convert.ToInt32(CurrentBuildingControl.InitialDisplayHeight * currentZoom);
 
         }
 
