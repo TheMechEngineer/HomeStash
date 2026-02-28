@@ -13,8 +13,8 @@ namespace BackEnd.ModelClasses
         public event Action? RoomListChanged;
 
         public string Name { get; private set; }
-        public int Height { get; private set; }
-        public int Width { get; private set; }
+        public float Height { get; private set; }
+        public float Width { get; private set; }
 
         private Storage UnsortedItems = new Storage();
 

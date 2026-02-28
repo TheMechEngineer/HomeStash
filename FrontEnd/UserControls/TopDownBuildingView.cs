@@ -16,10 +16,8 @@ namespace FrontEnd.UserControls
         private RootManager RootManagerInstance;
         Building CurrentBuilding;
 
-        private const int DefaultScaleFactor = 10;
+        private const int DefaultScaleFactor = 1;
         private float currentZoom = 1.0f;
-
-
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
