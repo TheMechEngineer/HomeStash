@@ -11,10 +11,10 @@ namespace BackEnd.ModelClasses
     public class Room : IStorage
     {
         public string Name { get; private set; }
-        public double Height { get; private set; }
-        public double Width { get; private set; }
-        public double CenterX { get; private set; }
-        public double CenterY { get; private set; }
+        public int Height { get; private set; }
+        public int Width { get; private set; }
+        public int CenterX { get; private set; }
+        public int CenterY { get; private set; }
         public int RoomColor { get; private set; }
 
         private Storage RoomStorage = new Storage();
