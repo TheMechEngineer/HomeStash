@@ -14,20 +14,20 @@ namespace FrontEnd.UserControls
     internal partial class BuildingControl : UserControl
     {
         private Building CurrentBuilding;
-        private int DefaultScaleFactor;
+        private int DefaultPixelsPerUnit;
 
         internal int InitialDisplayWidth;
         internal int InitialDisplayHeight;
 
-        internal BuildingControl(ref Building _CurrentBuilding, int _DefaultScaleFactor)
+        internal BuildingControl(ref Building _CurrentBuilding, int _DefaultPixelsPerUnit)
         {
             InitializeComponent();
 
             CurrentBuilding = _CurrentBuilding;
-            DefaultScaleFactor = _DefaultScaleFactor;
+            DefaultPixelsPerUnit = _DefaultPixelsPerUnit;
 
-            InitialDisplayWidth = CurrentBuilding.Width * DefaultScaleFactor;
-            InitialDisplayHeight = CurrentBuilding.Height * DefaultScaleFactor;
+            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit));
+            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit));
 
             InitializeVisuals();
         }

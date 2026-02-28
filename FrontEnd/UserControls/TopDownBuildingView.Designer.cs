@@ -38,10 +38,12 @@
             splTopView = new SplitContainer();
             pnlTopViewCamera = new Panel();
             ClickHoldTimer = new System.Windows.Forms.Timer(components);
+            pnlBuildingVisualEdgeBuffer = new Panel();
             tsrTopDown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
             splTopView.SuspendLayout();
+            pnlTopViewCamera.SuspendLayout();
             SuspendLayout();
             // 
             // tsrTopDown
@@ -130,6 +132,7 @@
             // 
             pnlTopViewCamera.AutoScroll = true;
             pnlTopViewCamera.BackColor = SystemColors.Control;
+            pnlTopViewCamera.Controls.Add(pnlBuildingVisualEdgeBuffer);
             pnlTopViewCamera.Dock = DockStyle.Fill;
             pnlTopViewCamera.Location = new Point(0, 0);
             pnlTopViewCamera.Name = "pnlTopViewCamera";
@@ -139,6 +142,13 @@
             // ClickHoldTimer
             // 
             ClickHoldTimer.Tick += ClickHoldTimer_Tick;
+            // 
+            // pnlBuildingVisualEdgeBuffer
+            // 
+            pnlBuildingVisualEdgeBuffer.Location = new Point(0, 0);
+            pnlBuildingVisualEdgeBuffer.Name = "pnlBuildingVisualEdgeBuffer";
+            pnlBuildingVisualEdgeBuffer.Size = new Size(200, 100);
+            pnlBuildingVisualEdgeBuffer.TabIndex = 0;
             // 
             // TopDownBuildingView
             // 
@@ -154,6 +164,7 @@
             splTopView.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splTopView).EndInit();
             splTopView.ResumeLayout(false);
+            pnlTopViewCamera.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -169,5 +180,6 @@
         private ToolStripButton tsbtnCenter;
         private ToolStripButton tsbtnAddRoom;
         private ToolStripSeparator toolStripSeparator1;
+        private Panel pnlBuildingVisualEdgeBuffer;
     }
 }
