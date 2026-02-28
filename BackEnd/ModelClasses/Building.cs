@@ -20,7 +20,7 @@ namespace BackEnd.ModelClasses
 
         private List<Room> __RoomList = new List<Room>();
 
-        public IReadOnlyList<Room> Rooms
+        public IReadOnlyList<Room> RoomList
         {
             get
             { return __RoomList.AsReadOnly(); }
@@ -100,12 +100,12 @@ namespace BackEnd.ModelClasses
 
         public int TotalItemCount()
         {
-            return UnsortedItems.TotalItemCount() + Rooms.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
+            return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
         }
 
         public double TotalItemValue()
         {
-            return UnsortedItems.TotalItemValue() + Rooms.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
+            return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
         }
 
         public void AddItem(IStored _ItemToAdd)
@@ -128,11 +128,14 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (!true) //logic or boolean function here for system level validation on room creation
+            //I know I could condense this to directly set CreationSuccess to this function, but I want to match the structure in my other classes.
+            if (!NewRoomSystemValidation(_RoomName, _Height, _Width, _CenterX, _CenterY, out _ErrorMessage))
             {
-                _ErrorMessage = "System Level Check Failed";
                 CreationSuccess = false;
             }
+
+            //temp safety net .remove once ready
+            CreationSuccess = false;
 
             if (CreationSuccess)
             {
@@ -147,6 +150,59 @@ namespace BackEnd.ModelClasses
                 {
                     CreationSuccess = false;
                 }
+            }
+
+            return CreationSuccess;
+        }
+
+        private bool NewRoomSystemValidation(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
+            {
+                _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
+                CreationSuccess = false;
+            }
+
+            //Check That Room Center Is In Building
+            if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
+            {
+                _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Room Center Point Must Be Between (0,0) and ({this.Width},{this.Height})\n";
+                CreationSuccess = false;
+            }
+
+            //Check That Room Left Is In Building
+            if (_CenterX - _Width/2 < 0)
+            {
+                _ErrorMessage += "Room Left Boundary Is Outside Building Limits\n";
+                CreationSuccess = false;
+            }
+
+            //system check needs for
+
+            //check right, top, bottom are in bounds
+
+            //check for collision with existing buildings
+
+            //current idea for checking collision, the below checks for left wall, but will need variants of this for every wall
+
+            //for each room in room list
+            //if _centerX - Width/2 < room.centerx + room.width/2 && _centerX - Width/2 > room.centerx - room.width/2 (This means the left wall is between the left and right walls of the comparison)
+            // { then check if it is vertically in the bounds, if so then error
+            //this doesnt correctly identify if the new room surrounds the existing room on all four sides
+
+            //maybe I need to treat the four corners of the rooms as points, instead of looking at walls. Then check if the four points are in between the four points
+            // for example 
+            // if topleftpoint is between room.right - room.left && room.bottom- room.top
+            // this logic would repeat for the other three points
+            // this seems pretty clean
+            // now just need to figure out logic to catch if new room encompasses existing room
+
+            if (!CreationSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
             }
 
             return CreationSuccess;

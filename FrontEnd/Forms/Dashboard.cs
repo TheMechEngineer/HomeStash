@@ -253,6 +253,7 @@ namespace FrontEnd.Forms
             _CurrentControl.AddCanceled -= AddNewBuildingControl_AddCanceled;
 
             ViewPortPanel.Controls["BuildingSelection"].Enabled = true;
+
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }

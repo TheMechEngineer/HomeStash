@@ -88,7 +88,6 @@ namespace FrontEnd.UserControls
         {
             AddNewRoom NewControl = new AddNewRoom();
 
-            //Need To Unwire These
             NewControl.AddConfirmed += AddNewRoomControl_AddConfirmed;
             NewControl.AddCanceled += AddNewRoomControl_AddCanceled;
 
@@ -100,21 +99,7 @@ namespace FrontEnd.UserControls
 
             tsrTopDown.Enabled = false;
             splTopView.Panel1.Enabled = false;
-            //need to diable panel one and the toolstrip
-            //need to name the controls in addnew room
-        }
 
-        private void CloseAddNewRoom()
-        {
-            tsrTopDown.Enabled = true;
-            splTopView.Panel1.Enabled = true;
-
-            if (splTopView.Panel2.Controls.ContainsKey("AddNewRoom"))
-            {
-                AddNewRoom RemovedControl = splTopView.Panel2.Controls["AddNewRoom"] as AddNewRoom;
-                splTopView.Panel2.Controls.Remove(RemovedControl);
-                RemovedControl.Dispose();
-            }
         }
 
         private void TopDownBuildingView_Load(object sender, EventArgs e)
@@ -168,12 +153,28 @@ namespace FrontEnd.UserControls
 
         private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue) _RoomValues)
         {
-            throw new NotImplementedException();
+            string? _ErrorMessage;
+
+            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Height, _RoomValues.Width, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+            {
+                AddNewRoomControl_AddCanceled(_CurrentControl);
+            }
+            else
+            {
+                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void AddNewRoomControl_AddCanceled(AddNewRoom _CurrentControl)
         {
-            throw new NotImplementedException();
+            _CurrentControl.AddConfirmed -= AddNewRoomControl_AddConfirmed;
+            _CurrentControl.AddCanceled -= AddNewRoomControl_AddCanceled;
+
+            tsrTopDown.Enabled = true;
+            splTopView.Panel1.Enabled = true;
+
+            splTopView.Panel2.Controls.Remove(_CurrentControl);
+            _CurrentControl.Dispose();
         }
 
 

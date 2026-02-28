@@ -50,7 +50,7 @@ namespace FrontEnd.UserControls
             }
             catch (FormatException Exc)
             {
-                MessageBox.Show("Height, Width, And Coordinates Must Be Whole Numbers", "Invalid Input");
+                MessageBox.Show("Height, Width, And Coordinates Must Be Whole Numbers", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

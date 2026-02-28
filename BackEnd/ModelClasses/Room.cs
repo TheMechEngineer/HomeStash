@@ -42,19 +42,13 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_RoomName))
             {
-                _ErrorMessage += "Building Name Must Contain Characters\n";
+                _ErrorMessage += "Room Name Must Contain Characters\n";
                 CreationSuccess = false;
             }
 
             if (_Height <= 0 || _Width <= 0)
             {
                 _ErrorMessage += "Height And Width Dimensions Must Be Positive Whole Numbers\n";
-                CreationSuccess = false;
-            }
-
-            if (_CenterX <= 0 || _CenterY <= 0)
-            {
-                _ErrorMessage += "Minimum Room Center Point Must Be 1,1\n";
                 CreationSuccess = false;
             }
 

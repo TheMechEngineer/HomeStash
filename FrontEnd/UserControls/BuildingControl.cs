@@ -37,5 +37,12 @@ namespace FrontEnd.UserControls
             this.Width = InitialDisplayWidth;
             this.Height = InitialDisplayHeight;
         }
+
+        //
+        //
+        // Since this control is responsible for showing the rooms this class should subsribe to the building event that fires when roomlist changes
+        // The event handler to attach to that event would be the method to draw the rooms in the building
+        //
+        //
     }
 }
