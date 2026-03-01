@@ -37,6 +37,7 @@
             BackColor = Color.RoyalBlue;
             Margin = new Padding(0);
             Name = "BuildingControl";
+            Paint += BuildingControl_Paint;
             ResumeLayout(false);
         }
 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -52,16 +53,57 @@ namespace FrontEnd.UserControls
 
         internal void ScaleBuilding(float ScaleModifier)
         {
+            this.SuspendLayout();
+
             ScalingFactor *= ScaleModifier;
 
             this.Width = Convert.ToInt32(this.InitialDisplayWidth * ScalingFactor);
             this.Height = Convert.ToInt32(this.InitialDisplayHeight * ScalingFactor);
 
             PopulateRooms();
+
+            this.ResumeLayout();
+            this.Invalidate();
+        }
+
+        private void DrawGrid(Graphics _GraphicsTool)
+        {
+            _GraphicsTool.Clear(this.BackColor);
+
+            Pen DrawingTool = new Pen(Color.DarkGray);
+            DrawingTool.Width = 2.0f;
+            DrawingTool.DashPattern = new float[] { 3.0F, 6.0F};
+
+            int GridCount = 10;
+            float VerticalGap = Convert.ToSingle(this.Width) / GridCount;
+            float HorizontalGap = Convert.ToSingle(this.Height) / GridCount;
+
+            for (int i = 0; i <= GridCount; i++)
+            {
+
+                PointF HStartPoint = new PointF(0, HorizontalGap * i);
+                PointF HEndPoint = new PointF(this.Width, HorizontalGap * i);
+
+                PointF VStartPoint = new PointF(VerticalGap * i, 0);
+                PointF VEndPoint = new PointF(VerticalGap * i, this.Height);
+
+                if (i == GridCount && DrawingTool.Width == 1.0f)
+                {
+                    HStartPoint.Y -= 1.0f;
+                    HEndPoint.Y -= 1.0f;
+
+                    VStartPoint.X -= 1.0f;
+                    VEndPoint.X -= 1.0f;
+                }
+   
+
+                _GraphicsTool.DrawLine(DrawingTool, HStartPoint, HEndPoint);
+                _GraphicsTool.DrawLine(DrawingTool, VStartPoint, VEndPoint);
+            }
         }
 
         private void PopulateRooms()
-        { 
+        {
             this.Controls.Clear();
 
             foreach (Room CurrentRoom in CurrentBuilding.RoomList)
@@ -70,20 +112,18 @@ namespace FrontEnd.UserControls
 
                 DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
 
-                int DisplayedRoomLeft = Convert.ToInt32((((CurrentRoom.CenterX - CurrentRoom.Width/2) * DefaultPixelsPerUnit) * ScalingFactor));
+                int DisplayedRoomLeft = Convert.ToInt32((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor));
                 int DisplayedRoomTop = Convert.ToInt32((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor));
-                
+
                 DisplayedRoom.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
 
                 this.Controls.Add(DisplayedRoom);
             }
         }
 
-        //
-        //
-        // Since this control is responsible for showing the rooms this class should subsribe to the building event that fires when roomlist changes
-        // The event handler to attach to that event would be the method to draw the rooms in the building
-        //
-        //
+        private void BuildingControl_Paint(object sender, PaintEventArgs e)
+        {
+            DrawGrid(e.Graphics);
+        }
     }
 }

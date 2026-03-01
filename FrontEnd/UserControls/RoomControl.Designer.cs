@@ -33,11 +33,12 @@
             // 
             // lblRoomInfo
             // 
-            lblRoomInfo.AutoSize = true;
-            lblRoomInfo.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblRoomInfo.Location = new Point(41, 73);
+            lblRoomInfo.Dock = DockStyle.Fill;
+            lblRoomInfo.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblRoomInfo.Location = new Point(0, 0);
             lblRoomInfo.Name = "lblRoomInfo";
-            lblRoomInfo.Size = new Size(66, 15);
+            lblRoomInfo.RightToLeft = RightToLeft.No;
+            lblRoomInfo.Size = new Size(150, 150);
             lblRoomInfo.TabIndex = 0;
             lblRoomInfo.Text = "Room Info";
             lblRoomInfo.TextAlign = ContentAlignment.MiddleCenter;
@@ -51,7 +52,6 @@
             Margin = new Padding(0);
             Name = "RoomControl";
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
