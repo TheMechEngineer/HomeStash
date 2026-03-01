@@ -149,6 +149,7 @@
             // 
             // txtColorInput
             // 
+            txtColorInput.Cursor = Cursors.Hand;
             txtColorInput.Location = new Point(206, 337);
             txtColorInput.Name = "txtColorInput";
             txtColorInput.Size = new Size(243, 39);

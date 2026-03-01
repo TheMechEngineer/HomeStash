@@ -16,8 +16,6 @@ namespace FrontEnd.UserControls
         private RootManager RootManagerInstance;
         Building CurrentBuilding;
 
-        private const int DefaultPixelsPerUnit = 10;
-        private float currentZoom = 1.0f;
         private const int BuildingOffsetBuffer = 25;
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
@@ -37,7 +35,7 @@ namespace FrontEnd.UserControls
             Panel BufferPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"] as Panel;
             BufferPanel.Padding = new Padding(BuildingOffsetBuffer);
 
-            BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding, DefaultPixelsPerUnit);
+            BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding);
 
             DisplayedBuilding.Dock = DockStyle.None;
             DisplayedBuilding.Name = "DisplayedBuilding";
@@ -75,18 +73,6 @@ namespace FrontEnd.UserControls
             CameraPanel.AutoScrollPosition = new Point(ViewLeftBound, ViewTopBound);
         }
 
-        private void ScaleCameraView(float ScaleModifier)
-        {
-            currentZoom *= ScaleModifier;
-
-            //Set building
-            BuildingControl CurrentBuildingControl = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"] as BuildingControl;
-
-            CurrentBuildingControl.Width = Convert.ToInt32(CurrentBuildingControl.InitialDisplayWidth * currentZoom);
-            CurrentBuildingControl.Height = Convert.ToInt32(CurrentBuildingControl.InitialDisplayHeight * currentZoom);
-
-        }
-
         private void OpenAddNewRoom()
         {
             AddNewRoom NewControl = new AddNewRoom();
@@ -113,16 +99,16 @@ namespace FrontEnd.UserControls
         private void tsbtnScale_Click(object sender, EventArgs e)
         {
             ToolStripButton CurrentButton = sender as ToolStripButton;
+            BuildingControl CurrentBuildingView = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"].Controls["DisplayedBuilding"] as BuildingControl;
 
             if (CurrentButton.Name == "tsbtnScaleDown")
             {
-                ScaleCameraView(.9f);
+                CurrentBuildingView.ScaleBuilding(.9f);
             }
             else if (CurrentButton.Name == "tsbtnScaleUp")
             {
-                ScaleCameraView(1.1f);
+                CurrentBuildingView.ScaleBuilding(1.1f);
             }
-
         }
 
         private void ClickHoldTimer_Tick(object sender, EventArgs e)

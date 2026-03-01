@@ -14,17 +14,18 @@ namespace FrontEnd.UserControls
     internal partial class BuildingControl : UserControl
     {
         private Building CurrentBuilding;
-        private int DefaultPixelsPerUnit;
+
+        private const int DefaultPixelsPerUnit = 10;
+        private float currentZoom = 1.0f;
 
         internal int InitialDisplayWidth;
         internal int InitialDisplayHeight;
 
-        internal BuildingControl(ref Building _CurrentBuilding, int _DefaultPixelsPerUnit)
+        internal BuildingControl(ref Building _CurrentBuilding)
         {
             InitializeComponent();
 
             CurrentBuilding = _CurrentBuilding;
-            DefaultPixelsPerUnit = _DefaultPixelsPerUnit;
 
             InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit));
             InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit));
@@ -36,6 +37,15 @@ namespace FrontEnd.UserControls
         {
             this.Width = InitialDisplayWidth;
             this.Height = InitialDisplayHeight;
+        }
+
+        internal void ScaleBuilding(float ScaleModifier)
+        {
+            currentZoom *= ScaleModifier;
+
+            this.Width = Convert.ToInt32(this.InitialDisplayWidth * currentZoom);
+            this.Height = Convert.ToInt32(this.InitialDisplayHeight * currentZoom);
+
         }
 
         //
