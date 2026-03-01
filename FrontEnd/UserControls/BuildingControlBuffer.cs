@@ -14,6 +14,7 @@ namespace FrontEnd.UserControls
     public partial class BuildingControlBuffer : UserControl
     {
         Building CurrentBuilding;
+        BuildingControl DisplayedBuilding;
 
         private const int BuildingOffsetBuffer = 25;
         private Color BufferColor = Color.Black;
@@ -29,19 +30,35 @@ namespace FrontEnd.UserControls
             Wire();
         }
 
+        private void temp()
+        {
+            List<Control> RemoveList = new List<Control>();
+
+            foreach (Control item in this.Controls.OfType<Label>())
+            {
+                RemoveList.Add(item);
+            }
+
+            foreach (Control ritem in RemoveList)
+            {
+                this.Controls.Remove(ritem);
+                ritem.Dispose();
+            }
+        }
+
         private void InitializeVisuals()
         {
             this.Padding = new Padding(BuildingOffsetBuffer);
             this.BackColor = BufferColor;
 
-            BuildingControl DisplayedBuilding = new BuildingControl(CurrentBuilding);
+            this.DisplayedBuilding = new BuildingControl(CurrentBuilding);
 
-            DisplayedBuilding.Dock = DockStyle.None;
-            DisplayedBuilding.Name = "DisplayedBuilding";
-            DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
-            DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.DisplayedBuilding.Dock = DockStyle.None;
+            this.DisplayedBuilding.Name = "DisplayedBuilding";
+            this.DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
+            this.DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            this.Controls.Add(DisplayedBuilding);
+            this.Controls.Add(this.DisplayedBuilding);
         }
 
         private void Wire()
