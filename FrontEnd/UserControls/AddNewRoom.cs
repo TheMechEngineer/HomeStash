@@ -15,7 +15,7 @@ namespace FrontEnd.UserControls
 {
     internal partial class AddNewRoom : UserControl
     {
-        internal event Action<AddNewRoom, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue)>? AddConfirmed;
+        internal event Action<AddNewRoom, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue)>? AddConfirmed;
         internal event Action<AddNewRoom>? AddCanceled;
 
         internal AddNewRoom()
@@ -39,18 +39,18 @@ namespace FrontEnd.UserControls
 
                 AddConfirmed?.Invoke(this, 
                     (
-                        txtNameInput.Text, 
-                        Convert.ToInt32(txtHeightInput.Text), 
-                        Convert.ToInt32(txtWidthInput.Text), 
-                        Convert.ToInt32(txtXCoordInput.Text), 
-                        Convert.ToInt32(txtYCoordInput.Text), 
+                        txtNameInput.Text,
+                        Convert.ToSingle(txtWidthInput.Text),
+                        Convert.ToSingle(txtHeightInput.Text), 
+                        Convert.ToSingle(txtXCoordInput.Text), 
+                        Convert.ToSingle(txtYCoordInput.Text), 
                         Convert.ToInt32(txtColorInput.Text)
                     )
                 );
             }
             catch (FormatException Exc)
             {
-                MessageBox.Show("Height, Width, And Coordinates Must Be Whole Numbers", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Width, Height, And Coordinates Must Be Numbers", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

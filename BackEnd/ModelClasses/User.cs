@@ -63,7 +63,8 @@ namespace BackEnd.ModelClasses
             return true;
         }
 
-        public bool TryAddBuilding(string _BuildingName, int _Height, int _Width, out string? _ErrorMessage)
+        //Change To Width First Then Height, And Also Change Type To Float. Do for all TRYS relevant to building and room
+        public bool TryAddBuilding(string _BuildingName, float _Width, float _Height, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool CreationSuccess = true;
@@ -78,7 +79,7 @@ namespace BackEnd.ModelClasses
             {
                 Building? NewBuilding;
 
-                if (Building.TryCreate(_BuildingName, _Height, _Width, out NewBuilding, out _ErrorMessage))
+                if (Building.TryCreate(_BuildingName, _Width, _Height, out NewBuilding, out _ErrorMessage))
                 {
                     __BuildingList.Add(NewBuilding);
                     BuildingListChanged?.Invoke();

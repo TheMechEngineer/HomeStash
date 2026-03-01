@@ -13,8 +13,8 @@ namespace BackEnd.ModelClasses
         public event Action? RoomListChanged;
 
         public string Name { get; private set; }
-        public float Height { get; private set; }
         public float Width { get; private set; }
+        public float Height { get; private set; }
 
         private Storage UnsortedItems = new Storage();
 
@@ -32,14 +32,14 @@ namespace BackEnd.ModelClasses
             { return UnsortedItems.StoredItems; }
         }
 
-        private Building(string _Name, int _Height, int _Width)
+        private Building(string _Name, float _Width, float _Height)
         {
             this.Name = _Name;
-            this.Height = _Height;
             this.Width = _Width;
+            this.Height = _Height;
         }
 
-        internal static bool TryCreate(string _BuildingName, int _Height, int _Width, out Building? _CreatedBuilding, out string? _ErrorMessage)
+        internal static bool TryCreate(string _BuildingName, float _Width, float _Height, out Building? _CreatedBuilding, out string? _ErrorMessage)
         {
             _CreatedBuilding = null;
             _ErrorMessage = null;
@@ -51,15 +51,15 @@ namespace BackEnd.ModelClasses
                 CreationSuccess = false;
             }
 
-            if (_Height <= 0 || _Width <= 0)
+            if (_Width <= 0 || _Height <= 0 )
             {
-                _ErrorMessage += "Height And Width Dimensions Must Be Positive Whole Numbers\n";
+                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
                 CreationSuccess = false;
             }
 
             if (CreationSuccess)
             {
-                _CreatedBuilding = new Building(_BuildingName, _Height, _Width);
+                _CreatedBuilding = new Building(_BuildingName, _Width, _Height);
             }
             else
             {
@@ -83,18 +83,18 @@ namespace BackEnd.ModelClasses
             return true;
         }
 
-        internal bool TryModifySize(int _NewHeight, int _NewWidth, out string? _ErrorMessage)
+        internal bool TryModifySize(float _NewWidth, float _NewHeight, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
 
-            if (_NewHeight <= 0 || _NewWidth <= 0)
+            if (_NewWidth <= 0 || _NewHeight <= 0)
             {
-                _ErrorMessage = "Height And Width Dimensions Must Be Positive Whole Numbers";
+                _ErrorMessage = "Width And Height Dimensions Must Be Positive Numbers";
                 return false;
             }
 
-            this.Height = _NewHeight;
             this.Width = _NewWidth;
+            this.Height = _NewHeight;
             return true;
         }
 
@@ -123,25 +123,22 @@ namespace BackEnd.ModelClasses
             UnsortedItems.MoveItem(_ItemToMove, _Destination);
         }
 
-        public bool TryAddRoom(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, int _RoomColor, out string? _ErrorMessage)
+        public bool TryAddRoom(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
             //I know I could condense this to directly set CreationSuccess to this function, but I want to match the structure in my other classes.
-            if (!NewRoomSystemValidation(_RoomName, _Height, _Width, _CenterX, _CenterY, out _ErrorMessage))
+            if (!NewRoomSystemValidation(_RoomName, _Width, _Height, _CenterX, _CenterY, out _ErrorMessage))
             {
                 CreationSuccess = false;
             }
-
-            //temp safety net .remove once ready
-            CreationSuccess = false;
 
             if (CreationSuccess)
             {
                 Room? NewRoom;
 
-                if (Room.TryCreate(_RoomName, _Height, _Width, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
+                if (Room.TryCreate(_RoomName, _Width, _Height, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
                 {
                     __RoomList.Add(NewRoom);
                     RoomListChanged?.Invoke();
@@ -155,7 +152,7 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        private bool NewRoomSystemValidation(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, out string? _ErrorMessage)
+        private bool NewRoomSystemValidation(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool CreationSuccess = true;

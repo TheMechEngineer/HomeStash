@@ -33,8 +33,8 @@ namespace BackEnd.DataContinuity
 
             ReturnItem.TryChangeActiveUser(ReturnItem.UserList[3], out _);
 
-            ReturnItem.UserList[3].TryAddBuilding("Home", 3, 3, out _ );
-            ReturnItem.UserList[3].TryAddBuilding("1000", 1000, 1000, out _ );
+            ReturnItem.ActiveUser.TryAddBuilding("Home", 15, 10, out _ );
+            ReturnItem.ActiveUser.TryAddBuilding("1000", 1000, 1000, out _ );
 
             return ReturnItem;
         }

@@ -233,11 +233,11 @@ namespace FrontEnd.Forms
             _CurrentControl.Dispose();
         }
 
-        private void AddNewBuildingControl_AddConfirmed(AddNewBuilding _CurrentControl, (string _Name, int _Height, int _Width) _BuildingValues)
+        private void AddNewBuildingControl_AddConfirmed(AddNewBuilding _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
         {
             string? _ErrorMessage = null;
 
-            if(RootManagerInstance.ActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Height, _BuildingValues._Width, out _ErrorMessage))
+            if(RootManagerInstance.ActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
             {
                 AddNewBuildingControl_AddCanceled(_CurrentControl);
             }

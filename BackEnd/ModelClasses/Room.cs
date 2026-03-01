@@ -11,8 +11,8 @@ namespace BackEnd.ModelClasses
     public class Room : IStorage
     {
         public string Name { get; private set; }
-        public float Height { get; private set; }
         public float Width { get; private set; }
+        public float Height { get; private set; }
         public float CenterX { get; private set; }
         public float CenterY { get; private set; }
         public int RoomColor { get; private set; }
@@ -24,17 +24,17 @@ namespace BackEnd.ModelClasses
             { return RoomStorage.StoredItems; }
         }
 
-        private Room(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, int _RoomColor)
+        private Room(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor)
         {
             Name = _RoomName;
-            Height = _Height;
             Width = _Width;
+            Height = _Height;
             CenterX = _CenterX;
             CenterY = _CenterY;
             RoomColor = _RoomColor;
         }
 
-        internal static bool TryCreate(string _RoomName, int _Height, int _Width, int _CenterX, int _CenterY, int _RoomColor, out Room? _CreatedRoom, out string? _ErrorMessage)
+        internal static bool TryCreate(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out Room? _CreatedRoom, out string? _ErrorMessage)
         {
             _CreatedRoom = null;
             _ErrorMessage = null;
@@ -46,15 +46,15 @@ namespace BackEnd.ModelClasses
                 CreationSuccess = false;
             }
 
-            if (_Height <= 0 || _Width <= 0)
+            if (_Width <= 0 || _Height <= 0)
             {
-                _ErrorMessage += "Height And Width Dimensions Must Be Positive Whole Numbers\n";
+                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
                 CreationSuccess = false;
             }
 
             if (CreationSuccess)
             {
-                _CreatedRoom = new Room(_RoomName, _Height, _Width, _CenterX, _CenterY, _RoomColor);
+                _CreatedRoom = new Room(_RoomName, _Width, _Height, _CenterX, _CenterY, _RoomColor);
             }
             else
             {

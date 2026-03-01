@@ -35,7 +35,7 @@ namespace FrontEnd.UserControls
             Panel BufferPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"] as Panel;
             BufferPanel.Padding = new Padding(BuildingOffsetBuffer);
 
-            BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding);
+            BuildingControl DisplayedBuilding = new BuildingControl(CurrentBuilding);
 
             DisplayedBuilding.Dock = DockStyle.None;
             DisplayedBuilding.Name = "DisplayedBuilding";
@@ -139,11 +139,11 @@ namespace FrontEnd.UserControls
             OpenAddNewRoom();
         }
 
-        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue) _RoomValues)
+        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
         {
             string? _ErrorMessage;
 
-            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Height, _RoomValues.Width, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
             {
                 AddNewRoomControl_AddCanceled(_CurrentControl);
             }
@@ -164,7 +164,5 @@ namespace FrontEnd.UserControls
             splTopView.Panel2.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
-
-
     }
 }

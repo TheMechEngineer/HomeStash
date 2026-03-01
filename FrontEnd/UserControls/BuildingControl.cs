@@ -16,12 +16,12 @@ namespace FrontEnd.UserControls
         private Building CurrentBuilding;
 
         private const int DefaultPixelsPerUnit = 10;
-        private float currentZoom = 1.0f;
+        private float ScalingFactor = 1.0f;
 
         internal int InitialDisplayWidth;
         internal int InitialDisplayHeight;
 
-        internal BuildingControl(ref Building _CurrentBuilding)
+        internal BuildingControl(Building _CurrentBuilding)
         {
             InitializeComponent();
 
@@ -31,21 +31,52 @@ namespace FrontEnd.UserControls
             InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit));
 
             InitializeVisuals();
+            Wire();
         }
 
         private void InitializeVisuals()
         {
-            this.Width = InitialDisplayWidth;
-            this.Height = InitialDisplayHeight;
+            ScaleBuilding(1);
+        }
+
+        private void Wire()
+        {
+            CurrentBuilding.RoomListChanged += PopulateRooms;
+            this.HandleDestroyed += UnWire;
+        }
+        private void UnWire(object? sender, EventArgs e)
+        {
+            CurrentBuilding.RoomListChanged -= PopulateRooms;
+            this.HandleDestroyed -= UnWire;
         }
 
         internal void ScaleBuilding(float ScaleModifier)
         {
-            currentZoom *= ScaleModifier;
+            ScalingFactor *= ScaleModifier;
 
-            this.Width = Convert.ToInt32(this.InitialDisplayWidth * currentZoom);
-            this.Height = Convert.ToInt32(this.InitialDisplayHeight * currentZoom);
+            this.Width = Convert.ToInt32(this.InitialDisplayWidth * ScalingFactor);
+            this.Height = Convert.ToInt32(this.InitialDisplayHeight * ScalingFactor);
 
+            PopulateRooms();
+        }
+
+        private void PopulateRooms()
+        { 
+            this.Controls.Clear();
+
+            foreach (Room CurrentRoom in CurrentBuilding.RoomList)
+            {
+                RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
+
+                DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
+
+                int DisplayedRoomLeft = Convert.ToInt32((((CurrentRoom.CenterX - CurrentRoom.Width/2) * DefaultPixelsPerUnit) * ScalingFactor));
+                int DisplayedRoomTop = Convert.ToInt32((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor));
+                
+                DisplayedRoom.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
+
+                this.Controls.Add(DisplayedRoom);
+            }
         }
 
         //
