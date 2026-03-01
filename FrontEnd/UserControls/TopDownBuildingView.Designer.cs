@@ -37,13 +37,11 @@
             toolStripSeparator1 = new ToolStripSeparator();
             splTopView = new SplitContainer();
             pnlTopViewCamera = new Panel();
-            pnlBuildingVisualEdgeBuffer = new Panel();
             ClickHoldTimer = new System.Windows.Forms.Timer(components);
             tsrTopDown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
             splTopView.SuspendLayout();
-            pnlTopViewCamera.SuspendLayout();
             SuspendLayout();
             // 
             // tsrTopDown
@@ -132,23 +130,11 @@
             // 
             pnlTopViewCamera.AutoScroll = true;
             pnlTopViewCamera.BackColor = SystemColors.Control;
-            pnlTopViewCamera.Controls.Add(pnlBuildingVisualEdgeBuffer);
             pnlTopViewCamera.Dock = DockStyle.Fill;
             pnlTopViewCamera.Location = new Point(0, 0);
             pnlTopViewCamera.Name = "pnlTopViewCamera";
             pnlTopViewCamera.Size = new Size(666, 511);
             pnlTopViewCamera.TabIndex = 0;
-            // 
-            // pnlBuildingVisualEdgeBuffer
-            // 
-            pnlBuildingVisualEdgeBuffer.AutoSize = true;
-            pnlBuildingVisualEdgeBuffer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            pnlBuildingVisualEdgeBuffer.BackColor = SystemColors.ControlDark;
-            pnlBuildingVisualEdgeBuffer.Location = new Point(0, 0);
-            pnlBuildingVisualEdgeBuffer.Margin = new Padding(0);
-            pnlBuildingVisualEdgeBuffer.Name = "pnlBuildingVisualEdgeBuffer";
-            pnlBuildingVisualEdgeBuffer.Size = new Size(0, 0);
-            pnlBuildingVisualEdgeBuffer.TabIndex = 0;
             // 
             // ClickHoldTimer
             // 
@@ -168,8 +154,6 @@
             splTopView.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splTopView).EndInit();
             splTopView.ResumeLayout(false);
-            pnlTopViewCamera.ResumeLayout(false);
-            pnlTopViewCamera.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -185,6 +169,5 @@
         private ToolStripButton tsbtnCenter;
         private ToolStripButton tsbtnAddRoom;
         private ToolStripSeparator toolStripSeparator1;
-        private Panel pnlBuildingVisualEdgeBuffer;
     }
 }
