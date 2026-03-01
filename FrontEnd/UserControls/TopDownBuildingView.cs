@@ -16,8 +16,6 @@ namespace FrontEnd.UserControls
         private RootManager RootManagerInstance;
         Building CurrentBuilding;
 
-        private const int BuildingOffsetBuffer = 25;
-
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
 
@@ -32,17 +30,16 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            Panel BufferPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["pnlBuildingVisualEdgeBuffer"] as Panel;
-            BufferPanel.Padding = new Padding(BuildingOffsetBuffer);
+            Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
-            BuildingControl DisplayedBuilding = new BuildingControl(CurrentBuilding);
+            BuildingControlBuffer BufferedBuilding = new BuildingControlBuffer(CurrentBuilding);
 
-            DisplayedBuilding.Dock = DockStyle.None;
-            DisplayedBuilding.Name = "DisplayedBuilding";
-            DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
-            DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            BufferedBuilding.Dock = DockStyle.None;
+            BufferedBuilding.Name = "BufferedBuilding";
+            BufferedBuilding.Location = new Point(0, 0);
+            BufferedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            BufferPanel.Controls.Add(DisplayedBuilding);
+            CameraPanel.Controls.Add(BufferedBuilding);
         }
 
         private void Wire()
@@ -61,8 +58,8 @@ namespace FrontEnd.UserControls
    
             Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
-            int BufferedWidth = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Width;
-            int BufferedHeight = CameraPanel.Controls["pnlBuildingVisualEdgeBuffer"].Height;
+            int BufferedWidth = CameraPanel.Controls["BufferedBuilding"].Width;
+            int BufferedHeight = CameraPanel.Controls["BufferedBuilding"].Height;
 
             int CameraWidth = CameraPanel.ClientSize.Width;
             int CameraHeight = CameraPanel.ClientSize.Height;
