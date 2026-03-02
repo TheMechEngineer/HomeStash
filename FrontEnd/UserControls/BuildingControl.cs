@@ -14,6 +14,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
+        internal event Action? BuildingScaled;
+
         private Building CurrentBuilding;
 
         private const int DefaultPixelsPerUnit = 10;
@@ -64,6 +66,7 @@ namespace FrontEnd.UserControls
 
             this.ResumeLayout();
             this.Invalidate();
+            BuildingScaled?.Invoke();
         }
 
         private void DrawGrid(Graphics _GraphicsTool)

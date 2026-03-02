@@ -34,11 +34,9 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Margin = new Padding(0);
             Name = "BuildingControlBuffer";
-            Size = new Size(0, 0);
             ResumeLayout(false);
         }
 

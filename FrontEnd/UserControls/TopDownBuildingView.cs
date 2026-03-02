@@ -1,4 +1,5 @@
 ﻿using BackEnd.ModelClasses;
+using FrontEnd.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,7 +56,7 @@ namespace FrontEnd.UserControls
 
         private void CenterCameraView()
         {
-   
+
             Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
             int BufferedWidth = CameraPanel.Controls["BufferedBuilding"].Width;
@@ -84,8 +85,15 @@ namespace FrontEnd.UserControls
             splTopView.Panel2.Controls.Add(NewControl);
 
             tsrTopDown.Enabled = false;
-            splTopView.Panel1.Enabled = false;
 
+            TransparentPanel BlockerPanel = new TransparentPanel();
+            BlockerPanel.Name = "Blocker";
+            BlockerPanel.Dock = DockStyle.Fill;
+            BlockerPanel.BackColor = Color.Black;
+            BlockerPanel.Opacity = 20;
+
+            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Add(BlockerPanel);
+            BlockerPanel.BringToFront();
         }
 
         private void TopDownBuildingView_Load(object sender, EventArgs e)
@@ -156,10 +164,19 @@ namespace FrontEnd.UserControls
             _CurrentControl.AddCanceled -= AddNewRoomControl_AddCanceled;
 
             tsrTopDown.Enabled = true;
-            splTopView.Panel1.Enabled = true;
+
+            TransparentPanel BlockerPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["Blocker"] as TransparentPanel;
+            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Remove(BlockerPanel);
+            BlockerPanel.Dispose();
 
             splTopView.Panel2.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
+        }
+
+        private void tsbtnScale_MouseLeave(object sender, EventArgs e)
+        {
+            ClickHoldTimer.Tag = null;
+            ClickHoldTimer.Stop();
         }
     }
 }

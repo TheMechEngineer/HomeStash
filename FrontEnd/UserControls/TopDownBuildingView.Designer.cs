@@ -48,7 +48,7 @@
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnAddRoom, toolStripSeparator1 });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, toolStripSeparator1, tsbtnAddRoom });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 25);
@@ -66,6 +66,7 @@
             tsbtnScaleDown.ToolTipText = "Scale Building View Down (Hold For Auto Scale)";
             tsbtnScaleDown.Click += tsbtnScale_Click;
             tsbtnScaleDown.MouseDown += tsbtnScale_MouseDown;
+            tsbtnScaleDown.MouseLeave += tsbtnScale_MouseLeave;
             tsbtnScaleDown.MouseUp += tsbtnScale_MouseUp;
             // 
             // tsbtnScaleUp
@@ -79,6 +80,7 @@
             tsbtnScaleUp.ToolTipText = "Scale Building View Up (Hold For Auto Scale)";
             tsbtnScaleUp.Click += tsbtnScale_Click;
             tsbtnScaleUp.MouseDown += tsbtnScale_MouseDown;
+            tsbtnScaleUp.MouseLeave += tsbtnScale_MouseLeave;
             tsbtnScaleUp.MouseUp += tsbtnScale_MouseUp;
             // 
             // tsbtnCenter
