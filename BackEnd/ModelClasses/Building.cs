@@ -45,15 +45,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (string.IsNullOrEmpty(_BuildingName))
+            if (!NameSelfValidation(_BuildingName, ref _ErrorMessage))
             {
-                _ErrorMessage += "Building Name Must Contain Characters\n";
                 CreationSuccess = false;
             }
 
-            if (_Width <= 0 || _Height <= 0 )
+            if (!SizeSelfValidation(_Width, _Height, ref _ErrorMessage))
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
                 CreationSuccess = false;
             }
 
@@ -72,30 +70,72 @@ namespace BackEnd.ModelClasses
         internal bool TryModifyName(string _NewBuildingName, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
+            bool ModifyNameSuccess = true;
 
-            if (string.IsNullOrEmpty(_NewBuildingName))
+            if (!NameSelfValidation(_NewBuildingName, ref _ErrorMessage))
             {
-                _ErrorMessage = "Building Name Must Contain Characters";
-                return false;
+                ModifyNameSuccess = false;
             }
 
-            this.Name = _NewBuildingName;
-            return true;
+            if (ModifyNameSuccess)
+            {
+                this.Name = _NewBuildingName;
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+             
+            return ModifyNameSuccess;
         }
 
         internal bool TryModifySize(float _NewWidth, float _NewHeight, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
+            bool ModifySizeSuccess = true;
 
-            if (_NewWidth <= 0 || _NewHeight <= 0)
+            if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
             {
-                _ErrorMessage = "Width And Height Dimensions Must Be Positive Numbers";
-                return false;
+                ModifySizeSuccess = false;
             }
 
-            this.Width = _NewWidth;
-            this.Height = _NewHeight;
-            return true;
+            if (ModifySizeSuccess)
+            {
+                this.Width = _NewWidth;
+                this.Height = _NewHeight;
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifySizeSuccess;
+        }
+
+        private static bool NameSelfValidation(string _BuildingName, ref string? _ErrorMessage)
+        {
+            bool BuildingNameValid = true;
+
+            if (string.IsNullOrEmpty(_BuildingName))
+            {
+                _ErrorMessage += "Building Name Must Contain Characters\n";
+                BuildingNameValid = false;
+            }
+
+            return BuildingNameValid;
+        }
+
+        private static bool SizeSelfValidation(float _Width, float _Height, ref string? _ErrorMessage)
+        {
+            bool BuildingSizeValid = true;
+
+            if (_Width <= 0 || _Height <= 0)
+            {
+                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                BuildingSizeValid = false;
+            }
+
+            return BuildingSizeValid;
         }
 
         public int TotalItemCount()
@@ -126,15 +166,14 @@ namespace BackEnd.ModelClasses
         public bool TryAddRoom(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
-            bool CreationSuccess = true;
+            bool AddRoomSuccess = true;
 
-            //I know I could condense this to directly set CreationSuccess to this function, but I want to match the structure in my other classes.
-            if (!NewRoomSystemValidation(_RoomName, _Width, _Height, _CenterX, _CenterY, out _ErrorMessage))
+            if (!NewRoomSystemValidation(_RoomName, _Width, _Height, _CenterX, _CenterY, ref _ErrorMessage))
             {
-                CreationSuccess = false;
+                AddRoomSuccess = false;
             }
 
-            if (CreationSuccess)
+            if (AddRoomSuccess)
             {
                 Room? NewRoom;
 
@@ -145,17 +184,21 @@ namespace BackEnd.ModelClasses
                 }
                 else
                 {
-                    CreationSuccess = false;
+                    AddRoomSuccess = false;
                 }
             }
 
-            return CreationSuccess;
+            if (!AddRoomSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return AddRoomSuccess;
         }
 
-        private bool NewRoomSystemValidation(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, out string? _ErrorMessage)
+        private bool NewRoomSystemValidation(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, ref string? _ErrorMessage)
         {
-            _ErrorMessage = null;
-            bool CreationSuccess = true;
+            bool SystemValid = true;
 
             float NewRoomLeftLocation = _CenterX - _Width / 2;
             float NewRoomRightLocation = _CenterX + _Width / 2;
@@ -165,45 +208,45 @@ namespace BackEnd.ModelClasses
             if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
             {
                 _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
             //Check That Room Center Is In Building
             if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
             {
                 _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
             //Check That Room Left Is In Building
             if (NewRoomLeftLocation < 0)
             {
                 _ErrorMessage += $"Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
             //Check That Room Right Is In Building
             if (NewRoomRightLocation > this.Width)
             {
                 _ErrorMessage += $"Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
             //Check That Room Top Is In Building
             if (NewRoomTopLocation < 0)
             {
                 _ErrorMessage += $"Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
             //Check That Room Right Is In Building
             if (NewRoomBottomLocation > this.Height)
             {
                 _ErrorMessage += $"Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
-                CreationSuccess = false;
+                SystemValid = false;
             }
 
-            if (CreationSuccess)
+            if (SystemValid)
             {
                 foreach (Room CurrentRoom in __RoomList)
                 {
@@ -221,23 +264,28 @@ namespace BackEnd.ModelClasses
                             )
                         )
                     {
-                        _ErrorMessage += $"New Room Collides With {CurrentRoom.Name}\n";
-                        CreationSuccess = false;
+                        _ErrorMessage += $"Room Collides With {CurrentRoom.Name}\n";
+                        SystemValid = false;
                     }
                 }
             }
 
-            if (!CreationSuccess)
-            {
-                _ErrorMessage = _ErrorMessage?.TrimEnd();
-            }
-
-            return CreationSuccess;
+            return SystemValid;
         }
 
-        public void RemoveRoom(Room _RoomToRemove)
+        public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
         {
+            _ErrorMessage = null;
+
+            if (!__RoomList.Contains(_RoomToRemove))
+            {
+                _ErrorMessage = "Room To Be Removed Must Exist In The Room List";
+                return false;
+            }
+
             __RoomList.Remove(_RoomToRemove);
+            RoomListChanged?.Invoke();
+            return true;
         }
     }
 }

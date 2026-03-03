@@ -40,15 +40,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (string.IsNullOrEmpty(_RoomName))
+            if (!NameSelfValidation(_RoomName, ref _ErrorMessage))
             {
-                _ErrorMessage += "Room Name Must Contain Characters\n";
                 CreationSuccess = false;
             }
 
-            if (_Width <= 0 || _Height <= 0)
+            if (!SizeSelfValidation(_Width, _Height, ref _ErrorMessage))
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
                 CreationSuccess = false;
             }
 
@@ -62,6 +60,32 @@ namespace BackEnd.ModelClasses
             }
 
             return CreationSuccess;
+        }
+
+        private static bool NameSelfValidation(string _RoomName, ref string? _ErrorMessage)
+        {
+            bool RoomNameValid = true;
+
+            if (string.IsNullOrEmpty(_RoomName))
+            {
+                _ErrorMessage += "Room Name Must Contain Characters\n";
+                RoomNameValid = false;
+            }
+
+            return RoomNameValid;
+        }
+
+        private static bool SizeSelfValidation(float _Width, float _Height, ref string? _ErrorMessage)
+        {
+            bool RoomSizeValid = true;
+
+            if (_Width <= 0 || _Height <= 0)
+            {
+                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                RoomSizeValid = false;
+            }
+
+            return RoomSizeValid;
         }
 
         public int TotalItemCount()
@@ -85,6 +109,5 @@ namespace BackEnd.ModelClasses
         {
             RoomStorage.MoveItem(_ItemToMove, _Destination);
         }
-
     }
 }

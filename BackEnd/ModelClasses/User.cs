@@ -38,54 +38,71 @@ namespace BackEnd.ModelClasses
         {
             _CreatedUser = null;
             _ErrorMessage = null;
-
-            if (!UsernameSelfValidation(_Username, out _ErrorMessage))
-            {
-                return false;
-            }
-
-            _CreatedUser = new User(_Username);
-            return true;
-        }
-
-        internal bool TryModifyName(string _NewUsername, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
-
-            if (!UsernameSelfValidation(_NewUsername, out _ErrorMessage))
-            {
-                return false;
-            }
-
-            this.Username = _NewUsername;
-            return true;
-        }
-
-        private static bool UsernameSelfValidation(string _Username, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (string.IsNullOrEmpty(_Username))
-            {
-                _ErrorMessage = "Username Must Contain Characters";
-                CreationSuccess = false;
-            }
-
-            return CreationSuccess;
-        }
-
-        public bool TryAddBuilding(string _BuildingName, float _Width, float _Height, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
-            bool CreationSuccess = true;
-
-            if (!NewBuildingSystemValidation(_BuildingName, out _ErrorMessage))
+            if (!UsernameSelfValidation(_Username, ref _ErrorMessage))
             {
                 CreationSuccess = false;
             }
 
             if (CreationSuccess)
+            {
+                _CreatedUser = new User(_Username);
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return CreationSuccess;
+        }
+
+        internal bool TryModifyName(string _NewUsername, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool ModifySuccess = true;
+
+            if (!UsernameSelfValidation(_NewUsername, ref _ErrorMessage))
+            {
+                ModifySuccess = false;
+            }
+
+            if (ModifySuccess)
+            {
+                this.Username = _NewUsername;
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifySuccess;
+        }
+
+        private static bool UsernameSelfValidation(string _Username, ref string? _ErrorMessage)
+        {
+            bool UsernameValid = true;
+
+            if (string.IsNullOrEmpty(_Username))
+            {
+                _ErrorMessage += "Username Must Contain Characters\n";
+                UsernameValid = false;
+            }
+
+            return UsernameValid;
+        }
+
+        public bool TryAddBuilding(string _BuildingName, float _Width, float _Height, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool AddBuildingSuccess = true;
+
+            if (!NewBuildingSystemValidation(_BuildingName, ref _ErrorMessage))
+            {
+                AddBuildingSuccess = false;
+            }
+
+            if (AddBuildingSuccess)
             {
                 Building? NewBuilding;
 
@@ -96,25 +113,29 @@ namespace BackEnd.ModelClasses
                 }
                 else
                 {
-                    CreationSuccess = false;
+                    AddBuildingSuccess = false;
                 }
             }
 
-            return CreationSuccess;
+            if (!AddBuildingSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return AddBuildingSuccess;
         }
 
-        private bool NewBuildingSystemValidation(string _BuildingName, out string? _ErrorMessage)
+        private bool NewBuildingSystemValidation(string _BuildingName, ref string? _ErrorMessage)
         {
-            _ErrorMessage = null;
-            bool CreationSuccess = true;
+            bool SystemValid = true;
 
             if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
             {
-                _ErrorMessage = $"{_BuildingName} Already Exists. No Duplicate Building Names.";
-                CreationSuccess = false;
+                _ErrorMessage += $"{_BuildingName} Already Exists. No Duplicate Building Names.\n";
+                SystemValid = false;
             }
 
-            return CreationSuccess;
+            return SystemValid;
         }
 
         public bool TryRemoveBuilding(Building _BuildingToRemove, out string? _ErrorMessage)

@@ -10,7 +10,7 @@ namespace BackEnd.ModelClasses
     {
         public event Action? ActiveUserChanged;
         public event Action? UserListChanged;
-        private List<User> __UserList { get; set; } = new List<User>();
+        private List<User> __UserList = new List<User>();
         private User? __ActiveUser;
 
         public User? ActiveUser {
@@ -21,20 +21,20 @@ namespace BackEnd.ModelClasses
         public IReadOnlyList<User> UserList
         {
             get
-            { return __UserList; }
+            { return __UserList.AsReadOnly(); }
         }
 
         public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
-            bool CreationSuccess = true;
+            bool AddUserSuccess = true;
 
-            if (!NewUserSystemValidation(_Username, out _ErrorMessage))
+            if (!NewUserSystemValidation(_Username, ref _ErrorMessage))
             {
-                CreationSuccess = false;
+                AddUserSuccess = false;
             }
 
-            if (CreationSuccess)
+            if (AddUserSuccess)
             {
                 User? _NewUser;
 
@@ -45,26 +45,30 @@ namespace BackEnd.ModelClasses
                 }
                 else
                 {
-                    CreationSuccess = false;
+                    AddUserSuccess = false;
                 }
 
             }
 
-            return CreationSuccess;
+            if (!AddUserSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return AddUserSuccess;
         }
 
-        private bool NewUserSystemValidation(string _Username, out string? _ErrorMessage)
+        private bool NewUserSystemValidation(string _Username, ref string? _ErrorMessage)
         {
-            _ErrorMessage = null;
-            bool CreationSuccess = true;
+            bool SystemValid = true;
 
             if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
             {
-                _ErrorMessage = $"{_Username} Already Exists. No Duplicate Usernames.";
-                CreationSuccess = false;
+                _ErrorMessage += $"{_Username} Already Exists. No Duplicate Usernames.\n";
+                SystemValid = false;
             }
 
-            return CreationSuccess;
+            return SystemValid;
         }
 
         public bool TryRemoveUser(User _UserToRemove, out string? _ErrorMessage)
