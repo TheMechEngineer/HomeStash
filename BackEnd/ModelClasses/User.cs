@@ -39,9 +39,8 @@ namespace BackEnd.ModelClasses
             _CreatedUser = null;
             _ErrorMessage = null;
 
-            if (string.IsNullOrEmpty(_Username))
+            if (!UsernameSelfValidation(_Username, out _ErrorMessage))
             {
-                _ErrorMessage = "Username Must Contain Characters";
                 return false;
             }
 
@@ -53,9 +52,8 @@ namespace BackEnd.ModelClasses
         {
             _ErrorMessage = null;
 
-            if (string.IsNullOrEmpty(_NewUsername))
+            if (!UsernameSelfValidation(_NewUsername, out _ErrorMessage))
             {
-                _ErrorMessage = "Username Must Contain Characters";
                 return false;
             }
 
@@ -63,7 +61,20 @@ namespace BackEnd.ModelClasses
             return true;
         }
 
-        //Change To Width First Then Height, And Also Change Type To Float. Do for all TRYS relevant to building and room
+        private static bool UsernameSelfValidation(string _Username, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (string.IsNullOrEmpty(_Username))
+            {
+                _ErrorMessage = "Username Must Contain Characters";
+                CreationSuccess = false;
+            }
+
+            return CreationSuccess;
+        }
+
         public bool TryAddBuilding(string _BuildingName, float _Width, float _Height, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
