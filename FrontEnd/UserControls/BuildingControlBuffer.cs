@@ -11,16 +11,43 @@ using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
-    public partial class BuildingControlBuffer : UserControl
+    internal partial class BuildingControlBuffer : UserControl
     {
-        Building CurrentBuilding;
-        BuildingControl DisplayedBuilding;
+        private Building CurrentBuilding;
+        private BuildingControl DisplayedBuilding;
 
-        private const int BuildingOffsetBuffer = 25;
         private Color BufferColor = Color.Black;
         private Color BufferTextColor = Color.DarkGray;
 
-        public BuildingControlBuffer(Building _CurrentBuilding)
+        private const int _BuildingOffsetBuffer = 50;
+        internal int BuildingOffsetBuffer 
+        {
+            get {  return _BuildingOffsetBuffer; }
+        }
+
+        internal int HGridCount
+        {
+            get
+            { return DisplayedBuilding.HGridCount; }
+
+            set
+            {
+                DisplayedBuilding.HGridCount = value > 0 ? value : DisplayedBuilding.HGridCount;
+            }
+        }
+
+        internal int VGridCount
+        {
+            get
+            { return DisplayedBuilding.VGridCount; }
+
+            set
+            {
+                DisplayedBuilding.VGridCount = value > 0 ? value : DisplayedBuilding.HGridCount;
+            }
+        }
+
+        internal BuildingControlBuffer(Building _CurrentBuilding)
         {
             InitializeComponent();
 
@@ -40,20 +67,20 @@ namespace FrontEnd.UserControls
             this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
             this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
 
-            int GridCount = 10;
-            float VerticalGap = Convert.ToSingle(DisplayedBuilding.Width) / GridCount;
-            float HorizontalGap = Convert.ToSingle(DisplayedBuilding.Height) / GridCount;
+            float VerticalGap = Convert.ToSingle(DisplayedBuilding.Width) / HGridCount;
+            float HorizontalGap = Convert.ToSingle(DisplayedBuilding.Height) / VGridCount;
 
             this.SuspendLayout();
 
             for (int j = 0; j <= 1; j++)
             {
-                for (int i = 0; i <= GridCount; i++)
+                //Labels For Vertical Lines
+                for (int i = 0; i <= HGridCount; i++)
                 {
                     Label TestLabel = new Label();
 
                     TestLabel.AutoSize = true;
-                    TestLabel.Text = (CurrentBuilding.Width / GridCount * i).ToString();
+                    TestLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Width / HGridCount * i));
                     TestLabel.TextAlign = ContentAlignment.MiddleCenter;
                     TestLabel.ForeColor = BufferTextColor;
 
@@ -66,14 +93,15 @@ namespace FrontEnd.UserControls
                 }
             }
 
+            //Labels For Horizontal Lines
             for (int j = 0; j <= 1; j++)
             {
-                for (int i = 0; i <= GridCount; i++)
+                for (int i = 0; i <= VGridCount; i++)
                 {
                     Label TestLabel = new Label();
 
                     TestLabel.AutoSize = true;
-                    TestLabel.Text = (CurrentBuilding.Height / GridCount * i).ToString();
+                    TestLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Height / VGridCount * i));
                     TestLabel.TextAlign = ContentAlignment.MiddleCenter;
                     TestLabel.ForeColor = BufferTextColor;
 
@@ -107,13 +135,13 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
+            this.BackColor = BufferColor;
+
             //this.Padding = new Padding(BuildingOffsetBuffer); // I used this when I had autosize on. Commenting Out Because Im turning Autosize off.
             this.DisplayedBuilding = new BuildingControl(CurrentBuilding);
 
             this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
             this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
-
-            this.BackColor = BufferColor;
 
             this.DisplayedBuilding.Dock = DockStyle.None;
             this.DisplayedBuilding.Name = "DisplayedBuilding";
@@ -125,20 +153,25 @@ namespace FrontEnd.UserControls
             temp3();
         }
 
-        private void DrawGridNumerics(Graphics _GraphicsTool)
-        {
-
-        }
-
         private void Wire()
         {
-            DisplayedBuilding.BuildingScaled += temp3;
+            DisplayedBuilding.BuildingViewUpdated += temp3;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
-            DisplayedBuilding.BuildingScaled -= temp3;
+            DisplayedBuilding.BuildingViewUpdated -= temp3;
             this.HandleDestroyed -= UnWire;
+        }
+
+        internal void ScaleBuilding(float _ScaleModifier)
+        {
+            DisplayedBuilding.ScaleBuilding(_ScaleModifier);
+        }
+
+        private void DrawGridNumerics(Graphics _GraphicsTool)
+        {
+
         }
     }
 }

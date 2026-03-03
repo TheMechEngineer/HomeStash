@@ -14,15 +14,42 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
-        internal event Action? BuildingScaled;
+        internal event Action? BuildingViewUpdated;
 
         private Building CurrentBuilding;
 
         private const int DefaultPixelsPerUnit = 10;
         private float ScalingFactor = 1.0f;
 
-        internal int InitialDisplayWidth;
-        internal int InitialDisplayHeight;
+        private int _HGridCount = 10;
+        internal int HGridCount {  
+            get 
+            { return _HGridCount; }
+
+            set
+            {
+                _HGridCount = value > 0 ? value : _HGridCount;
+                this.Invalidate();
+                BuildingViewUpdated?.Invoke();
+            }
+        }
+
+        private int _VGridCount = 10;
+        internal int VGridCount
+        {
+            get
+            { return _VGridCount; }
+
+            set
+            {
+                _VGridCount = value > 0 ? value : _VGridCount;
+                this.Invalidate();
+                BuildingViewUpdated?.Invoke();
+            }
+        }
+
+        private int InitialDisplayWidth;
+        private int InitialDisplayHeight;
 
         internal BuildingControl(Building _CurrentBuilding)
         {
@@ -30,8 +57,9 @@ namespace FrontEnd.UserControls
 
             CurrentBuilding = _CurrentBuilding;
 
-            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit));
-            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit));
+            //Need To Use Math.Round Because Convert.ToInt32 uses Bankers Rounding and we want Away From Zero Rounding
+            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
             InitializeVisuals();
             Wire();
@@ -53,20 +81,21 @@ namespace FrontEnd.UserControls
             this.HandleDestroyed -= UnWire;
         }
 
-        internal void ScaleBuilding(float ScaleModifier)
+        internal void ScaleBuilding(float _ScaleModifier)
         {
             this.SuspendLayout();
 
-            ScalingFactor *= ScaleModifier;
+            ScalingFactor *= _ScaleModifier;
 
-            this.Width = Convert.ToInt32(this.InitialDisplayWidth * ScalingFactor);
-            this.Height = Convert.ToInt32(this.InitialDisplayHeight * ScalingFactor);
+            this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
             PopulateRooms();
+            this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
 
             this.ResumeLayout();
-            this.Invalidate();
-            BuildingScaled?.Invoke();
+            
+            BuildingViewUpdated?.Invoke();
         }
 
         private void DrawGrid(Graphics _GraphicsTool)
@@ -77,31 +106,38 @@ namespace FrontEnd.UserControls
             DrawingTool.Width = 2.0f;
             DrawingTool.DashPattern = new float[] { 3.0F, 6.0F};
 
-            int GridCount = 10;
-            float VerticalGap = Convert.ToSingle(this.Width) / GridCount;
-            float HorizontalGap = Convert.ToSingle(this.Height) / GridCount;
+            float VerticalGap = Convert.ToSingle(this.Width) / _HGridCount;
+            float HorizontalGap = Convert.ToSingle(this.Height) / _VGridCount;
 
-            for (int i = 0; i <= GridCount; i++)
+            //Vertical Grid Lines
+            for (int i = 0; i <= _HGridCount; i++)
+            {
+                PointF VStartPoint = new PointF(VerticalGap * i, 0);
+                PointF VEndPoint = new PointF(VerticalGap * i, this.Height);
+
+                if (i == _HGridCount && DrawingTool.Width == 1.0f)
+                {
+                    VStartPoint.X -= 1.0f;
+                    VEndPoint.X -= 1.0f;
+                }
+   
+                _GraphicsTool.DrawLine(DrawingTool, VStartPoint, VEndPoint); //Vertical Grid Line
+            }
+
+            //Horizontal Grid Lines
+            for (int i = 0; i <= _VGridCount; i++)
             {
 
                 PointF HStartPoint = new PointF(0, HorizontalGap * i);
                 PointF HEndPoint = new PointF(this.Width, HorizontalGap * i);
 
-                PointF VStartPoint = new PointF(VerticalGap * i, 0);
-                PointF VEndPoint = new PointF(VerticalGap * i, this.Height);
-
-                if (i == GridCount && DrawingTool.Width == 1.0f)
+                if (i == _VGridCount && DrawingTool.Width == 1.0f)
                 {
                     HStartPoint.Y -= 1.0f;
                     HEndPoint.Y -= 1.0f;
-
-                    VStartPoint.X -= 1.0f;
-                    VEndPoint.X -= 1.0f;
                 }
-   
 
-                _GraphicsTool.DrawLine(DrawingTool, HStartPoint, HEndPoint);
-                _GraphicsTool.DrawLine(DrawingTool, VStartPoint, VEndPoint);
+                _GraphicsTool.DrawLine(DrawingTool, HStartPoint, HEndPoint); //Horizontal Grid Line
             }
         }
 
@@ -115,8 +151,8 @@ namespace FrontEnd.UserControls
 
                 DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
 
-                int DisplayedRoomLeft = Convert.ToInt32((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor));
-                int DisplayedRoomTop = Convert.ToInt32((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor));
+                int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
+                int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
 
                 DisplayedRoom.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
 

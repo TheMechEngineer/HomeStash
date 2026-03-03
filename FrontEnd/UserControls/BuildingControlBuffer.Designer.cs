@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    partial class BuildingControlBuffer
+    internal partial class BuildingControlBuffer
     {
         /// <summary> 
         /// Required designer variable.

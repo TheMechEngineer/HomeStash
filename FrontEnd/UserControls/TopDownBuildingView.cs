@@ -15,15 +15,18 @@ namespace FrontEnd.UserControls
     internal partial class TopDownBuildingView : UserControl
     {
         private RootManager RootManagerInstance;
-        Building CurrentBuilding;
+        private Building CurrentBuilding;
+        private BuildingControlBuffer CurrentBufferedBuilding;
+
+        private Panel CameraPanel;
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
 
             InitializeComponent();
 
-            RootManagerInstance = _ProgramRoot;
-            CurrentBuilding = RootManagerInstance.ActiveUser.ActiveBuilding;
+            this.RootManagerInstance = _ProgramRoot;
+            this.CurrentBuilding = RootManagerInstance.ActiveUser.ActiveBuilding;
 
             InitializeVisuals();
             Wire();
@@ -31,16 +34,19 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
+            this.CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
-            BuildingControlBuffer BufferedBuilding = new BuildingControlBuffer(CurrentBuilding);
+            this.CurrentBufferedBuilding = new BuildingControlBuffer(CurrentBuilding);
 
-            BufferedBuilding.Dock = DockStyle.None;
-            BufferedBuilding.Name = "BufferedBuilding";
-            BufferedBuilding.Location = new Point(0, 0);
-            BufferedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            CurrentBufferedBuilding.Dock = DockStyle.None;
+            CurrentBufferedBuilding.Name = "CurrentBufferedBuilding";
+            CurrentBufferedBuilding.Location = new Point(0, 0);
+            CurrentBufferedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            CameraPanel.Controls.Add(BufferedBuilding);
+            this.tsnudHGridCount.Value = CurrentBufferedBuilding.HGridCount;
+            this.tsnudVGridCount.Value = CurrentBufferedBuilding.VGridCount;
+
+            this.CameraPanel.Controls.Add(CurrentBufferedBuilding);
         }
 
         private void Wire()
@@ -56,19 +62,40 @@ namespace FrontEnd.UserControls
 
         private void CenterCameraView()
         {
+            int BufferedWidth = this.CurrentBufferedBuilding.Width;
+            int BufferedHeight = this.CurrentBufferedBuilding.Height;
 
-            Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
-
-            int BufferedWidth = CameraPanel.Controls["BufferedBuilding"].Width;
-            int BufferedHeight = CameraPanel.Controls["BufferedBuilding"].Height;
-
-            int CameraWidth = CameraPanel.ClientSize.Width;
-            int CameraHeight = CameraPanel.ClientSize.Height;
+            int CameraWidth = this.CameraPanel.ClientSize.Width;
+            int CameraHeight = this.CameraPanel.ClientSize.Height;
 
             int ViewLeftBound = (BufferedWidth - CameraWidth) / 2;
             int ViewTopBound = (BufferedHeight - CameraHeight) / 2;
 
-            CameraPanel.AutoScrollPosition = new Point(ViewLeftBound, ViewTopBound);
+            this.CameraPanel.AutoScrollPosition = new Point(ViewLeftBound, ViewTopBound);
+        }
+
+        private void FitBuildingToScreen()
+        {
+            float PercentOfScreenToFill = 0.95f;
+
+            float BufferedControlWidth = Convert.ToSingle(this.CurrentBufferedBuilding.Width);
+            float BuildingControlWidth = Convert.ToSingle(BufferedControlWidth - (2 * CurrentBufferedBuilding.BuildingOffsetBuffer));
+
+            float BufferedControlHeight = Convert.ToSingle(this.CurrentBufferedBuilding.Height);
+            float BuildingControlHeight = Convert.ToSingle(BufferedControlHeight - (2 * CurrentBufferedBuilding.BuildingOffsetBuffer));
+
+            float DesiredBufferWidth = PercentOfScreenToFill * Convert.ToSingle(this.CameraPanel.ClientSize.Width);
+            float WidthLinearIncrease = DesiredBufferWidth - BufferedControlWidth;
+
+            float DesiredBufferHeight = PercentOfScreenToFill * Convert.ToSingle(this.CameraPanel.ClientSize.Height);
+            float HeightLinearIncrease = DesiredBufferHeight - BufferedControlHeight;
+
+            float RequiredWidthScale = (WidthLinearIncrease + BuildingControlWidth) / BuildingControlWidth;
+            float RequiredHeightScale = (HeightLinearIncrease + BuildingControlHeight) / BuildingControlHeight;
+
+            float SelectedScale = Math.Min(RequiredWidthScale, RequiredHeightScale);
+
+            CurrentBufferedBuilding.ScaleBuilding(SelectedScale);
         }
 
         private void OpenAddNewRoom()
@@ -92,27 +119,32 @@ namespace FrontEnd.UserControls
             BlockerPanel.BackColor = Color.Black;
             BlockerPanel.Opacity = 20;
 
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Add(BlockerPanel);
+            this.CameraPanel.Controls.Add(BlockerPanel);
             BlockerPanel.BringToFront();
         }
 
         private void TopDownBuildingView_Load(object sender, EventArgs e)
         {
-            this.BeginInvoke(CenterCameraView);
+
+            this.BeginInvoke(() =>
+            {
+                FitBuildingToScreen();
+                CenterCameraView();
+            });
+
         }
 
         private void tsbtnScale_Click(object sender, EventArgs e)
         {
             ToolStripButton CurrentButton = sender as ToolStripButton;
-            BuildingControl CurrentBuildingView = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["BufferedBuilding"].Controls["DisplayedBuilding"] as BuildingControl;
 
             if (CurrentButton.Name == "tsbtnScaleDown")
             {
-                CurrentBuildingView.ScaleBuilding(.9f);
+                CurrentBufferedBuilding.ScaleBuilding(.9f);
             }
             else if (CurrentButton.Name == "tsbtnScaleUp")
             {
-                CurrentBuildingView.ScaleBuilding(1.1f);
+                CurrentBufferedBuilding.ScaleBuilding(1.1f);
             }
         }
 
@@ -132,6 +164,11 @@ namespace FrontEnd.UserControls
         {
             ClickHoldTimer.Tag = null;
             ClickHoldTimer.Stop();
+        }
+
+        private void tsbtnFitToScreen_Click(object sender, EventArgs e)
+        {
+            FitBuildingToScreen();
         }
 
         private void tsbtnCenter_Click(object sender, EventArgs e)
@@ -165,8 +202,8 @@ namespace FrontEnd.UserControls
 
             tsrTopDown.Enabled = true;
 
-            TransparentPanel BlockerPanel = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["Blocker"] as TransparentPanel;
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Remove(BlockerPanel);
+            TransparentPanel BlockerPanel = this.CameraPanel.Controls["Blocker"] as TransparentPanel;
+            this.CameraPanel.Controls.Remove(BlockerPanel);
             BlockerPanel.Dispose();
 
             splTopView.Panel2.Controls.Remove(_CurrentControl);
@@ -178,5 +215,18 @@ namespace FrontEnd.UserControls
             ClickHoldTimer.Tag = null;
             ClickHoldTimer.Stop();
         }
+
+        private void tsnudHGridCount_ValueChanged(object sender, EventArgs e)
+        {
+
+            CurrentBufferedBuilding.HGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+        }
+
+        private void tsnudVGridCount_ValueChanged(object sender, EventArgs e)
+        {
+            CurrentBufferedBuilding.VGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+        }
+
+
     }
 }

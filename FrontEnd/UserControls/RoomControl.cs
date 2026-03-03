@@ -19,8 +19,8 @@ namespace FrontEnd.UserControls
         private int DefaultPixelsPerUnit;
         private float ScalingFactor;
 
-        internal int InitialDisplayWidth;
-        internal int InitialDisplayHeight;
+        private int InitialDisplayWidth;
+        private int InitialDisplayHeight;
 
         internal RoomControl(Room _CurrentRoom, int _DefaultPixelsPerUnit, float _ScalingFactor)
         {
@@ -31,8 +31,8 @@ namespace FrontEnd.UserControls
             DefaultPixelsPerUnit = _DefaultPixelsPerUnit;
             ScalingFactor = _ScalingFactor;
 
-            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentRoom.Width * DefaultPixelsPerUnit));
-            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit));
+            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentRoom.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
             InitializeVisuals();
         }
@@ -47,10 +47,8 @@ namespace FrontEnd.UserControls
 
         private void ScaleRoom()
         {
-            this.Width = Convert.ToInt32(this.InitialDisplayWidth * ScalingFactor);
-            this.Height = Convert.ToInt32(this.InitialDisplayHeight * ScalingFactor);
-
-            this.lblRoomInfo.Location = new Point(this.Width / 2, this.Height / 2); //this isnt perfect but works for now
+            this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
         }
 
     }
