@@ -141,7 +141,7 @@
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripSeparator1, tsbtnAddRoom, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount, toolStripSeparator1, tsbtnAddRoom });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 26);
@@ -156,6 +156,7 @@
             tsbtnFitToScreen.Name = "tsbtnFitToScreen";
             tsbtnFitToScreen.Size = new Size(23, 23);
             tsbtnFitToScreen.Text = "toolStripButton1";
+            tsbtnFitToScreen.ToolTipText = "Fit Building To Screen";
             tsbtnFitToScreen.Click += tsbtnFitToScreen_Click;
             // 
             // toolStripLabel1

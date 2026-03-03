@@ -76,6 +76,10 @@ namespace FrontEnd.UserControls
 
         private void FitBuildingToScreen()
         {
+            // The buffer is larger than the building by 2 * BuildingOffsetBuffer on each axis.
+            // We need the scale multiplier for the building itself, not the buffer,
+            // so we strip the buffer padding out before calculating the ratio.
+
             float PercentOfScreenToFill = 0.95f;
 
             float BufferedControlWidth = Convert.ToSingle(this.CurrentBufferedBuilding.Width);
@@ -93,6 +97,8 @@ namespace FrontEnd.UserControls
             float RequiredWidthScale = (WidthLinearIncrease + BuildingControlWidth) / BuildingControlWidth;
             float RequiredHeightScale = (HeightLinearIncrease + BuildingControlHeight) / BuildingControlHeight;
 
+            //We want to fir the entire building on to the screen, so we select the scale that is smaller between vertical or horizontal.
+            //This way it will always scale to have one side be 95% of the screen, and the other to be less than.
             float SelectedScale = Math.Min(RequiredWidthScale, RequiredHeightScale);
 
             CurrentBufferedBuilding.ScaleBuilding(SelectedScale);
@@ -125,24 +131,20 @@ namespace FrontEnd.UserControls
 
         private void TopDownBuildingView_Load(object sender, EventArgs e)
         {
-
             this.BeginInvoke(() =>
             {
                 FitBuildingToScreen();
                 CenterCameraView();
             });
-
         }
 
         private void tsbtnScale_Click(object sender, EventArgs e)
         {
-            ToolStripButton CurrentButton = sender as ToolStripButton;
-
-            if (CurrentButton.Name == "tsbtnScaleDown")
+            if (sender == this.tsbtnScaleDown)
             {
                 CurrentBufferedBuilding.ScaleBuilding(.9f);
             }
-            else if (CurrentButton.Name == "tsbtnScaleUp")
+            else if (sender == this.tsbtnScaleUp)
             {
                 CurrentBufferedBuilding.ScaleBuilding(1.1f);
             }
@@ -218,15 +220,18 @@ namespace FrontEnd.UserControls
 
         private void tsnudHGridCount_ValueChanged(object sender, EventArgs e)
         {
+            CurrentBufferedBuilding.HGridCount = Convert.ToInt32(tsnudHGridCount.Value);
 
-            CurrentBufferedBuilding.HGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+            //Alternate Approach Using The Sender Instead
+            //CurrentBufferedBuilding.HGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
         }
 
         private void tsnudVGridCount_ValueChanged(object sender, EventArgs e)
         {
-            CurrentBufferedBuilding.VGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+            CurrentBufferedBuilding.VGridCount = Convert.ToInt32(tsnudVGridCount.Value);
+
+            //Alternate Approach Using The Sender Instead
+            //CurrentBufferedBuilding.VGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
         }
-
-
     }
 }

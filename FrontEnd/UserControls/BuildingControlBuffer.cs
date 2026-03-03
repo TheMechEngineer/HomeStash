@@ -31,9 +31,7 @@ namespace FrontEnd.UserControls
             { return DisplayedBuilding.HGridCount; }
 
             set
-            {
-                DisplayedBuilding.HGridCount = value > 0 ? value : DisplayedBuilding.HGridCount;
-            }
+            { DisplayedBuilding.HGridCount = value > 0 ? value : DisplayedBuilding.HGridCount; }
         }
 
         internal int VGridCount
@@ -42,9 +40,7 @@ namespace FrontEnd.UserControls
             { return DisplayedBuilding.VGridCount; }
 
             set
-            {
-                DisplayedBuilding.VGridCount = value > 0 ? value : DisplayedBuilding.HGridCount;
-            }
+            { DisplayedBuilding.VGridCount = value > 0 ? value : DisplayedBuilding.VGridCount; }
         }
 
         internal BuildingControlBuffer(Building _CurrentBuilding)
@@ -56,122 +52,118 @@ namespace FrontEnd.UserControls
             InitializeVisuals();
             Wire();
         }
-        private void temp3()
+
+        private void InitializeVisuals()
         {
-            temp();
-            temp2();
+            this.BackColor = BufferColor;
+
+            this.DisplayedBuilding = new BuildingControl(CurrentBuilding);
+            this.DisplayedBuilding.Name = "DisplayedBuilding";
+
+            this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
+            this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
+
+            this.DisplayedBuilding.Dock = DockStyle.None;
+            this.DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
+            this.DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+
+            this.Controls.Add(this.DisplayedBuilding);
+
+            RefreshGridLabels();
         }
 
-        private void temp2()
+        private void Wire()
+        {
+            DisplayedBuilding.BuildingViewUpdated += RefreshGridLabels;
+            this.HandleDestroyed += UnWire;
+        }
+        private void UnWire(object? sender, EventArgs e)
+        {
+            DisplayedBuilding.BuildingViewUpdated -= RefreshGridLabels;
+            this.HandleDestroyed -= UnWire;
+        }
+
+        private void RefreshGridLabels()
         {
             this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
             this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
 
-            float VerticalGap = Convert.ToSingle(DisplayedBuilding.Width) / HGridCount;
-            float HorizontalGap = Convert.ToSingle(DisplayedBuilding.Height) / VGridCount;
+            ClearExistingGridLabels();
+            GenerateNewGridLabels();
+        }
 
+        private void ClearExistingGridLabels()
+        {
+            List<Control> RemoveList = new List<Control>();
+
+            foreach (Control CurrentLabel in this.Controls.OfType<Label>())
+            {
+                RemoveList.Add(CurrentLabel);
+            }
+
+            foreach (Control LabelToRemove in RemoveList)
+            {
+                this.Controls.Remove(LabelToRemove);
+                LabelToRemove.Dispose();
+            }
+        }
+
+        private void GenerateNewGridLabels()
+        {
             this.SuspendLayout();
 
-            for (int j = 0; j <= 1; j++)
+            float HorizontalGap = Convert.ToSingle(DisplayedBuilding.Width) / HGridCount;
+
+            //Labels For Vertical Grid Lines
+            for (int i = 0; i <= 1; i++)
             {
-                //Labels For Vertical Lines
-                for (int i = 0; i <= HGridCount; i++)
+                for (int j = 0; j <= HGridCount; j++)
                 {
-                    Label TestLabel = new Label();
+                    Label VerticalGridLineLabel = new Label();
 
-                    TestLabel.AutoSize = true;
-                    TestLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Width / HGridCount * i));
-                    TestLabel.TextAlign = ContentAlignment.MiddleCenter;
-                    TestLabel.ForeColor = BufferTextColor;
+                    VerticalGridLineLabel.AutoSize = true;
+                    VerticalGridLineLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Width / HGridCount * j));
+                    VerticalGridLineLabel.TextAlign = ContentAlignment.MiddleCenter;
+                    VerticalGridLineLabel.ForeColor = BufferTextColor;
 
-                    this.Controls.Add(TestLabel); // Need To Do This First Or AutoSize Doesnt Make Correct Size
+                    this.Controls.Add(VerticalGridLineLabel); // Need To Do This First Or Position Doesnt Work, Because AutoSize Doesnt Make Correct Size
 
-                    int ControlLeftPosition = (int)(BuildingOffsetBuffer - (TestLabel.Width / 2) + (VerticalGap * i));
-                    int ControlTopPosition = ((DisplayedBuilding.Height + BuildingOffsetBuffer) * j) + (BuildingOffsetBuffer / 2) - (TestLabel.Height / 2);
+                    int ControlLeftPosition = (int)(BuildingOffsetBuffer - (VerticalGridLineLabel.Width / 2) + (HorizontalGap * j));
+                    int ControlTopPosition = ((DisplayedBuilding.Height + BuildingOffsetBuffer) * i) + (BuildingOffsetBuffer / 2) - (VerticalGridLineLabel.Height / 2);
 
-                    TestLabel.Location = new Point(ControlLeftPosition, ControlTopPosition);
+                    VerticalGridLineLabel.Location = new Point(ControlLeftPosition, ControlTopPosition);
                 }
             }
 
-            //Labels For Horizontal Lines
-            for (int j = 0; j <= 1; j++)
+            float VerticalGap = Convert.ToSingle(DisplayedBuilding.Height) / VGridCount;
+
+            //Labels For Horizontal Grid Lines
+            for (int i = 0; i <= 1; i++)
             {
-                for (int i = 0; i <= VGridCount; i++)
+                for (int j = 0; j <= VGridCount; j++)
                 {
-                    Label TestLabel = new Label();
+                    Label HorizontalGridLineLabel = new Label();
 
-                    TestLabel.AutoSize = true;
-                    TestLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Height / VGridCount * i));
-                    TestLabel.TextAlign = ContentAlignment.MiddleCenter;
-                    TestLabel.ForeColor = BufferTextColor;
+                    HorizontalGridLineLabel.AutoSize = true;
+                    HorizontalGridLineLabel.Text = string.Format("{0:F2}", (CurrentBuilding.Height / VGridCount * j));
+                    HorizontalGridLineLabel.TextAlign = ContentAlignment.MiddleCenter;
+                    HorizontalGridLineLabel.ForeColor = BufferTextColor;
 
-                    this.Controls.Add(TestLabel); // Need To Do This First Or AutoSize Doesnt Make Correct Size
+                    this.Controls.Add(HorizontalGridLineLabel); // Need To Do This First Or AutoSize Doesnt Make Correct Size
 
-                    int ControlLeftPosition = ((DisplayedBuilding.Width + BuildingOffsetBuffer) * j) + (BuildingOffsetBuffer / 2) - (TestLabel.Width / 2);
-                    int ControlTopPosition = (int)(BuildingOffsetBuffer - (TestLabel.Height / 2) + (HorizontalGap * i));
+                    int ControlLeftPosition = ((DisplayedBuilding.Width + BuildingOffsetBuffer) * i) + (BuildingOffsetBuffer / 2) - (HorizontalGridLineLabel.Width / 2);
+                    int ControlTopPosition = (int)(BuildingOffsetBuffer - (HorizontalGridLineLabel.Height / 2) + (VerticalGap * j));
 
-                    TestLabel.Location = new Point(ControlLeftPosition, ControlTopPosition);
+                    HorizontalGridLineLabel.Location = new Point(ControlLeftPosition, ControlTopPosition);
                 }
             }
 
             this.ResumeLayout();
         }
 
-        private void temp()
-        {
-            List<Control> RemoveList = new List<Control>();
-
-            foreach (Control item in this.Controls.OfType<Label>())
-            {
-                RemoveList.Add(item);
-            }
-
-            foreach (Control ritem in RemoveList)
-            {
-                this.Controls.Remove(ritem);
-                ritem.Dispose();
-            }
-        }
-
-        private void InitializeVisuals()
-        {
-            this.BackColor = BufferColor;
-
-            //this.Padding = new Padding(BuildingOffsetBuffer); // I used this when I had autosize on. Commenting Out Because Im turning Autosize off.
-            this.DisplayedBuilding = new BuildingControl(CurrentBuilding);
-
-            this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
-            this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
-
-            this.DisplayedBuilding.Dock = DockStyle.None;
-            this.DisplayedBuilding.Name = "DisplayedBuilding";
-            this.DisplayedBuilding.Location = new Point(BuildingOffsetBuffer, BuildingOffsetBuffer);
-            this.DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-
-            this.Controls.Add(this.DisplayedBuilding);
-
-            temp3();
-        }
-
-        private void Wire()
-        {
-            DisplayedBuilding.BuildingViewUpdated += temp3;
-            this.HandleDestroyed += UnWire;
-        }
-        private void UnWire(object? sender, EventArgs e)
-        {
-            DisplayedBuilding.BuildingViewUpdated -= temp3;
-            this.HandleDestroyed -= UnWire;
-        }
-
         internal void ScaleBuilding(float _ScaleModifier)
         {
             DisplayedBuilding.ScaleBuilding(_ScaleModifier);
-        }
-
-        private void DrawGridNumerics(Graphics _GraphicsTool)
-        {
-
         }
     }
 }

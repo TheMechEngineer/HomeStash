@@ -72,12 +72,12 @@ namespace FrontEnd.UserControls
 
         private void Wire()
         {
-            CurrentBuilding.RoomListChanged += PopulateRooms;
+            CurrentBuilding.RoomListChanged += RefreshRooms;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
-            CurrentBuilding.RoomListChanged -= PopulateRooms;
+            CurrentBuilding.RoomListChanged -= RefreshRooms;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -90,7 +90,7 @@ namespace FrontEnd.UserControls
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
             this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
-            PopulateRooms();
+            RefreshRooms();
             this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
 
             this.ResumeLayout();
@@ -141,10 +141,30 @@ namespace FrontEnd.UserControls
             }
         }
 
-        private void PopulateRooms()
+        private void RefreshRooms()
         {
-            this.Controls.Clear();
+            ClearExistingRooms();
+            GenerateNewRooms();
+        }
 
+        private void ClearExistingRooms()
+        {
+            List<Control> RemoveList = new List<Control>();
+
+            foreach (Control CurrentRoomControl in this.Controls.OfType<RoomControl>())
+            {
+                RemoveList.Add(CurrentRoomControl);
+            }
+
+            foreach (Control RoomToRemove in RemoveList)
+            {
+                this.Controls.Remove(RoomToRemove);
+                RoomToRemove.Dispose();
+            }
+        }
+
+        private void GenerateNewRooms()
+        {
             foreach (Room CurrentRoom in CurrentBuilding.RoomList)
             {
                 RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
