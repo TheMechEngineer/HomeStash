@@ -69,9 +69,8 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
+            if (!NewBuildingSystemValidation(_BuildingName, out _ErrorMessage))
             {
-                _ErrorMessage = $"{_BuildingName} Already Exists. No Duplicate Building Names.";
                 CreationSuccess = false;
             }
 
@@ -88,6 +87,20 @@ namespace BackEnd.ModelClasses
                 {
                     CreationSuccess = false;
                 }
+            }
+
+            return CreationSuccess;
+        }
+
+        private bool NewBuildingSystemValidation(string _BuildingName, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
+            {
+                _ErrorMessage = $"{_BuildingName} Already Exists. No Duplicate Building Names.";
+                CreationSuccess = false;
             }
 
             return CreationSuccess;

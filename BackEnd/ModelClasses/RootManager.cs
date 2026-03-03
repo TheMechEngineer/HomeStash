@@ -29,9 +29,8 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
-            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
+            if (!NewUserSystemValidation(_Username, out _ErrorMessage))
             {
-                _ErrorMessage = $"{_Username} Already Exists. No Duplicate Usernames.";
                 CreationSuccess = false;
             }
 
@@ -49,6 +48,20 @@ namespace BackEnd.ModelClasses
                     CreationSuccess = false;
                 }
 
+            }
+
+            return CreationSuccess;
+        }
+
+        private bool NewUserSystemValidation(string _Username, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
+            {
+                _ErrorMessage = $"{_Username} Already Exists. No Duplicate Usernames.";
+                CreationSuccess = false;
             }
 
             return CreationSuccess;
