@@ -157,6 +157,11 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool CreationSuccess = true;
 
+            float NewRoomLeftLocation = _CenterX - _Width / 2;
+            float NewRoomRightLocation = _CenterX + _Width / 2;
+            float NewRoomTopLocation = _CenterY - _Height / 2;
+            float NewRoomBottomLocation = _CenterY + _Height / 2;
+
             if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
             {
                 _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
@@ -166,36 +171,61 @@ namespace BackEnd.ModelClasses
             //Check That Room Center Is In Building
             if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
             {
-                _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Room Center Point Must Be Between (0,0) and ({this.Width},{this.Height})\n";
+                _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
                 CreationSuccess = false;
             }
 
             //Check That Room Left Is In Building
-            if (_CenterX - _Width/2 < 0)
+            if (NewRoomLeftLocation < 0)
             {
-                _ErrorMessage += "Room Left Boundary Is Outside Building Limits\n";
+                _ErrorMessage += $"Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
                 CreationSuccess = false;
             }
 
-            //system check needs for
+            //Check That Room Right Is In Building
+            if (NewRoomRightLocation > this.Width)
+            {
+                _ErrorMessage += $"Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
+                CreationSuccess = false;
+            }
 
-            //check right, top, bottom are in bounds
+            //Check That Room Top Is In Building
+            if (NewRoomTopLocation < 0)
+            {
+                _ErrorMessage += $"Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
+                CreationSuccess = false;
+            }
 
-            //check for collision with existing buildings
+            //Check That Room Right Is In Building
+            if (NewRoomBottomLocation > this.Height)
+            {
+                _ErrorMessage += $"Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
+                CreationSuccess = false;
+            }
 
-            //current idea for checking collision, the below checks for left wall, but will need variants of this for every wall
+            if (CreationSuccess)
+            {
+                foreach (Room CurrentRoom in __RoomList)
+                {
+                    float CurrentRoomLeftLocation = CurrentRoom.CenterX - CurrentRoom.Width / 2;
+                    float CurrentRoomRightLocation = CurrentRoom.CenterX + CurrentRoom.Width / 2;
+                    float CurrentRoomTopLocation = CurrentRoom.CenterY - CurrentRoom.Height / 2;
+                    float CurrentRoomBottomLocation = CurrentRoom.CenterY + CurrentRoom.Height / 2;
 
-            //for each room in room list
-            //if _centerX - Width/2 < room.centerx + room.width/2 && _centerX - Width/2 > room.centerx - room.width/2 (This means the left wall is between the left and right walls of the comparison)
-            // { then check if it is vertically in the bounds, if so then error
-            //this doesnt correctly identify if the new room surrounds the existing room on all four sides
-
-            //maybe I need to treat the four corners of the rooms as points, instead of looking at walls. Then check if the four points are in between the four points
-            // for example 
-            // if topleftpoint is between room.right - room.left && room.bottom- room.top
-            // this logic would repeat for the other three points
-            // this seems pretty clean
-            // now just need to figure out logic to catch if new room encompasses existing room
+                    if (!   
+                            (
+                            NewRoomLeftLocation >= CurrentRoomRightLocation || 
+                            NewRoomRightLocation <= CurrentRoomLeftLocation ||
+                            NewRoomTopLocation >= CurrentRoomBottomLocation ||
+                            NewRoomBottomLocation <= CurrentRoomTopLocation
+                            )
+                        )
+                    {
+                        _ErrorMessage += $"New Room Collides With {CurrentRoom.Name}\n";
+                        CreationSuccess = false;
+                    }
+                }
+            }
 
             if (!CreationSuccess)
             {
