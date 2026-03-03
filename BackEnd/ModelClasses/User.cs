@@ -57,14 +57,25 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal bool TryModifyName(string _NewUsername, out string? _ErrorMessage)
+        internal bool TryModify(string _NewUsername, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (!UsernameSelfValidation(_NewUsername, ref _ErrorMessage))
+            if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            {
+                if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                {
+                    if (!UsernameSelfValidation(_NewUsername, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
+            }
+            else
             {
                 ModifySuccess = false;
+                _ErrorMessage += $"No User Fields Have Been Modified\n";
             }
 
             if (ModifySuccess)
@@ -97,7 +108,7 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool AddBuildingSuccess = true;
 
-            if (!NewBuildingSystemValidation(_BuildingName, ref _ErrorMessage))
+            if (!BuildingNameSystemValidation(_BuildingName, ref _ErrorMessage))
             {
                 AddBuildingSuccess = false;
             }
@@ -125,7 +136,48 @@ namespace BackEnd.ModelClasses
             return AddBuildingSuccess;
         }
 
-        private bool NewBuildingSystemValidation(string _BuildingName, ref string? _ErrorMessage)
+        public bool TryModifyBuilding(Building _BuildingToModify, string _NewBuildingName, float _NewWidth, float _NewHeight, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool ModifyBuildingSuccess = true;
+
+            if (_BuildingToModify.Name != _NewBuildingName || _BuildingToModify.Width != _NewWidth || _BuildingToModify.Height != _NewHeight)
+            {
+                if (_BuildingToModify.Name != _NewBuildingName)
+                {
+                    if (!BuildingNameSystemValidation(_NewBuildingName, ref _ErrorMessage))
+                    {
+                        ModifyBuildingSuccess = false;
+                    }
+                }
+
+                if (ModifyBuildingSuccess)
+                {
+                    if (_BuildingToModify.TryModify(_NewBuildingName, _NewWidth, _NewHeight, out _ErrorMessage))
+                    {
+                        BuildingListChanged?.Invoke();
+                    }
+                    else
+                    {
+                        ModifyBuildingSuccess = false;
+                    }
+                }
+            }
+            else
+            {
+                ModifyBuildingSuccess = false;
+                _ErrorMessage += $"No Building Fields Have Been Modified\n";
+            }
+
+            if (!ModifyBuildingSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifyBuildingSuccess;
+        }
+
+        private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
 

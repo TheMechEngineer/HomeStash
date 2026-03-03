@@ -29,7 +29,7 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool AddUserSuccess = true;
 
-            if (!NewUserSystemValidation(_Username, ref _ErrorMessage))
+            if (!UsernameSystemValidation(_Username, ref _ErrorMessage))
             {
                 AddUserSuccess = false;
             }
@@ -58,7 +58,48 @@ namespace BackEnd.ModelClasses
             return AddUserSuccess;
         }
 
-        private bool NewUserSystemValidation(string _Username, ref string? _ErrorMessage)
+        public bool TryModifyUser(User _UserToModify, string _NewUsername, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool ModifyUserSuccess = true;
+
+            if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            {
+                if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                {
+                    if (!UsernameSystemValidation(_NewUsername, ref _ErrorMessage))
+                    {
+                        ModifyUserSuccess = false;
+                    }
+                }
+
+                if (ModifyUserSuccess)
+                {
+                    if (_UserToModify.TryModify(_NewUsername, out _ErrorMessage))
+                    {
+                        UserListChanged?.Invoke();
+                    }
+                    else
+                    {
+                        ModifyUserSuccess = false;
+                    }
+                }
+            }
+            else
+            {
+                ModifyUserSuccess = false;
+                _ErrorMessage += $"No User Fields Have Been Modified\n";
+            }
+
+            if (!ModifyUserSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifyUserSuccess;
+        }
+
+        private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
 

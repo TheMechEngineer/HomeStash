@@ -67,40 +67,38 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal bool TryModifyName(string _NewBuildingName, out string? _ErrorMessage)
+        internal bool TryModify(string _NewBuildingName, float _NewWidth, float _NewHeight, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
-            bool ModifyNameSuccess = true;
+            bool ModifySuccess = true;
 
-            if (!NameSelfValidation(_NewBuildingName, ref _ErrorMessage))
+            if (this.Name != _NewBuildingName || this.Width != _NewWidth || this.Height != _NewHeight)
             {
-                ModifyNameSuccess = false;
-            }
+                if (this.Name != _NewBuildingName)
+                {
+                    if (!NameSelfValidation(_NewBuildingName, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
 
-            if (ModifyNameSuccess)
-            {
-                this.Name = _NewBuildingName;
+                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                {
+                    if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
             }
             else
             {
-                _ErrorMessage = _ErrorMessage?.TrimEnd();
-            }
-             
-            return ModifyNameSuccess;
-        }
-
-        internal bool TryModifySize(float _NewWidth, float _NewHeight, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
-            bool ModifySizeSuccess = true;
-
-            if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
-            {
-                ModifySizeSuccess = false;
+                ModifySuccess = false;
+                _ErrorMessage += $"No Building Fields Have Been Modified\n";
             }
 
-            if (ModifySizeSuccess)
+            if (ModifySuccess)
             {
+                this.Name = _NewBuildingName;
                 this.Width = _NewWidth;
                 this.Height = _NewHeight;
             }
@@ -109,7 +107,7 @@ namespace BackEnd.ModelClasses
                 _ErrorMessage = _ErrorMessage?.TrimEnd();
             }
 
-            return ModifySizeSuccess;
+            return ModifySuccess;
         }
 
         private static bool NameSelfValidation(string _BuildingName, ref string? _ErrorMessage)
@@ -168,7 +166,12 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool AddRoomSuccess = true;
 
-            if (!NewRoomSystemValidation(_RoomName, _Width, _Height, _CenterX, _CenterY, ref _ErrorMessage))
+            if (!RoomNameSystemValidation(_RoomName, ref _ErrorMessage))
+            {
+                AddRoomSuccess = false;
+            }
+
+            if (!RoomDimensionValidation(_Width, _Height, _CenterX, _CenterY, ref _ErrorMessage))
             {
                 AddRoomSuccess = false;
             }
@@ -196,7 +199,69 @@ namespace BackEnd.ModelClasses
             return AddRoomSuccess;
         }
 
-        private bool NewRoomSystemValidation(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, ref string? _ErrorMessage)
+        public bool TryModifyRoom(Room _RoomToModify, string _NewRoomName, float _NewWidth, float _NewHeight, float _NewCenterX, float _NewCenterY, int _NewRoomColor, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool ModifyRoomSuccess = true;
+
+            if (_RoomToModify.Name != _NewRoomName || _RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY || _RoomToModify.RoomColor != _NewRoomColor)
+            {
+                if (_RoomToModify.Name != _NewRoomName)
+                {
+                    if (!RoomNameSystemValidation(_NewRoomName, ref _ErrorMessage))
+                    {
+                        ModifyRoomSuccess = false;
+                    }
+                }
+
+                if (_RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY)
+                {
+                    if (!RoomDimensionValidation(_NewWidth, _NewHeight, _NewCenterX, _NewCenterY, ref _ErrorMessage, _RoomToModify))
+                    {
+                        ModifyRoomSuccess = false;
+                    }
+                }
+
+                if (ModifyRoomSuccess)
+                {
+                    if (_RoomToModify.TryModify(_NewRoomName, _NewWidth, _NewHeight, _NewCenterX, _NewCenterY, _NewRoomColor, out _ErrorMessage))
+                    {
+                        RoomListChanged?.Invoke();
+                    }
+                    else
+                    {
+                        ModifyRoomSuccess = false;
+                    }
+                }
+            }
+            else
+            {
+                ModifyRoomSuccess = false;
+                _ErrorMessage += $"No Room Fields Have Been Modified\n";
+            }
+
+            if (!ModifyRoomSuccess)
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifyRoomSuccess;
+        }
+
+        private bool RoomNameSystemValidation(string _RoomName, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
+            {
+                _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
+                SystemValid = false;
+            }
+
+            return SystemValid;
+        }
+
+        private bool RoomDimensionValidation(float _Width, float _Height, float _CenterX, float _CenterY, ref string? _ErrorMessage, Room? _RoomToExclude = null)
         {
             bool SystemValid = true;
 
@@ -204,12 +269,6 @@ namespace BackEnd.ModelClasses
             float NewRoomRightLocation = _CenterX + _Width / 2;
             float NewRoomTopLocation = _CenterY - _Height / 2;
             float NewRoomBottomLocation = _CenterY + _Height / 2;
-
-            if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
-            {
-                _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
-                SystemValid = false;
-            }
 
             //Check That Room Center Is In Building
             if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
@@ -239,7 +298,7 @@ namespace BackEnd.ModelClasses
                 SystemValid = false;
             }
 
-            //Check That Room Right Is In Building
+            //Check That Room Bottom Is In Building
             if (NewRoomBottomLocation > this.Height)
             {
                 _ErrorMessage += $"Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
@@ -248,16 +307,17 @@ namespace BackEnd.ModelClasses
 
             if (SystemValid)
             {
-                foreach (Room CurrentRoom in __RoomList)
+                //The .Where LINQ method is used to exlude the current room, when this method is called to verify on modify instead of add.
+                foreach (Room CurrentRoom in __RoomList.Where(CurrentRoom => CurrentRoom != _RoomToExclude))
                 {
                     float CurrentRoomLeftLocation = CurrentRoom.CenterX - CurrentRoom.Width / 2;
                     float CurrentRoomRightLocation = CurrentRoom.CenterX + CurrentRoom.Width / 2;
                     float CurrentRoomTopLocation = CurrentRoom.CenterY - CurrentRoom.Height / 2;
                     float CurrentRoomBottomLocation = CurrentRoom.CenterY + CurrentRoom.Height / 2;
 
-                    if (!   
+                    if (!
                             (
-                            NewRoomLeftLocation >= CurrentRoomRightLocation || 
+                            NewRoomLeftLocation >= CurrentRoomRightLocation ||
                             NewRoomRightLocation <= CurrentRoomLeftLocation ||
                             NewRoomTopLocation >= CurrentRoomBottomLocation ||
                             NewRoomBottomLocation <= CurrentRoomTopLocation

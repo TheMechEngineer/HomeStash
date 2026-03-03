@@ -62,6 +62,52 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
+        internal bool TryModify(string _NewRoomName, float _NewWidth, float _NewHeight, float _NewCenterX, float _NewCenterY, int _NewRoomColor, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool ModifySuccess = true;
+
+            if (this.Name != _NewRoomName || this.Width != _NewWidth || this.Height != _NewHeight || this.CenterX != _NewCenterX || this.CenterY != _NewCenterY || this.RoomColor != _NewRoomColor)
+            {
+                if (this.Name != _NewRoomName)
+                {
+                    if (!NameSelfValidation(_NewRoomName, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
+
+                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                {
+                    if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
+            }
+            else
+            {
+                ModifySuccess = false;
+                _ErrorMessage += $"No Room Fields Have Been Modified\n";
+            }
+
+            if (ModifySuccess)
+            {
+                this.Name = _NewRoomName;
+                this.Width = _NewWidth;
+                this.Height = _NewHeight;
+                this.CenterX = _NewCenterX;
+                this.CenterY = _NewCenterY;
+                this.RoomColor = _NewRoomColor;
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifySuccess;
+        }
+
         private static bool NameSelfValidation(string _RoomName, ref string? _ErrorMessage)
         {
             bool RoomNameValid = true;
