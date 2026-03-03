@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    internal partial class BuildingControl
+    internal partial class BuildingControlBuffer
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,14 +30,13 @@
         {
             SuspendLayout();
             // 
-            // BuildingControl
+            // BuildingControlBuffer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.RoyalBlue;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Margin = new Padding(0);
-            Name = "BuildingControl";
-            Paint += BuildingControl_Paint;
+            Name = "BuildingControlBuffer";
             ResumeLayout(false);
         }
 

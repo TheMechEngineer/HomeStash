@@ -27,6 +27,9 @@
     <Compile Update="UserControls\AddNewUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="UserControls\RoomControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

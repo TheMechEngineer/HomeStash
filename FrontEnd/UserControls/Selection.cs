@@ -74,17 +74,17 @@ namespace FrontEnd.UserControls
             {
                 DisplayName = CurrentSelection.DisplayText;
 
-                Label NewUser = new Label();
-                NewUser.Name = DisplayName;
-                NewUser.Text = DisplayName;
-                NewUser.Margin = new Padding(3);
-                NewUser.Width = InitialFLPClientWidth - NewUser.Margin.Left - NewUser.Margin.Right;
-                NewUser.TextAlign = ContentAlignment.MiddleCenter;
-                NewUser.BackColor = Color.White;
-                NewUser.Height = 40;
-                NewUser.Click += Label_Click!;
-                NewUser.Tag = CurrentSelection.Value;
-                flpSelectionList.Controls.Add(NewUser);
+                Label NewSelectionItem = new Label();
+                NewSelectionItem.Name = DisplayName;
+                NewSelectionItem.Text = DisplayName;
+                NewSelectionItem.Margin = new Padding(3);
+                NewSelectionItem.Width = InitialFLPClientWidth - NewSelectionItem.Margin.Left - NewSelectionItem.Margin.Right;
+                NewSelectionItem.TextAlign = ContentAlignment.MiddleCenter;
+                NewSelectionItem.BackColor = Color.White;
+                NewSelectionItem.Height = 40;
+                NewSelectionItem.Click += Label_Click!;
+                NewSelectionItem.Tag = CurrentSelection.Value;
+                flpSelectionList.Controls.Add(NewSelectionItem);
 
                 if (flpSelectionList.HorizontalScroll.Visible == true && flpSelectionList.VerticalScroll.Visible == true)
                 {

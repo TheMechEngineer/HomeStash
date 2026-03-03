@@ -57,14 +57,14 @@
             // tsmiUserSelect
             // 
             tsmiUserSelect.Name = "tsmiUserSelect";
-            tsmiUserSelect.Size = new Size(180, 22);
+            tsmiUserSelect.Size = new Size(152, 22);
             tsmiUserSelect.Text = "User Select";
             tsmiUserSelect.Click += tsmiUserSelect_Click;
             // 
             // tsmiBuildingSelect
             // 
             tsmiBuildingSelect.Name = "tsmiBuildingSelect";
-            tsmiBuildingSelect.Size = new Size(180, 22);
+            tsmiBuildingSelect.Size = new Size(152, 22);
             tsmiBuildingSelect.Text = "Building Select";
             tsmiBuildingSelect.Click += tsmiBuildingSelect_Click;
             // 

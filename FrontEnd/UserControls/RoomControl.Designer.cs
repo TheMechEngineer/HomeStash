@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    internal partial class BuildingControl
+    internal partial class RoomControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,19 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            lblRoomInfo = new Label();
             SuspendLayout();
             // 
-            // BuildingControl
+            // lblRoomInfo
+            // 
+            lblRoomInfo.Dock = DockStyle.Fill;
+            lblRoomInfo.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblRoomInfo.Location = new Point(0, 0);
+            lblRoomInfo.Name = "lblRoomInfo";
+            lblRoomInfo.RightToLeft = RightToLeft.No;
+            lblRoomInfo.Size = new Size(150, 150);
+            lblRoomInfo.TabIndex = 0;
+            lblRoomInfo.Text = "Room Info";
+            lblRoomInfo.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // RoomControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.RoyalBlue;
+            BackColor = Color.Green;
+            Controls.Add(lblRoomInfo);
             Margin = new Padding(0);
-            Name = "BuildingControl";
-            Paint += BuildingControl_Paint;
+            Name = "RoomControl";
             ResumeLayout(false);
         }
 
         #endregion
+
+        private Label lblRoomInfo;
     }
 }

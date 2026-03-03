@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,36 +14,175 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
+        internal event Action? BuildingViewUpdated;
+
         private Building CurrentBuilding;
-        private int DefaultScaleFactor;
 
-        internal int InitialDisplayWidth;
-        internal int InitialDisplayHeight;
+        private const int DefaultPixelsPerUnit = 10;
+        private float ScalingFactor = 1.0f;
 
-        internal BuildingControl(ref Building _CurrentBuilding, int _DefaultScaleFactor)
+        private int _HGridCount = 10;
+        internal int HGridCount {  
+            get 
+            { return _HGridCount; }
+
+            set
+            {
+                _HGridCount = value > 0 ? value : _HGridCount;
+                this.Invalidate();
+                BuildingViewUpdated?.Invoke();
+            }
+        }
+
+        private int _VGridCount = 10;
+        internal int VGridCount
+        {
+            get
+            { return _VGridCount; }
+
+            set
+            {
+                _VGridCount = value > 0 ? value : _VGridCount;
+                this.Invalidate();
+                BuildingViewUpdated?.Invoke();
+            }
+        }
+
+        private int InitialDisplayWidth;
+        private int InitialDisplayHeight;
+
+        internal BuildingControl(Building _CurrentBuilding)
         {
             InitializeComponent();
 
             CurrentBuilding = _CurrentBuilding;
-            DefaultScaleFactor = _DefaultScaleFactor;
 
-            InitialDisplayWidth = CurrentBuilding.Width * DefaultScaleFactor;
-            InitialDisplayHeight = CurrentBuilding.Height * DefaultScaleFactor;
+            //Need To Use Math.Round Because Convert.ToInt32 uses Bankers Rounding and we want Away From Zero Rounding
+            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
             InitializeVisuals();
+            Wire();
         }
 
         private void InitializeVisuals()
         {
-            this.Width = InitialDisplayWidth;
-            this.Height = InitialDisplayHeight;
+            ScaleBuilding(1);
         }
 
-        //
-        //
-        // Since this control is responsible for showing the rooms this class should subsribe to the building event that fires when roomlist changes
-        // The event handler to attach to that event would be the method to draw the rooms in the building
-        //
-        //
+        private void Wire()
+        {
+            CurrentBuilding.RoomListChanged += RefreshRooms;
+            this.HandleDestroyed += UnWire;
+        }
+        private void UnWire(object? sender, EventArgs e)
+        {
+            CurrentBuilding.RoomListChanged -= RefreshRooms;
+            this.HandleDestroyed -= UnWire;
+        }
+
+        internal void ScaleBuilding(float _ScaleModifier)
+        {
+            this.SuspendLayout();
+
+            ScalingFactor *= _ScaleModifier;
+
+            this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
+
+            RefreshRooms();
+            this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
+
+            this.ResumeLayout();
+            
+            BuildingViewUpdated?.Invoke();
+        }
+
+        private void DrawGrid(Graphics _GraphicsTool)
+        {
+            _GraphicsTool.Clear(this.BackColor);
+
+            Pen DrawingTool = new Pen(Color.DarkGray);
+            DrawingTool.Width = 2.0f;
+            DrawingTool.DashPattern = new float[] { 3.0F, 6.0F};
+
+            float VerticalGap = Convert.ToSingle(this.Width) / _HGridCount;
+            float HorizontalGap = Convert.ToSingle(this.Height) / _VGridCount;
+
+            //Vertical Grid Lines
+            for (int i = 0; i <= _HGridCount; i++)
+            {
+                PointF VStartPoint = new PointF(VerticalGap * i, 0);
+                PointF VEndPoint = new PointF(VerticalGap * i, this.Height);
+
+                if (i == _HGridCount && DrawingTool.Width == 1.0f)
+                {
+                    VStartPoint.X -= 1.0f;
+                    VEndPoint.X -= 1.0f;
+                }
+   
+                _GraphicsTool.DrawLine(DrawingTool, VStartPoint, VEndPoint); //Vertical Grid Line
+            }
+
+            //Horizontal Grid Lines
+            for (int i = 0; i <= _VGridCount; i++)
+            {
+
+                PointF HStartPoint = new PointF(0, HorizontalGap * i);
+                PointF HEndPoint = new PointF(this.Width, HorizontalGap * i);
+
+                if (i == _VGridCount && DrawingTool.Width == 1.0f)
+                {
+                    HStartPoint.Y -= 1.0f;
+                    HEndPoint.Y -= 1.0f;
+                }
+
+                _GraphicsTool.DrawLine(DrawingTool, HStartPoint, HEndPoint); //Horizontal Grid Line
+            }
+        }
+
+        private void RefreshRooms()
+        {
+            ClearExistingRooms();
+            GenerateNewRooms();
+        }
+
+        private void ClearExistingRooms()
+        {
+            List<Control> RemoveList = new List<Control>();
+
+            foreach (Control CurrentRoomControl in this.Controls.OfType<RoomControl>())
+            {
+                RemoveList.Add(CurrentRoomControl);
+            }
+
+            foreach (Control RoomToRemove in RemoveList)
+            {
+                this.Controls.Remove(RoomToRemove);
+                RoomToRemove.Dispose();
+            }
+        }
+
+        private void GenerateNewRooms()
+        {
+            foreach (Room CurrentRoom in CurrentBuilding.RoomList)
+            {
+                RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
+
+                DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
+
+                int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
+                int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
+
+                DisplayedRoom.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
+
+                this.Controls.Add(DisplayedRoom);
+            }
+        }
+
+        private void BuildingControl_Paint(object sender, PaintEventArgs e)
+        {
+            DrawGrid(e.Graphics);
+        }
     }
 }

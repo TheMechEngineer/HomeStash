@@ -1,4 +1,5 @@
 ﻿using BackEnd.ModelClasses;
+using FrontEnd.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,20 +15,18 @@ namespace FrontEnd.UserControls
     internal partial class TopDownBuildingView : UserControl
     {
         private RootManager RootManagerInstance;
-        Building CurrentBuilding;
+        private Building CurrentBuilding;
+        private BuildingControlBuffer CurrentBufferedBuilding;
 
-        private const int DefaultScaleFactor = 10;
-        private float currentZoom = 1.0f;
-
-
+        private Panel CameraPanel;
 
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
 
             InitializeComponent();
 
-            RootManagerInstance = _ProgramRoot;
-            CurrentBuilding = RootManagerInstance.ActiveUser.ActiveBuilding;
+            this.RootManagerInstance = _ProgramRoot;
+            this.CurrentBuilding = RootManagerInstance.ActiveUser.ActiveBuilding;
 
             InitializeVisuals();
             Wire();
@@ -35,14 +34,19 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            BuildingControl DisplayedBuilding = new BuildingControl(ref CurrentBuilding, DefaultScaleFactor);
+            this.CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
-            DisplayedBuilding.Dock = DockStyle.None;
-            DisplayedBuilding.Name = "DisplayedBuilding";
-            DisplayedBuilding.Location = new Point(0, 0);
-            DisplayedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.CurrentBufferedBuilding = new BuildingControlBuffer(CurrentBuilding);
 
-            splTopView.Panel1.Controls["pnlTopViewCamera"].Controls.Add(DisplayedBuilding);
+            CurrentBufferedBuilding.Dock = DockStyle.None;
+            CurrentBufferedBuilding.Name = "CurrentBufferedBuilding";
+            CurrentBufferedBuilding.Location = new Point(0, 0);
+            CurrentBufferedBuilding.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+
+            this.tsnudHGridCount.Value = CurrentBufferedBuilding.HGridCount;
+            this.tsnudVGridCount.Value = CurrentBufferedBuilding.VGridCount;
+
+            this.CameraPanel.Controls.Add(CurrentBufferedBuilding);
         }
 
         private void Wire()
@@ -58,30 +62,46 @@ namespace FrontEnd.UserControls
 
         private void CenterCameraView()
         {
-            Panel CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
+            int BufferedWidth = this.CurrentBufferedBuilding.Width;
+            int BufferedHeight = this.CurrentBufferedBuilding.Height;
 
-            int BuildingWidth = CameraPanel.Controls["DisplayedBuilding"].Width;
-            int BuildingHeight = CameraPanel.Controls["DisplayedBuilding"].Height;
+            int CameraWidth = this.CameraPanel.ClientSize.Width;
+            int CameraHeight = this.CameraPanel.ClientSize.Height;
 
-            int CameraWidth = CameraPanel.ClientSize.Width;
-            int CameraHeight = CameraPanel.ClientSize.Height;
+            int ViewLeftBound = (BufferedWidth - CameraWidth) / 2;
+            int ViewTopBound = (BufferedHeight - CameraHeight) / 2;
 
-            int CenterX = (BuildingWidth - CameraWidth) / 2;
-            int CenterY = (BuildingHeight - CameraHeight) / 2;
-
-            CameraPanel.AutoScrollPosition = new Point(CenterX, CenterY);
+            this.CameraPanel.AutoScrollPosition = new Point(ViewLeftBound, ViewTopBound);
         }
 
-        private void ScaleCameraView(float ScaleModifier)
+        private void FitBuildingToScreen()
         {
-            currentZoom *= ScaleModifier;
+            // The buffer is larger than the building by 2 * BuildingOffsetBuffer on each axis.
+            // We need the scale multiplier for the building itself, not the buffer,
+            // so we strip the buffer padding out before calculating the ratio.
 
-            //Set building
-            BuildingControl CurrentBuilding = splTopView.Panel1.Controls["pnlTopViewCamera"].Controls["DisplayedBuilding"] as BuildingControl;
+            float PercentOfScreenToFill = 0.95f;
 
-            CurrentBuilding.Width = Convert.ToInt32(CurrentBuilding.InitialDisplayWidth * currentZoom);
-            CurrentBuilding.Height = Convert.ToInt32(CurrentBuilding.InitialDisplayHeight * currentZoom);
+            float BufferedControlWidth = Convert.ToSingle(this.CurrentBufferedBuilding.Width);
+            float BuildingControlWidth = Convert.ToSingle(BufferedControlWidth - (2 * CurrentBufferedBuilding.BuildingOffsetBuffer));
 
+            float BufferedControlHeight = Convert.ToSingle(this.CurrentBufferedBuilding.Height);
+            float BuildingControlHeight = Convert.ToSingle(BufferedControlHeight - (2 * CurrentBufferedBuilding.BuildingOffsetBuffer));
+
+            float DesiredBufferWidth = PercentOfScreenToFill * Convert.ToSingle(this.CameraPanel.ClientSize.Width);
+            float WidthLinearIncrease = DesiredBufferWidth - BufferedControlWidth;
+
+            float DesiredBufferHeight = PercentOfScreenToFill * Convert.ToSingle(this.CameraPanel.ClientSize.Height);
+            float HeightLinearIncrease = DesiredBufferHeight - BufferedControlHeight;
+
+            float RequiredWidthScale = (WidthLinearIncrease + BuildingControlWidth) / BuildingControlWidth;
+            float RequiredHeightScale = (HeightLinearIncrease + BuildingControlHeight) / BuildingControlHeight;
+
+            //We want to fir the entire building on to the screen, so we select the scale that is smaller between vertical or horizontal.
+            //This way it will always scale to have one side be 95% of the screen, and the other to be less than.
+            float SelectedScale = Math.Min(RequiredWidthScale, RequiredHeightScale);
+
+            CurrentBufferedBuilding.ScaleBuilding(SelectedScale);
         }
 
         private void OpenAddNewRoom()
@@ -98,28 +118,36 @@ namespace FrontEnd.UserControls
             splTopView.Panel2.Controls.Add(NewControl);
 
             tsrTopDown.Enabled = false;
-            splTopView.Panel1.Enabled = false;
 
+            TransparentPanel BlockerPanel = new TransparentPanel();
+            BlockerPanel.Name = "Blocker";
+            BlockerPanel.Dock = DockStyle.Fill;
+            BlockerPanel.BackColor = Color.Black;
+            BlockerPanel.Opacity = 20;
+
+            this.CameraPanel.Controls.Add(BlockerPanel);
+            BlockerPanel.BringToFront();
         }
 
         private void TopDownBuildingView_Load(object sender, EventArgs e)
         {
-            this.BeginInvoke(CenterCameraView);
+            this.BeginInvoke(() =>
+            {
+                FitBuildingToScreen();
+                CenterCameraView();
+            });
         }
 
         private void tsbtnScale_Click(object sender, EventArgs e)
         {
-            ToolStripButton CurrentButton = sender as ToolStripButton;
-
-            if (CurrentButton.Name == "tsbtnScaleDown")
+            if (sender == this.tsbtnScaleDown)
             {
-                ScaleCameraView(.9f);
+                CurrentBufferedBuilding.ScaleBuilding(.9f);
             }
-            else if (CurrentButton.Name == "tsbtnScaleUp")
+            else if (sender == this.tsbtnScaleUp)
             {
-                ScaleCameraView(1.1f);
+                CurrentBufferedBuilding.ScaleBuilding(1.1f);
             }
-
         }
 
         private void ClickHoldTimer_Tick(object sender, EventArgs e)
@@ -140,10 +168,14 @@ namespace FrontEnd.UserControls
             ClickHoldTimer.Stop();
         }
 
+        private void tsbtnFitToScreen_Click(object sender, EventArgs e)
+        {
+            FitBuildingToScreen();
+        }
+
         private void tsbtnCenter_Click(object sender, EventArgs e)
         {
             CenterCameraView();
-            
         }
 
         private void tsbtnAddRoom_Click(object sender, EventArgs e)
@@ -151,11 +183,11 @@ namespace FrontEnd.UserControls
             OpenAddNewRoom();
         }
 
-        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, int Height, int Width, int CenterX, int CenterY, int ColorValue) _RoomValues)
+        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
         {
             string? _ErrorMessage;
 
-            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Height, _RoomValues.Width, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
             {
                 AddNewRoomControl_AddCanceled(_CurrentControl);
             }
@@ -171,12 +203,35 @@ namespace FrontEnd.UserControls
             _CurrentControl.AddCanceled -= AddNewRoomControl_AddCanceled;
 
             tsrTopDown.Enabled = true;
-            splTopView.Panel1.Enabled = true;
+
+            TransparentPanel BlockerPanel = this.CameraPanel.Controls["Blocker"] as TransparentPanel;
+            this.CameraPanel.Controls.Remove(BlockerPanel);
+            BlockerPanel.Dispose();
 
             splTopView.Panel2.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
 
+        private void tsbtnScale_MouseLeave(object sender, EventArgs e)
+        {
+            ClickHoldTimer.Tag = null;
+            ClickHoldTimer.Stop();
+        }
 
+        private void tsnudHGridCount_ValueChanged(object sender, EventArgs e)
+        {
+            CurrentBufferedBuilding.HGridCount = Convert.ToInt32(tsnudHGridCount.Value);
+
+            //Alternate Approach Using The Sender Instead
+            //CurrentBufferedBuilding.HGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+        }
+
+        private void tsnudVGridCount_ValueChanged(object sender, EventArgs e)
+        {
+            CurrentBufferedBuilding.VGridCount = Convert.ToInt32(tsnudVGridCount.Value);
+
+            //Alternate Approach Using The Sender Instead
+            //CurrentBufferedBuilding.VGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+        }
     }
 }
