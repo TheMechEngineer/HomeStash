@@ -13,6 +13,13 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControlBuffer : UserControl
     {
+        //This Is Called Event Fowarding
+        internal event Action<Room?>? RoomSelectionChanged
+        {
+            add { DisplayedBuilding.RoomSelectionChanged += value; }
+            remove { DisplayedBuilding.RoomSelectionChanged -= value; }
+        }
+
         private Building CurrentBuilding;
         private BuildingControl DisplayedBuilding;
 
@@ -164,6 +171,11 @@ namespace FrontEnd.UserControls
         internal void ScaleBuilding(float _ScaleModifier)
         {
             DisplayedBuilding.ScaleBuilding(_ScaleModifier);
+        }
+
+        internal void ResetSelectedRoom()
+        {
+            DisplayedBuilding.ResetSelectedRoom();
         }
     }
 }

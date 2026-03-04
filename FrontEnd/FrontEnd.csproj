@@ -18,7 +18,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Controls\UserControls\AddNewRoom.cs">
+    <Compile Update="Controls\UserControls\RoomInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\UserControls\BuildingInfo.cs">

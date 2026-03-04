@@ -86,7 +86,7 @@ namespace FrontEnd.UserControls
                 NewSelectionItem.TextAlign = ContentAlignment.MiddleCenter;
                 NewSelectionItem.BackColor = Color.White;
                 NewSelectionItem.Height = 40;
-                NewSelectionItem.Click += Label_Click!;
+                NewSelectionItem.Click += Label_Click;
                 NewSelectionItem.Tag = CurrentSelection.Value;
                 flpSelectionList.Controls.Add(NewSelectionItem);
 

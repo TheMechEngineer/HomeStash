@@ -258,7 +258,7 @@ namespace FrontEnd.Forms
             }
         }
 
-        private void UserInfo_ConfirmClicked(FormType _FormType, User _CurrentUser, UserInfo _CurrentControl, string _AddedUsername)
+        private void UserInfo_ConfirmClicked(FormType _FormType, User? _CurrentUser, UserInfo _CurrentControl, string _AddedUsername)
         {
             string? _ErrorMessage;
 
@@ -296,7 +296,7 @@ namespace FrontEnd.Forms
             _CurrentControl.Dispose();
         }
 
-        private void BuildingInfo_ConfirmClicked(FormType _FormType, Building _CurrentBuilding , BuildingInfo _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
+        private void BuildingInfo_ConfirmClicked(FormType _FormType, Building? _CurrentBuilding , BuildingInfo _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
         {
             string? _ErrorMessage = null;
 

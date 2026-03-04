@@ -1,5 +1,6 @@
 ﻿using BackEnd.ModelClasses;
 using FrontEnd.Controls.Utilities;
+using FrontEnd.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ namespace FrontEnd.UserControls
         private RootManager RootManagerInstance;
         private Building CurrentBuilding;
         private BuildingControlBuffer CurrentBufferedBuilding;
+
+        private Room? SelectedRoom;
 
         private Panel CameraPanel;
 
@@ -47,16 +50,23 @@ namespace FrontEnd.UserControls
             this.tsnudVGridCount.Value = CurrentBufferedBuilding.VGridCount;
 
             this.CameraPanel.Controls.Add(CurrentBufferedBuilding);
+
+            tsbtnEditRoom.Enabled = SelectedRoom != null;
         }
 
         private void Wire()
         {
             this.Load += TopDownBuildingView_Load;
+            CurrentBufferedBuilding.RoomSelectionChanged += CurrentBufferedBuilding_RoomSelectionChanged;
             this.HandleDestroyed += UnWire;
         }
+
+
+
         private void UnWire(object? sender, EventArgs e)
         {
             this.Load -= TopDownBuildingView_Load;
+            CurrentBufferedBuilding.RoomSelectionChanged -= CurrentBufferedBuilding_RoomSelectionChanged;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -104,18 +114,43 @@ namespace FrontEnd.UserControls
             CurrentBufferedBuilding.ScaleBuilding(SelectedScale);
         }
 
-        private void OpenAddNewRoom()
+        private void AddNewRoom()
         {
-            AddNewRoom NewControl = new AddNewRoom();
+            RoomInfo AddNewRoom = new RoomInfo();
 
-            NewControl.AddConfirmed += AddNewRoomControl_AddConfirmed;
-            NewControl.AddCanceled += AddNewRoomControl_AddCanceled;
+            AddNewRoom.ConfirmClicked += RoomInfo_ConfirmClicked;
+            AddNewRoom.CancelClicked += RoomInfo_CancelClicked;
 
-            NewControl.Dock = DockStyle.Fill;
-            NewControl.Name = "AddNewRoom";
+            AddNewRoom.Dock = DockStyle.Fill;
+            AddNewRoom.Name = "AddNewRoom";
 
-            splTopView.SplitterDistance = splTopView.ClientSize.Width - NewControl.Width;
-            splTopView.Panel2.Controls.Add(NewControl);
+            splTopView.SplitterDistance = splTopView.ClientSize.Width - AddNewRoom.Width;
+            splTopView.Panel2.Controls.Add(AddNewRoom);
+
+            tsrTopDown.Enabled = false;
+
+            TransparentPanel BlockerPanel = new TransparentPanel();
+            BlockerPanel.Name = "Blocker";
+            BlockerPanel.Dock = DockStyle.Fill;
+            BlockerPanel.BackColor = Color.Black;
+            BlockerPanel.Opacity = 20;
+
+            this.CameraPanel.Controls.Add(BlockerPanel);
+            BlockerPanel.BringToFront();
+        }
+
+        private void ModifyRoom()
+        {
+            RoomInfo ModifyRoom = new RoomInfo(SelectedRoom);
+
+            ModifyRoom.ConfirmClicked += RoomInfo_ConfirmClicked;
+            ModifyRoom.CancelClicked += RoomInfo_CancelClicked;
+
+            ModifyRoom.Dock = DockStyle.Fill;
+            ModifyRoom.Name = "ModifyRoom";
+
+            splTopView.SplitterDistance = splTopView.ClientSize.Width - ModifyRoom.Width;
+            splTopView.Panel2.Controls.Add(ModifyRoom);
 
             tsrTopDown.Enabled = false;
 
@@ -150,12 +185,6 @@ namespace FrontEnd.UserControls
             }
         }
 
-        private void ClickHoldTimer_Tick(object sender, EventArgs e)
-        {
-            ToolStripButton CurrentButton = ClickHoldTimer.Tag as ToolStripButton;
-            tsbtnScale_Click(CurrentButton, e);
-        }
-
         private void tsbtnScale_MouseDown(object sender, MouseEventArgs e)
         {
             ClickHoldTimer.Tag = sender as ToolStripButton;
@@ -166,6 +195,18 @@ namespace FrontEnd.UserControls
         {
             ClickHoldTimer.Tag = null;
             ClickHoldTimer.Stop();
+        }
+
+        private void tsbtnScale_MouseLeave(object sender, EventArgs e)
+        {
+            ClickHoldTimer.Tag = null;
+            ClickHoldTimer.Stop();
+        }
+
+        private void ClickHoldTimer_Tick(object sender, EventArgs e)
+        {
+            ToolStripButton CurrentButton = ClickHoldTimer.Tag as ToolStripButton;
+            tsbtnScale_Click(CurrentButton, e);
         }
 
         private void tsbtnFitToScreen_Click(object sender, EventArgs e)
@@ -180,27 +221,43 @@ namespace FrontEnd.UserControls
 
         private void tsbtnAddRoom_Click(object sender, EventArgs e)
         {
-            OpenAddNewRoom();
+            AddNewRoom();
         }
 
-        private void AddNewRoomControl_AddConfirmed(AddNewRoom _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
+        private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _CurrentRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
         {
             string? _ErrorMessage;
 
-            if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+            if (_FormType == FormType.Add)
             {
-                AddNewRoomControl_AddCanceled(_CurrentControl);
+                if (CurrentBuilding.TryAddRoom(_RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+                {
+                    RoomInfo_CancelClicked(_CurrentControl);
+                }
+                else
+                {
+                    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
+            else if (_FormType == FormType.Modify)
             {
-                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (CurrentBuilding.TryModifyRoom(_CurrentRoom, _RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+                {
+                    RoomInfo_CancelClicked(_CurrentControl);
+                }
+                else
+                {
+                    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
-        private void AddNewRoomControl_AddCanceled(AddNewRoom _CurrentControl)
+        private void RoomInfo_CancelClicked(RoomInfo _CurrentControl)
         {
-            _CurrentControl.AddConfirmed -= AddNewRoomControl_AddConfirmed;
-            _CurrentControl.AddCanceled -= AddNewRoomControl_AddCanceled;
+            _CurrentControl.ConfirmClicked -= RoomInfo_ConfirmClicked;
+            _CurrentControl.CancelClicked -= RoomInfo_CancelClicked;
+
+            CurrentBufferedBuilding.ResetSelectedRoom();
 
             tsrTopDown.Enabled = true;
 
@@ -210,12 +267,6 @@ namespace FrontEnd.UserControls
 
             splTopView.Panel2.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
-        }
-
-        private void tsbtnScale_MouseLeave(object sender, EventArgs e)
-        {
-            ClickHoldTimer.Tag = null;
-            ClickHoldTimer.Stop();
         }
 
         private void tsnudHGridCount_ValueChanged(object sender, EventArgs e)
@@ -232,6 +283,17 @@ namespace FrontEnd.UserControls
 
             //Alternate Approach Using The Sender Instead
             //CurrentBufferedBuilding.VGridCount = Convert.ToInt32((sender as ToolStripNumericUpDown).Value);
+        }
+
+        private void CurrentBufferedBuilding_RoomSelectionChanged(Room? _SelectedRoom)
+        {
+            SelectedRoom = _SelectedRoom;
+            tsbtnEditRoom.Enabled = SelectedRoom != null;
+        }
+
+        private void tsbtnEditRoom_Click(object sender, EventArgs e)
+        {
+            ModifyRoom();
         }
     }
 }

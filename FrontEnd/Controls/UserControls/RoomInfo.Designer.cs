@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    internal partial class AddNewRoom
+    internal partial class RoomInfo
     {
         /// <summary> 
         /// Required designer variable.
@@ -43,6 +43,7 @@
             lblRoomLocation = new Label();
             txtColorInput = new TextBox();
             cldRoomColor = new ColorDialog();
+            lblTitle = new Label();
             SuspendLayout();
             // 
             // btnConfirm
@@ -54,7 +55,7 @@
             btnConfirm.TabIndex = 1;
             btnConfirm.Text = "Confirm";
             btnConfirm.UseVisualStyleBackColor = true;
-            btnConfirm.Click += btnConfirmAdd_Click;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
@@ -65,12 +66,12 @@
             btnCancel.TabIndex = 2;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancelAdd_Click;
+            btnCancel.Click += btnCancel_Click;
             // 
             // lblRoomName
             // 
             lblRoomName.AutoSize = true;
-            lblRoomName.Location = new Point(22, 46);
+            lblRoomName.Location = new Point(22, 72);
             lblRoomName.Name = "lblRoomName";
             lblRoomName.Size = new Size(152, 32);
             lblRoomName.TabIndex = 3;
@@ -78,14 +79,14 @@
             // 
             // txtNameInput
             // 
-            txtNameInput.Location = new Point(206, 43);
+            txtNameInput.Location = new Point(206, 69);
             txtNameInput.Name = "txtNameInput";
             txtNameInput.Size = new Size(243, 39);
             txtNameInput.TabIndex = 4;
             // 
             // txtWidthInput
             // 
-            txtWidthInput.Location = new Point(206, 113);
+            txtWidthInput.Location = new Point(206, 139);
             txtWidthInput.Name = "txtWidthInput";
             txtWidthInput.Size = new Size(243, 39);
             txtWidthInput.TabIndex = 6;
@@ -93,7 +94,7 @@
             // lblRoomWidth
             // 
             lblRoomWidth.AutoSize = true;
-            lblRoomWidth.Location = new Point(22, 116);
+            lblRoomWidth.Location = new Point(22, 142);
             lblRoomWidth.Name = "lblRoomWidth";
             lblRoomWidth.Size = new Size(152, 32);
             lblRoomWidth.TabIndex = 5;
@@ -101,7 +102,7 @@
             // 
             // txtHeightInput
             // 
-            txtHeightInput.Location = new Point(206, 187);
+            txtHeightInput.Location = new Point(206, 213);
             txtHeightInput.Name = "txtHeightInput";
             txtHeightInput.Size = new Size(243, 39);
             txtHeightInput.TabIndex = 8;
@@ -109,7 +110,7 @@
             // lblRoomHeight
             // 
             lblRoomHeight.AutoSize = true;
-            lblRoomHeight.Location = new Point(22, 190);
+            lblRoomHeight.Location = new Point(22, 216);
             lblRoomHeight.Name = "lblRoomHeight";
             lblRoomHeight.Size = new Size(160, 32);
             lblRoomHeight.TabIndex = 7;
@@ -117,7 +118,7 @@
             // 
             // txtYCoordInput
             // 
-            txtYCoordInput.Location = new Point(335, 263);
+            txtYCoordInput.Location = new Point(335, 289);
             txtYCoordInput.Name = "txtYCoordInput";
             txtYCoordInput.Size = new Size(114, 39);
             txtYCoordInput.TabIndex = 12;
@@ -125,7 +126,7 @@
             // lblRoomColor
             // 
             lblRoomColor.AutoSize = true;
-            lblRoomColor.Location = new Point(22, 340);
+            lblRoomColor.Location = new Point(22, 366);
             lblRoomColor.Name = "lblRoomColor";
             lblRoomColor.Size = new Size(145, 32);
             lblRoomColor.TabIndex = 11;
@@ -133,7 +134,7 @@
             // 
             // txtXCoordInput
             // 
-            txtXCoordInput.Location = new Point(206, 263);
+            txtXCoordInput.Location = new Point(206, 289);
             txtXCoordInput.Name = "txtXCoordInput";
             txtXCoordInput.Size = new Size(100, 39);
             txtXCoordInput.TabIndex = 10;
@@ -141,7 +142,7 @@
             // lblRoomLocation
             // 
             lblRoomLocation.AutoSize = true;
-            lblRoomLocation.Location = new Point(22, 266);
+            lblRoomLocation.Location = new Point(22, 292);
             lblRoomLocation.Name = "lblRoomLocation";
             lblRoomLocation.Size = new Size(159, 32);
             lblRoomLocation.TabIndex = 9;
@@ -150,7 +151,7 @@
             // txtColorInput
             // 
             txtColorInput.Cursor = Cursors.Hand;
-            txtColorInput.Location = new Point(206, 337);
+            txtColorInput.Location = new Point(206, 363);
             txtColorInput.Name = "txtColorInput";
             txtColorInput.Size = new Size(243, 39);
             txtColorInput.TabIndex = 13;
@@ -162,12 +163,22 @@
             cldRoomColor.AnyColor = true;
             cldRoomColor.FullOpen = true;
             // 
-            // AddNewRoom
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Location = new Point(169, 18);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(122, 32);
+            lblTitle.TabIndex = 14;
+            lblTitle.Text = "Form Title";
+            // 
+            // RoomInfo
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
             BorderStyle = BorderStyle.Fixed3D;
+            Controls.Add(lblTitle);
             Controls.Add(txtColorInput);
             Controls.Add(lblRoomColor);
             Controls.Add(txtYCoordInput);
@@ -184,7 +195,7 @@
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
             MinimumSize = new Size(475, 0);
-            Name = "AddNewRoom";
+            Name = "RoomInfo";
             Size = new Size(475, 530);
             Load += AddNewRoom_Load;
             ResumeLayout(false);
@@ -206,5 +217,6 @@
         private Label lblRoomLocation;
         private TextBox txtColorInput;
         private ColorDialog cldRoomColor;
+        private Label lblTitle;
     }
 }

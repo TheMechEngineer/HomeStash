@@ -3,3 +3,4 @@ grow: <a href="https://www.flaticon.com/free-icons/resize" title="resize icons">
 focus : <a href="https://www.flaticon.com/free-icons/focus" title="focus icons">Focus icons created by Roundicons Premium - Flaticon</a>
 plus-sign: <a href="https://www.flaticon.com/free-icons/plus" title="plus icons">Plus icons created by dmitri13 - Flaticon</a>
 fit-to-screen: <a href="https://www.flaticon.com/free-icons/to" title="to icons">To icons created by kawalanicon - Flaticon</a>
+edit: <a href="https://www.flaticon.com/free-icons/editing" title="editing icons">Editing icons created by Freepik - Flaticon</a>

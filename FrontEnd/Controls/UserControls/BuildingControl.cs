@@ -15,6 +15,7 @@ namespace FrontEnd.UserControls
     internal partial class BuildingControl : UserControl
     {
         internal event Action? BuildingViewUpdated;
+        internal event Action<Room?>? RoomSelectionChanged;
 
         private Building CurrentBuilding;
 
@@ -22,8 +23,9 @@ namespace FrontEnd.UserControls
         private float ScalingFactor = 1.0f;
 
         private int _HGridCount = 10;
-        internal int HGridCount {  
-            get 
+        internal int HGridCount
+        {
+            get
             { return _HGridCount; }
 
             set
@@ -50,6 +52,9 @@ namespace FrontEnd.UserControls
 
         private int InitialDisplayWidth;
         private int InitialDisplayHeight;
+
+        private Color SelectedRoomColor = Color.Beige;
+        private RoomControl? SelectedRoom;
 
         internal BuildingControl(Building _CurrentBuilding)
         {
@@ -94,8 +99,19 @@ namespace FrontEnd.UserControls
             this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
 
             this.ResumeLayout();
-            
+
             BuildingViewUpdated?.Invoke();
+        }
+
+        internal void ResetSelectedRoom()
+        {
+            if (SelectedRoom != null)
+            {
+                SelectedRoom.BackColor = Color.FromArgb((SelectedRoom.Tag as Room).RoomColor);
+            }
+
+            SelectedRoom = null;
+            RoomSelectionChanged?.Invoke(SelectedRoom?.Tag as Room);
         }
 
         private void DrawGrid(Graphics _GraphicsTool)
@@ -104,7 +120,7 @@ namespace FrontEnd.UserControls
 
             Pen DrawingTool = new Pen(Color.DarkGray);
             DrawingTool.Width = 2.0f;
-            DrawingTool.DashPattern = new float[] { 3.0F, 6.0F};
+            DrawingTool.DashPattern = new float[] { 3.0F, 6.0F };
 
             float VerticalGap = Convert.ToSingle(this.Width) / _HGridCount;
             float HorizontalGap = Convert.ToSingle(this.Height) / _VGridCount;
@@ -120,7 +136,7 @@ namespace FrontEnd.UserControls
                     VStartPoint.X -= 1.0f;
                     VEndPoint.X -= 1.0f;
                 }
-   
+
                 _GraphicsTool.DrawLine(DrawingTool, VStartPoint, VEndPoint); //Vertical Grid Line
             }
 
@@ -158,6 +174,7 @@ namespace FrontEnd.UserControls
 
             foreach (Control RoomToRemove in RemoveList)
             {
+                (RoomToRemove as RoomControl).RoomClicked -= Room_Click;
                 this.Controls.Remove(RoomToRemove);
                 RoomToRemove.Dispose();
             }
@@ -170,6 +187,8 @@ namespace FrontEnd.UserControls
                 RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
 
                 DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
+                DisplayedRoom.Tag = CurrentRoom;
+                DisplayedRoom.RoomClicked += Room_Click;
 
                 int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
                 int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
@@ -180,9 +199,36 @@ namespace FrontEnd.UserControls
             }
         }
 
+        private void BuildingControl_Click(object sender, EventArgs e)
+        {
+            ResetSelectedRoom();
+        }
+
+        private void Room_Click(object sender, EventArgs e)
+        {
+            // This is pattern matching. Alternate Approach:
+            // Label ClickedLabel = sender as Label
+            if (sender is RoomControl ClickedRoom)
+            {
+                if (SelectedRoom != null)
+                {
+                    SelectedRoom.BackColor = Color.FromArgb((SelectedRoom.Tag as Room).RoomColor);
+                }
+
+                SelectedRoom = ClickedRoom;
+                SelectedRoom.BackColor = SelectedRoomColor;
+                RoomSelectionChanged?.Invoke(SelectedRoom.Tag as Room);
+
+                // Get index in the FlowLayoutPanel
+                //int index = flpUserList.Controls.IndexOf(ClickedLabel);
+                //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
+            }
+        }
+
         private void BuildingControl_Paint(object sender, PaintEventArgs e)
         {
             DrawGrid(e.Graphics);
         }
+
     }
 }

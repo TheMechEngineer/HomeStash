@@ -14,6 +14,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class RoomControl : UserControl
     {
+        internal event EventHandler? RoomClicked;
+
         private Room CurrentRoom;
 
         private int DefaultPixelsPerUnit;
@@ -35,6 +37,7 @@ namespace FrontEnd.UserControls
             InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
             InitializeVisuals();
+            Wire();
         }
 
         private void InitializeVisuals()
@@ -45,11 +48,41 @@ namespace FrontEnd.UserControls
             ScaleRoom();
         }
 
+        private void Wire()
+        {
+            this.Click += RoomControl_Click;
+
+            foreach (Control CurrentControl in this.Controls)
+            {
+                CurrentControl.Click += RoomControl_Click;
+            }
+
+            this.HandleDestroyed += UnWire;
+        }
+
+ 
+
+        private void UnWire(object? sender, EventArgs e)
+        {
+            this.Click -= RoomControl_Click;
+
+            foreach (Control CurrentControl in this.Controls)
+            {
+                CurrentControl.Click -= RoomControl_Click;
+            }
+
+            this.HandleDestroyed -= UnWire;
+        }
+
         private void ScaleRoom()
         {
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
             this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
         }
 
+        private void RoomControl_Click(object? sender, EventArgs e)
+        {
+            RoomClicked?.Invoke(this, e);
+        }
     }
 }

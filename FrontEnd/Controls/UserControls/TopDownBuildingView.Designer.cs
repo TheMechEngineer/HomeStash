@@ -42,9 +42,10 @@ namespace FrontEnd.UserControls
             tsrTopDown = new ToolStrip();
             tsbtnFitToScreen = new ToolStripButton();
             toolStripLabel1 = new ToolStripLabel();
-            tsnudHGridCount = new FrontEnd.Controls.Utilities.ToolStripNumericUpDown();
+            tsnudHGridCount = new ToolStripNumericUpDown();
             toolStripLabel2 = new ToolStripLabel();
-            tsnudVGridCount = new FrontEnd.Controls.Utilities.ToolStripNumericUpDown();
+            tsnudVGridCount = new ToolStripNumericUpDown();
+            tsbtnEditRoom = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
             splTopView.SuspendLayout();
@@ -143,7 +144,7 @@ namespace FrontEnd.UserControls
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount, toolStripSeparator1, tsbtnAddRoom });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount, toolStripSeparator1, tsbtnAddRoom, tsbtnEditRoom });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 26);
@@ -197,6 +198,17 @@ namespace FrontEnd.UserControls
             tsnudVGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudVGridCount.ValueChanged += tsnudVGridCount_ValueChanged;
             // 
+            // tsbtnEditRoom
+            // 
+            tsbtnEditRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnEditRoom.Image = Properties.Resources.editing;
+            tsbtnEditRoom.ImageTransparentColor = Color.Magenta;
+            tsbtnEditRoom.Name = "tsbtnEditRoom";
+            tsbtnEditRoom.Size = new Size(23, 23);
+            tsbtnEditRoom.Text = "toolStripButton1";
+            tsbtnEditRoom.ToolTipText = "Edit A Selected Room";
+            tsbtnEditRoom.Click += tsbtnEditRoom_Click;
+            // 
             // TopDownBuildingView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -230,5 +242,6 @@ namespace FrontEnd.UserControls
         private ToolStripLabel toolStripLabel1;
         private ToolStripLabel toolStripLabel2;
         private ToolStripButton tsbtnFitToScreen;
+        private ToolStripButton tsbtnEditRoom;
     }
 }
