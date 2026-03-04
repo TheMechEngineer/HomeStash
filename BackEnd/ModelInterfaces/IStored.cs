@@ -13,14 +13,12 @@ namespace BackEnd.ModelInterfaces
         /// <summary>
         /// Unique Identifier For The Item
         /// </summary>
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public double Value { get; set; }
-        public int Quantity { get; set; }
-        public IStorage ImmediateParent { get; set; }
-        public Room RoomParent { get; set; }
-
-        //Need to add actual objects that are the parents
+        //public int ID { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public double Value { get; }
+        public int Quantity { get; }
+        public IStorage ImmediateParent { get; }
+        public Room? RoomParent { get; }
     }
 }

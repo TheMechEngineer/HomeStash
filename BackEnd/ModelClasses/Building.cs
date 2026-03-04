@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
 {
-    public class Building
+    public class Building : IStorage
     {
         public event Action? RoomListChanged;
 
@@ -16,16 +16,14 @@ namespace BackEnd.ModelClasses
         public float Width { get; private set; }
         public float Height { get; private set; }
 
-        private Storage UnsortedItems = new Storage();
-
         private List<Room> __RoomList = new List<Room>();
-
         public IReadOnlyList<Room> RoomList
         {
             get
             { return __RoomList.AsReadOnly(); }
         }
 
+        private Storage UnsortedItems = new Storage();
         public IReadOnlyList<IStored> StoredItems
         {
             get
@@ -134,31 +132,6 @@ namespace BackEnd.ModelClasses
             }
 
             return BuildingSizeValid;
-        }
-
-        public int TotalItemCount()
-        {
-            return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
-        }
-
-        public double TotalItemValue()
-        {
-            return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
-        }
-
-        public void AddItem(IStored _ItemToAdd)
-        {
-            UnsortedItems.AddItem(_ItemToAdd);
-        }
-
-        public void RemoveItem(IStored _ItemToRemove)
-        {
-            UnsortedItems.RemoveItem(_ItemToRemove);
-        }
-
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        {
-            UnsortedItems.MoveItem(_ItemToMove, _Destination);
         }
 
         public bool TryAddRoom(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out string? _ErrorMessage)
@@ -346,6 +319,31 @@ namespace BackEnd.ModelClasses
             __RoomList.Remove(_RoomToRemove);
             RoomListChanged?.Invoke();
             return true;
+        }
+
+        public int TotalItemCount()
+        {
+            return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
+        }
+
+        public double TotalItemValue()
+        {
+            return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
+        }
+
+        public void AddItem(IStored _ItemToAdd)
+        {
+            UnsortedItems.AddItem(_ItemToAdd);
+        }
+
+        public void RemoveItem(IStored _ItemToRemove)
+        {
+            UnsortedItems.RemoveItem(_ItemToRemove);
+        }
+
+        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+        {
+            UnsortedItems.MoveItem(_ItemToMove, _Destination);
         }
     }
 }

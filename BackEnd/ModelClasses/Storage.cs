@@ -29,7 +29,7 @@ namespace BackEnd.ModelClasses
         public void AddItem(IStored _ItemToAdd)
         {
             __StoredItems.Add(_ItemToAdd);
-            _ItemToAdd.ImmediateParent = this;
+            //_ItemToAdd.ImmediateParent = this;
 
         }
 
@@ -42,7 +42,7 @@ namespace BackEnd.ModelClasses
             //NEED TO UPDATE THE ROOM OF THE MOVED ITEM TOO
             //If the item is deleted then this isnt needed
             //and if its moving to the unsorted items it isnt null
-            _ItemToRemove.ImmediateParent = null;
+            //_ItemToRemove.ImmediateParent = null;
         }
         public void MoveItem(IStored _ItemToMove, IStorage _Destination)
         {

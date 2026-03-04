@@ -10,19 +10,22 @@ namespace BackEnd.ModelClasses
     {
         public event Action? ActiveUserChanged;
         public event Action? UserListChanged;
-        private List<User> __UserList = new List<User>();
+        
         private User? __ActiveUser;
-
         public User? ActiveUser {
             get
             { return __ActiveUser; }
         }
 
+        private List<User> __UserList = new List<User>();
         public IReadOnlyList<User> UserList
         {
             get
             { return __UserList.AsReadOnly(); }
         }
+
+        public RootManager()
+        {}
 
         public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {

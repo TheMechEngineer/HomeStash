@@ -13,16 +13,14 @@ namespace BackEnd.ModelClasses
 
         public string Username { get; private set; }
 
-        private List<Building> __BuildingList = new List<Building>();
-
         private Building? __ActiveBuilding;
-
         public Building? ActiveBuilding
         {
             get
             { return __ActiveBuilding; }
         }
 
+        private List<Building> __BuildingList = new List<Building>();
         public IReadOnlyList<Building> BuildingList
         {
             get
@@ -211,11 +209,6 @@ namespace BackEnd.ModelClasses
             return true;
         }
 
-        public void CopyBuilding(Building _BuildingToCopy)
-        {
-            //stub
-        }
-
         public bool TryChangeActiveBuilding(Building _NewActiveBuilding, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -229,6 +222,10 @@ namespace BackEnd.ModelClasses
             __ActiveBuilding = _NewActiveBuilding;
             ActiveBuildingChanged?.Invoke();
             return true;
+        }
+        public void CopyBuilding(Building _BuildingToCopy)
+        {
+            //stub
         }
     }
 }

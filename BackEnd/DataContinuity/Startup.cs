@@ -16,8 +16,8 @@ namespace BackEnd.DataContinuity
         {
             List<Item> ReturnList = new List<Item>();
 
-            ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "TV", Value = 1200 });
-            ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "Laptop", Value = 1800 });
+            //ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "TV", Value = 1200 });
+            //ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "Laptop", Value = 1800 });
 
             return ReturnList;
         }

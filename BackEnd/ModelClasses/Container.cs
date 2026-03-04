@@ -13,10 +13,49 @@ namespace BackEnd.ModelClasses
         public IReadOnlyList<IStored> StoredItems
         {
             get
+            { return ContainerStorage.StoredItems; }
+        }
+
+        private Container(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent)
+            : base(_ItemName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent)
+        {}
+
+        internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent, out Container? _CreatedContainer, out string? _ErrorMessage)
+        {
+            _CreatedContainer = null;
+            _ErrorMessage = null;
+            bool CreationSuccess = true;
+
+            if (!NameSelfValidation(_ContainerName, ref _ErrorMessage))
             {
-                return ContainerStorage.StoredItems;
+                CreationSuccess = false;
             }
 
+            if (!ValueSelfValidation(_Value, ref _ErrorMessage))
+            {
+                CreationSuccess = false;
+            }
+
+            if (!QuantitySelfValidation(_Quantity, ref _ErrorMessage))
+            {
+                CreationSuccess = false;
+            }
+
+            if (CreationSuccess)
+            {
+                _CreatedContainer = new Container(_ContainerName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent);
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return CreationSuccess;
+        }
+
+        internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, IStorage _NewImmediateParent, Room? _NewRoomParent, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
+        {
+            return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, _NewImmediateParent, _NewRoomParent, out _ErrorMessage);
         }
 
         public int TotalItemCount()
