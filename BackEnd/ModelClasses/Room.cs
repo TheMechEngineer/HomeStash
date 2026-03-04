@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
 {
-    public class Room : IStorage
+    public class Room : IStorageHolder
     {
         public string Name { get; private set; }
         public float Width { get; private set; }
@@ -18,6 +18,12 @@ namespace BackEnd.ModelClasses
         public int RoomColor { get; private set; }
 
         private Storage RoomStorage = new Storage();
+        
+        public IStorage Storage
+        {
+            get
+            { return RoomStorage; }
+        }
         public IReadOnlyList<IStored> StoredItems
         {
             get

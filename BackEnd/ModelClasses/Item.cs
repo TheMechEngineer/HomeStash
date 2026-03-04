@@ -14,7 +14,7 @@ namespace BackEnd.ModelClasses
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
-        public IStorage ImmediateParent { get; private set; }
+        public IStorageHolder ImmediateParent { get; private set; }
         public Room? RoomParent { get; private set; }
 
         protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
 {
-    public class Building : IStorage
+    public class Building : IStorageHolder
     {
         public event Action? RoomListChanged;
 
@@ -16,18 +16,24 @@ namespace BackEnd.ModelClasses
         public float Width { get; private set; }
         public float Height { get; private set; }
 
+        private Storage UnsortedItems = new Storage();
+
+        public IStorage Storage
+        {
+            get
+            { return UnsortedItems; }
+        }
+        public IReadOnlyList<IStored> StoredItems
+        {
+            get
+            { return UnsortedItems.StoredItems; }
+        }
+
         private List<Room> __RoomList = new List<Room>();
         public IReadOnlyList<Room> RoomList
         {
             get
             { return __RoomList.AsReadOnly(); }
-        }
-
-        private Storage UnsortedItems = new Storage();
-        public IReadOnlyList<IStored> StoredItems
-        {
-            get
-            { return UnsortedItems.StoredItems; }
         }
 
         private Building(string _Name, float _Width, float _Height)

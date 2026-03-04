@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
 {
-    public class Container : Item, IStorage
+    public class Container : Item, IStorageHolder
     {
         private Storage ContainerStorage = new Storage();
+        public IStorage Storage
+        {
+            get
+            { return ContainerStorage; }
+        }
+
         public IReadOnlyList<IStored> StoredItems
         {
             get
