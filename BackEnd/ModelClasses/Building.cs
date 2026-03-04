@@ -120,7 +120,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_BuildingName))
             {
-                _ErrorMessage += "Building Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Building Name Must Contain Characters\n";
                 BuildingNameValid = false;
             }
 
@@ -133,7 +133,7 @@ namespace BackEnd.ModelClasses
 
             if (_Width <= 0 || _Height <= 0)
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                _ErrorMessage += "Self Validation Error: Width And Height Dimensions Must Be Positive Numbers\n";
                 BuildingSizeValid = false;
             }
 
@@ -248,7 +248,7 @@ namespace BackEnd.ModelClasses
 
             if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
             {
-                _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
+                _ErrorMessage += $"System Validation Error: Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
                 SystemValid = false;
             }
 
@@ -267,35 +267,35 @@ namespace BackEnd.ModelClasses
             //Check That Room Center Is In Building
             if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
             {
-                _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
+                _ErrorMessage += $"System Validation Error: Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
                 SystemValid = false;
             }
 
             //Check That Room Left Is In Building
             if (NewRoomLeftLocation < 0)
             {
-                _ErrorMessage += $"Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
+                _ErrorMessage += $"System Validation Error: Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
                 SystemValid = false;
             }
 
             //Check That Room Right Is In Building
             if (NewRoomRightLocation > this.Width)
             {
-                _ErrorMessage += $"Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
+                _ErrorMessage += $"System Validation Error: Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
                 SystemValid = false;
             }
 
             //Check That Room Top Is In Building
             if (NewRoomTopLocation < 0)
             {
-                _ErrorMessage += $"Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
+                _ErrorMessage += $"System Validation Error: Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
                 SystemValid = false;
             }
 
             //Check That Room Bottom Is In Building
             if (NewRoomBottomLocation > this.Height)
             {
-                _ErrorMessage += $"Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
+                _ErrorMessage += $"System Validation Error: Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
                 SystemValid = false;
             }
 
@@ -318,7 +318,7 @@ namespace BackEnd.ModelClasses
                             )
                         )
                     {
-                        _ErrorMessage += $"Room Collides With {CurrentRoom.Name}\n";
+                        _ErrorMessage += $"System Validation Error: Room Collides With {CurrentRoom.Name}\n";
                         SystemValid = false;
                     }
                 }

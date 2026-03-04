@@ -94,7 +94,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_Username))
             {
-                _ErrorMessage += "Username Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Username Must Contain Characters\n";
                 UsernameValid = false;
             }
 
@@ -221,7 +221,7 @@ namespace BackEnd.ModelClasses
 
             if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
             {
-                _ErrorMessage += $"{_BuildingName} Already Exists. No Duplicate Building Names.\n";
+                _ErrorMessage += $"System Validation Error: {_BuildingName} Already Exists. No Duplicate Building Names.\n";
                 SystemValid = false;
             }
 

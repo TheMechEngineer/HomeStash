@@ -120,7 +120,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_RoomName))
             {
-                _ErrorMessage += "Room Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Room Name Must Contain Characters\n";
                 RoomNameValid = false;
             }
 
@@ -133,7 +133,7 @@ namespace BackEnd.ModelClasses
 
             if (_Width <= 0 || _Height <= 0)
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                _ErrorMessage += "Self Validation Error: Width And Height Dimensions Must Be Positive Numbers\n";
                 RoomSizeValid = false;
             }
 

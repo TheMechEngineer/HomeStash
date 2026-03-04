@@ -143,7 +143,7 @@ namespace BackEnd.ModelClasses
 
             if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
             {
-                _ErrorMessage += $"{_Username} Already Exists. No Duplicate Usernames.\n";
+                _ErrorMessage += $"System Validation Error: {_Username} Already Exists. No Duplicate Usernames.\n";
                 SystemValid = false;
             }
 

@@ -114,7 +114,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_ItemName))
             {
-                _ErrorMessage += "Item Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Item Name Must Contain Characters\n";
                 ItemNameValid = false;
             }
 
@@ -127,7 +127,7 @@ namespace BackEnd.ModelClasses
 
             if (_Value < 0)
             {
-                _ErrorMessage += "Value Cannot Be Negative\n";
+                _ErrorMessage += "Self Validation Error: Value Cannot Be Negative\n";
                 ValueValid = false;
             }
 
@@ -140,7 +140,7 @@ namespace BackEnd.ModelClasses
 
             if (_Quantity <= 0)
             {
-                _ErrorMessage += "Quantity Must Be At Least 1\n";
+                _ErrorMessage += "Self Validation Error: Quantity Must Be At Least 1\n";
                 QuantityValid = false;
             }
 
