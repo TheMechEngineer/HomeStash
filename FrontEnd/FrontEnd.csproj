@@ -18,16 +18,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\AddNewRoom.cs">
+    <Compile Update="Controls\UserControls\AddNewRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\AddNewBuilding.cs">
+    <Compile Update="Controls\UserControls\BuildingInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\AddNewUser.cs">
+    <Compile Update="Controls\UserControls\UserInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\RoomControl.cs">
+    <Compile Update="Controls\UserControls\RoomControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

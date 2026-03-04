@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrontEnd.Adapters
 {
-    internal class ASelection
+    internal class AdapterSelection
     {
         internal event Action? SourceUpdated;
 
@@ -21,12 +21,12 @@ namespace FrontEnd.Adapters
         }
 
         private IReadOnlyList<object> SourceList;
-        private List<ASelectionItem> ConvertedList = new List<ASelectionItem>();
+        private List<AdapterSelectionItem> ConvertedList = new List<AdapterSelectionItem>();
 
         private readonly RootManager RootManagerInstance;
         private string __ButtonText;
 
-        internal ASelection(ref RootManager _RootManagerInstance, IReadOnlyList<object> _SourceList, string _ButtonText)
+        internal AdapterSelection(ref RootManager _RootManagerInstance, IReadOnlyList<object> _SourceList, string _ButtonText)
         {
             __ButtonText = _ButtonText;
             SourceList = _SourceList;
@@ -65,11 +65,11 @@ namespace FrontEnd.Adapters
                 {
                     case Type CurrentType when SelectionType == typeof(User):
                         User CurrentUser = CurrentObject as User;
-                        ConvertedList.Add(new ASelectionItem(CurrentUser.Username, CurrentUser));
+                        ConvertedList.Add(new AdapterSelectionItem(CurrentUser.Username, CurrentUser));
                         break;
                     case Type CurrentType when SelectionType == typeof(Building):
                         Building CurrentBuilding = CurrentObject as Building;
-                        ConvertedList.Add(new ASelectionItem(CurrentBuilding.Name, CurrentBuilding));
+                        ConvertedList.Add(new AdapterSelectionItem(CurrentBuilding.Name, CurrentBuilding));
                         break;
                 }
 
@@ -77,7 +77,7 @@ namespace FrontEnd.Adapters
 
         }
 
-        internal IReadOnlyList<ASelectionItem> GetAList()
+        internal IReadOnlyList<AdapterSelectionItem> GetAList()
         {
             RefreshConvertedList();
             return ConvertedList.AsReadOnly();

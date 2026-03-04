@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    internal partial class AddNewUser
+    internal partial class UserInfo
     {
         /// <summary> 
         /// Required designer variable.
@@ -33,6 +33,7 @@
             btnCancel = new Button();
             lblUserName = new Label();
             txtUserNameInput = new TextBox();
+            lblTitle = new Label();
             SuspendLayout();
             // 
             // btnConfirm
@@ -44,7 +45,7 @@
             btnConfirm.TabIndex = 1;
             btnConfirm.Text = "Confirm";
             btnConfirm.UseVisualStyleBackColor = true;
-            btnConfirm.Click += btnConfirmAdd_Click;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
@@ -55,12 +56,12 @@
             btnCancel.TabIndex = 2;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancelAdd_Click;
+            btnCancel.Click += btnCancel_Click;
             // 
             // lblUserName
             // 
             lblUserName.AutoSize = true;
-            lblUserName.Location = new Point(22, 46);
+            lblUserName.Location = new Point(27, 58);
             lblUserName.Name = "lblUserName";
             lblUserName.Size = new Size(137, 32);
             lblUserName.TabIndex = 3;
@@ -68,24 +69,34 @@
             // 
             // txtUserNameInput
             // 
-            txtUserNameInput.Location = new Point(175, 43);
+            txtUserNameInput.Location = new Point(180, 55);
             txtUserNameInput.Name = "txtUserNameInput";
             txtUserNameInput.Size = new Size(243, 39);
             txtUserNameInput.TabIndex = 4;
             // 
-            // AddNewUser
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Location = new Point(142, 10);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(122, 32);
+            lblTitle.TabIndex = 5;
+            lblTitle.Text = "Form Title";
+            // 
+            // UserInfo
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
             BorderStyle = BorderStyle.Fixed3D;
+            Controls.Add(lblTitle);
             Controls.Add(txtUserNameInput);
             Controls.Add(lblUserName);
             Controls.Add(btnCancel);
             Controls.Add(btnConfirm);
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
-            Name = "AddNewUser";
+            Name = "UserInfo";
             Size = new Size(435, 175);
             Load += AddNewUser_Load;
             ResumeLayout(false);
@@ -97,5 +108,6 @@
         private Button btnCancel;
         private Label lblUserName;
         private TextBox txtUserNameInput;
+        private Label lblTitle;
     }
 }

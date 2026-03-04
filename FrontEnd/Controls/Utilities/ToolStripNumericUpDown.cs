@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.Design;
 
-namespace FrontEnd.Utilities
+namespace FrontEnd.Controls.Utilities
 {
     [ToolStripItemDesignerAvailability(ToolStripItemDesignerAvailability.ToolStrip)]
     public class ToolStripNumericUpDown : ToolStripControlHost
@@ -18,7 +18,7 @@ namespace FrontEnd.Utilities
         {
             get
             {
-                return this.Control as NumericUpDown;
+                return Control as NumericUpDown;
             }
         }
 
@@ -46,7 +46,7 @@ namespace FrontEnd.Utilities
             base.OnSubscribeControlEvents(CurrentControl);
 
             // Add the event.
-            this.NumericUpDownControl.ValueChanged += NumericUpDown_ValueChanged;
+            NumericUpDownControl.ValueChanged += NumericUpDown_ValueChanged;
         }
 
         protected override void OnUnsubscribeControlEvents(Control CurrentControl)
@@ -55,7 +55,7 @@ namespace FrontEnd.Utilities
             base.OnUnsubscribeControlEvents(CurrentControl);
 
             // Remove the event.
-            this.NumericUpDownControl.ValueChanged -= NumericUpDown_ValueChanged;
+            NumericUpDownControl.ValueChanged -= NumericUpDown_ValueChanged;
         }
 
         private void NumericUpDown_ValueChanged(object sender, EventArgs e)

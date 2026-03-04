@@ -33,6 +33,7 @@
             btnDelete = new Button();
             btnSelect = new Button();
             lblSelectionTitle = new Label();
+            btnModify = new Button();
             SuspendLayout();
             // 
             // flpSelectionList
@@ -56,7 +57,7 @@
             btnAdd.Margin = new Padding(6);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(220, 49);
-            btnAdd.TabIndex = 1;
+            btnAdd.TabIndex = 3;
             btnAdd.Text = "Add Button";
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += buttonAdd_Click;
@@ -67,14 +68,14 @@
             btnDelete.Margin = new Padding(6);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(224, 49);
-            btnDelete.TabIndex = 2;
+            btnDelete.TabIndex = 4;
             btnDelete.Text = "Delete Button";
             btnDelete.UseVisualStyleBackColor = true;
             btnDelete.Click += buttonDelete_Click;
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(144, 514);
+            btnSelect.Location = new Point(31, 514);
             btnSelect.Margin = new Padding(6);
             btnSelect.Name = "btnSelect";
             btnSelect.Size = new Size(214, 49);
@@ -92,11 +93,23 @@
             lblSelectionTitle.TabIndex = 3;
             lblSelectionTitle.Text = "Selection Title";
             // 
+            // btnModify
+            // 
+            btnModify.Location = new Point(257, 514);
+            btnModify.Margin = new Padding(6);
+            btnModify.Name = "btnModify";
+            btnModify.Size = new Size(224, 49);
+            btnModify.TabIndex = 2;
+            btnModify.Text = "Modify Button";
+            btnModify.UseVisualStyleBackColor = true;
+            btnModify.Click += btnModify_Click;
+            // 
             // Selection
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
+            Controls.Add(btnModify);
             Controls.Add(lblSelectionTitle);
             Controls.Add(btnDelete);
             Controls.Add(btnSelect);
@@ -117,5 +130,6 @@
         private Button btnDelete;
         private Button btnSelect;
         private Label lblSelectionTitle;
+        private Button btnModify;
     }
 }

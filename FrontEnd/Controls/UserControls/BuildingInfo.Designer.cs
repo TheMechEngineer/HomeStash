@@ -1,6 +1,6 @@
 ﻿namespace FrontEnd.UserControls
 {
-    internal partial class AddNewBuilding
+    internal partial class BuildingInfo
     {
         /// <summary> 
         /// Required designer variable.
@@ -37,6 +37,7 @@
             lblBuildingWidth = new Label();
             txtHeightInput = new TextBox();
             lblBuildingHeight = new Label();
+            lblTitle = new Label();
             SuspendLayout();
             // 
             // btnConfirm
@@ -48,7 +49,7 @@
             btnConfirm.TabIndex = 1;
             btnConfirm.Text = "Confirm";
             btnConfirm.UseVisualStyleBackColor = true;
-            btnConfirm.Click += btnConfirmAdd_Click;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
@@ -59,12 +60,12 @@
             btnCancel.TabIndex = 2;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancelAdd_Click;
+            btnCancel.Click += btnCancel_Click;
             // 
             // lblBuildingName
             // 
             lblBuildingName.AutoSize = true;
-            lblBuildingName.Location = new Point(22, 46);
+            lblBuildingName.Location = new Point(22, 72);
             lblBuildingName.Name = "lblBuildingName";
             lblBuildingName.Size = new Size(178, 32);
             lblBuildingName.TabIndex = 3;
@@ -72,14 +73,14 @@
             // 
             // txtNameInput
             // 
-            txtNameInput.Location = new Point(206, 43);
+            txtNameInput.Location = new Point(206, 69);
             txtNameInput.Name = "txtNameInput";
             txtNameInput.Size = new Size(243, 39);
             txtNameInput.TabIndex = 4;
             // 
             // txtWidthInput
             // 
-            txtWidthInput.Location = new Point(206, 113);
+            txtWidthInput.Location = new Point(206, 139);
             txtWidthInput.Name = "txtWidthInput";
             txtWidthInput.Size = new Size(243, 39);
             txtWidthInput.TabIndex = 6;
@@ -87,7 +88,7 @@
             // lblBuildingWidth
             // 
             lblBuildingWidth.AutoSize = true;
-            lblBuildingWidth.Location = new Point(22, 116);
+            lblBuildingWidth.Location = new Point(22, 142);
             lblBuildingWidth.Name = "lblBuildingWidth";
             lblBuildingWidth.Size = new Size(178, 32);
             lblBuildingWidth.TabIndex = 5;
@@ -95,7 +96,7 @@
             // 
             // txtHeightInput
             // 
-            txtHeightInput.Location = new Point(206, 187);
+            txtHeightInput.Location = new Point(206, 213);
             txtHeightInput.Name = "txtHeightInput";
             txtHeightInput.Size = new Size(243, 39);
             txtHeightInput.TabIndex = 8;
@@ -103,18 +104,28 @@
             // lblBuildingHeight
             // 
             lblBuildingHeight.AutoSize = true;
-            lblBuildingHeight.Location = new Point(22, 190);
+            lblBuildingHeight.Location = new Point(22, 216);
             lblBuildingHeight.Name = "lblBuildingHeight";
             lblBuildingHeight.Size = new Size(186, 32);
             lblBuildingHeight.TabIndex = 7;
             lblBuildingHeight.Text = "Building Height:";
             // 
-            // AddNewBuilding
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Location = new Point(169, 18);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(122, 32);
+            lblTitle.TabIndex = 9;
+            lblTitle.Text = "Form Title";
+            // 
+            // BuildingInfo
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
             BorderStyle = BorderStyle.Fixed3D;
+            Controls.Add(lblTitle);
             Controls.Add(txtHeightInput);
             Controls.Add(lblBuildingHeight);
             Controls.Add(txtWidthInput);
@@ -125,7 +136,7 @@
             Controls.Add(btnConfirm);
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
-            Name = "AddNewBuilding";
+            Name = "BuildingInfo";
             Size = new Size(475, 349);
             Load += AddNewBuilding_Load;
             ResumeLayout(false);
@@ -141,5 +152,6 @@
         private Label lblBuildingWidth;
         private TextBox txtHeightInput;
         private Label lblBuildingHeight;
+        private Label lblTitle;
     }
 }

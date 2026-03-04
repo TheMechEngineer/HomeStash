@@ -1,4 +1,6 @@
-﻿namespace FrontEnd.UserControls
+﻿using FrontEnd.Controls.Utilities;
+
+namespace FrontEnd.UserControls
 {
     internal partial class TopDownBuildingView
     {
@@ -40,9 +42,9 @@
             tsrTopDown = new ToolStrip();
             tsbtnFitToScreen = new ToolStripButton();
             toolStripLabel1 = new ToolStripLabel();
-            tsnudHGridCount = new FrontEnd.Utilities.ToolStripNumericUpDown();
+            tsnudHGridCount = new FrontEnd.Controls.Utilities.ToolStripNumericUpDown();
             toolStripLabel2 = new ToolStripLabel();
-            tsnudVGridCount = new FrontEnd.Utilities.ToolStripNumericUpDown();
+            tsnudVGridCount = new FrontEnd.Controls.Utilities.ToolStripNumericUpDown();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
             splTopView.SuspendLayout();
@@ -223,8 +225,8 @@
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton tsbtnAddRoom;
         private ToolStrip tsrTopDown;
-        private Utilities.ToolStripNumericUpDown tsnudHGridCount;
-        private Utilities.ToolStripNumericUpDown tsnudVGridCount;
+        private ToolStripNumericUpDown tsnudHGridCount;
+        private ToolStripNumericUpDown tsnudVGridCount;
         private ToolStripLabel toolStripLabel1;
         private ToolStripLabel toolStripLabel2;
         private ToolStripButton tsbtnFitToScreen;

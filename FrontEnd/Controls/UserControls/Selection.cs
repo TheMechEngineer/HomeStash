@@ -18,18 +18,19 @@ namespace FrontEnd.UserControls
 {
     internal partial class Selection : UserControl
     {
-        internal event Action<Selection, Type, object>? ChooseSelection;
-        internal event Action<Selection, Type>? AddNewSelection;
-        internal event Action<Type, object>? DeleteSelection;
+        internal event Action<Selection, Type, object>? SelectClicked;
+        internal event Action<Selection, Type>? AddClicked;
+        internal event Action<Selection, Type, object>? ModifyClicked;
+        internal event Action<Type, object>? DeleteClicked;
 
-        private ASelection SelectionAdapter;
+        private AdapterSelection SelectionAdapter;
         private int InitialFLPClientWidth;
 
         private Color UnselectedLabelColor = Color.White;
         private Color SelectedLabelColor = Color.Beige;
         private Label? SelectedLabel;
 
-        internal Selection(ASelection _SelectionAdapter)
+        internal Selection(AdapterSelection _SelectionAdapter)
         {
             InitializeComponent();
 
@@ -56,13 +57,16 @@ namespace FrontEnd.UserControls
             SelectionAdapter.SourceUpdated -= PopulateSelectionList;
             this.HandleDestroyed -= UnWire;
         }
-        private void SetDisplayText() {
+        private void SetDisplayText()
+        {
             string ControlText = SelectionAdapter.ButtonText;
 
             lblSelectionTitle.Text = ControlText + " Selection Menu";
+            btnSelect.Text = "Select " + ControlText;
+            btnModify.Text = "Modify " + ControlText;
             btnAdd.Text = "Add " + ControlText;
             btnDelete.Text = "Delete " + ControlText;
-            btnSelect.Text = "Select " + ControlText;
+
         }
         private void PopulateSelectionList()
         {
@@ -70,7 +74,7 @@ namespace FrontEnd.UserControls
 
             flpSelectionList.Controls.Clear();
 
-            foreach (ASelectionItem CurrentSelection in SelectionAdapter.GetAList())
+            foreach (AdapterSelectionItem CurrentSelection in SelectionAdapter.GetAList())
             {
                 DisplayName = CurrentSelection.DisplayText;
 
@@ -101,12 +105,20 @@ namespace FrontEnd.UserControls
         {
             if (SelectedLabel != null)
             {
-                ChooseSelection?.Invoke(this, SelectionAdapter.SelectionType, SelectedLabel.Tag);
+                SelectClicked?.Invoke(this, SelectionAdapter.SelectionType, SelectedLabel.Tag);
+            }
+        }
+
+        private void btnModify_Click(object sender, EventArgs e)
+        {
+            if (SelectedLabel != null)
+            {
+                ModifyClicked?.Invoke(this, SelectionAdapter.SelectionType, SelectedLabel.Tag);
             }
         }
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            AddNewSelection?.Invoke(this, SelectionAdapter.SelectionType);
+            AddClicked?.Invoke(this, SelectionAdapter.SelectionType);
         }
         private void buttonDelete_Click(object sender, EventArgs e)
         {
@@ -116,7 +128,7 @@ namespace FrontEnd.UserControls
 
                 if (MessageBox.Show(MessagePrompt, "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    DeleteSelection?.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
+                    DeleteClicked?.Invoke(SelectionAdapter.SelectionType, SelectedLabel.Tag);
                 }
                 else
                 {
@@ -148,5 +160,7 @@ namespace FrontEnd.UserControls
                 //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
             }
         }
+
+
     }
 }

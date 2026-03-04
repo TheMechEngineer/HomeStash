@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrontEnd.Utilities
+namespace FrontEnd.Controls.Utilities
 {
     // Source - https://stackoverflow.com/a/32402532
     // Posted by Reza Aghaei, modified by community. See post 'Timeline' for change history
@@ -25,13 +25,13 @@ namespace FrontEnd.Utilities
         {
             get
             {
-                return this.opacity;
+                return opacity;
             }
             set
             {
                 if (value < 0 || value > 100)
                     throw new ArgumentException("value must be between 0 and 100");
-                this.opacity = value;
+                opacity = value;
             }
         }
         protected override CreateParams CreateParams
@@ -45,9 +45,9 @@ namespace FrontEnd.Utilities
         }
         protected override void OnPaint(PaintEventArgs e)
         {
-            using (var brush = new SolidBrush(Color.FromArgb(this.opacity * 255 / 100, this.BackColor)))
+            using (var brush = new SolidBrush(Color.FromArgb(opacity * 255 / 100, BackColor)))
             {
-                e.Graphics.FillRectangle(brush, this.ClientRectangle);
+                e.Graphics.FillRectangle(brush, ClientRectangle);
             }
             base.OnPaint(e);
         }
