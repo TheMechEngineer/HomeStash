@@ -13,7 +13,7 @@ namespace BackEnd.ModelClasses
 {
     internal class Storage : IStorage
     {
-        public event Action? StoredItemsChanged;
+        internal event Action? StoredItemsChanged;
 
         private List<IStored> __StoredItems = new List<IStored>();
         public IReadOnlyList<IStored> StoredItems

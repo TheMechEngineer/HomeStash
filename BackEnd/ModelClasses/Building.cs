@@ -1,4 +1,5 @@
-﻿using BackEnd.ModelInterfaces;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelInterfaces;
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,12 @@ namespace BackEnd.ModelClasses
     public class Building : IStorageHolder
     {
         public event Action? RoomListChanged;
+
+        public event Action? StoredItemsChanged
+        {
+            add { UnsortedItems.StoredItemsChanged += value; }
+            remove { UnsortedItems.StoredItemsChanged -= value; }
+        }
 
         public string Name { get; private set; }
         public float Width { get; private set; }
@@ -327,20 +334,18 @@ namespace BackEnd.ModelClasses
             return SystemValid;
         }
 
-        public int TotalItemCount()
+        public bool TryAddIstored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string _ErrorMessage)
         {
-            return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
-        }
+            _ErrorMessage = null;
 
-        public double TotalItemValue()
-        {
-            return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
-        }
+            if (!UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage))
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+                return false;
+            }
 
-        //public void AddItem(IStored _ItemToAdd)
-        //{
-        //    UnsortedItems.AddItem(_ItemToAdd);
-        //}
+            return true;
+        }
 
         //public void RemoveItem(IStored _ItemToRemove)
         //{
@@ -351,5 +356,15 @@ namespace BackEnd.ModelClasses
         //{
         //    UnsortedItems.MoveItem(_ItemToMove, _Destination);
         //}
+
+        public int TotalItemCount()
+        {
+            return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
+        }
+
+        public double TotalItemValue()
+        {
+            return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
+        }
     }
 }

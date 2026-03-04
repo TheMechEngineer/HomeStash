@@ -1,4 +1,5 @@
-﻿using BackEnd.ModelInterfaces;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelInterfaces;
 
 using System;
 using System.Collections.Generic;
@@ -148,10 +149,19 @@ namespace BackEnd.ModelClasses
         {
             return RoomStorage.TotalItemValue();
         }
-        //public void AddItem(IStored _ItemToAdd)
-        //{
-        //    RoomStorage.AddItem(_ItemToAdd);
-        //}
+
+        public bool TryAddIstored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!RoomStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage))
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+                return false;
+            }
+
+            return true;
+        }
 
         //public void RemoveItem(IStored _ItemToRemove)
         //{
