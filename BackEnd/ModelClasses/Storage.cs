@@ -5,6 +5,7 @@ using BackEnd.ModelInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,56 +22,119 @@ namespace BackEnd.ModelClasses
             { return __StoredItems.AsReadOnly(); }
         }
 
-        internal void TryAddIStored(StoredItemType _ItemType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
+        //I dont want this to be public, but to satisfy the compiler interface rules it must be. However since the class itself and inteface are internal, the front end wont be able to see the method anyways.
+        public bool TryAddIStored(StoredItemType _IStoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
-            bool TryAddSuccess = true;
+            bool AddIStoredSuccess = true;
 
             //No System Validation For Adding Stored Items At This Point
 
-            IStored? NewStoredItem;
+            IStored? StoredObject = null;
 
-            switch (_ItemType)
+            switch (_IStoredType)
             {
                 case StoredItemType.Item:
-                    TryAddSuccess = Item.TryCreate(_StoredName, _Description, _Value, _Quantity,);
+                    Item? _NewStoredItem;
+                    AddIStoredSuccess = Item.TryCreate(_StoredName, _Description, _Value, _Quantity, out _NewStoredItem, out _ErrorMessage);
+                    StoredObject = _NewStoredItem;
                     break;
                 case StoredItemType.Container:
-                    TryAddSuccess = Container.TryCreate(_StoredName, _Description, _Value, _Quantity,);
+                    Container? _NewStoredContainer;
+                    AddIStoredSuccess = Container.TryCreate(_StoredName, _Description, _Value, _Quantity, out _NewStoredContainer, out _ErrorMessage);
+                    StoredObject = _NewStoredContainer;
                     break;
             }
 
-
-
-
-
-
-
-            return TryAddSuccess;
-
-
-
-            __StoredItems.Add(_ItemToAdd);
-            //_ItemToAdd.ImmediateParent = this;
-
+            if (AddIStoredSuccess)
+            {
+                __StoredItems.Add(StoredObject);
+                StoredItemsChanged?.Invoke();
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+            return AddIStoredSuccess;
         }
 
-        //NEED TO UPDATE THE ROOM OF THE MOVED ITEM TOO
-
-        //MAYBE I NEED TO MAKE A REMOVE ITEM WHICH PUTS IT IN THE UNSORTED AND DELETE ITEM WHICH ACTUALLY DELTES IT
-        public void TryRemoveIStored(IStored _ItemToRemove)
+        public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
         {
-            __StoredItems.Remove(_ItemToRemove);
-            //NEED TO UPDATE THE ROOM OF THE MOVED ITEM TOO
-            //If the item is deleted then this isnt needed
-            //and if its moving to the unsorted items it isnt null
-            //_ItemToRemove.ImmediateParent = null;
+            _ErrorMessage = null;
+            bool ModifyIStoredSuccess = true;
+
+            if (_IStoredToModify.Name != _NewStoredName || _IStoredToModify.Description != _NewDescription || _IStoredToModify.Value != _NewValue || _IStoredToModify.Quantity != _NewQuantity)
+            {
+                //No System Validation For Adding Stored Items At This Point
+
+                Type SelectionType = _IStoredToModify.GetType();
+
+                switch (SelectionType)
+                {
+                    case Type CurrentType when SelectionType == typeof(Item):
+                        ModifyIStoredSuccess = (_IStoredToModify as Item).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+                        break;
+                    case Type CurrentType when SelectionType == typeof(Container):
+                        ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+                        break;
+                }
+
+            }
+            else
+            {
+                ModifyIStoredSuccess = false;
+                _ErrorMessage += $"No Item Fields Have Been Modified\n";
+            }
+
+            if (ModifyIStoredSuccess)
+            {
+                StoredItemsChanged?.Invoke();
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return ModifyIStoredSuccess;
+
         }
-        public void TryMoveIStored(IStored _ItemToMove, IStorage _Destination)
+
+        public bool TryRemoveIStored(IStored _IStoredToRemove, out string? _ErrorMessage)
         {
-            _Destination.AddItem(_ItemToMove);
-            this.RemoveItem(_ItemToMove);
+            _ErrorMessage = null;
+
+            if (!__StoredItems.Contains(_IStoredToRemove))
+            {
+                _ErrorMessage = "Item To Be Removed Must Exist In The Storage List";
+                return false;
+            }
+
+            __StoredItems.Remove(_IStoredToRemove);
+            StoredItemsChanged?.Invoke();
+            return true;
         }
+
+        public bool TryMoveIStored(IStored _IStoredToMove, IStorage _Destination, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!this.__StoredItems.Contains(_IStoredToMove))
+            {
+                _ErrorMessage = "Item To Be Moved Must Exist In The Storage List";
+                return false;
+            }
+
+            Storage StorageDestination = _Destination as Storage;
+
+            StorageDestination.__StoredItems.Add(_IStoredToMove);
+            StorageDestination.StoredItemsChanged?.Invoke();
+
+            this.__StoredItems.Remove(_IStoredToMove);
+            this.StoredItemsChanged?.Invoke();
+
+            return true;
+        }
+
         public int TotalItemCount()
         {
             return __StoredItems.Sum(CurrentItem => CurrentItem.Quantity);

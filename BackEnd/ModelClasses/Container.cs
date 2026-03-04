@@ -22,11 +22,11 @@ namespace BackEnd.ModelClasses
             { return ContainerStorage.StoredItems; }
         }
 
-        private Container(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent)
-            : base(_ItemName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent)
+        private Container(string _ItemName, string _Description, double _Value, int _Quantity)
+            : base(_ItemName, _Description, _Value, _Quantity)
         {}
 
-        internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent, out Container? _CreatedContainer, out string? _ErrorMessage)
+        internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, out Container? _CreatedContainer, out string? _ErrorMessage)
         {
             _CreatedContainer = null;
             _ErrorMessage = null;
@@ -49,7 +49,7 @@ namespace BackEnd.ModelClasses
 
             if (CreationSuccess)
             {
-                _CreatedContainer = new Container(_ContainerName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent);
+                _CreatedContainer = new Container(_ContainerName, _Description, _Value, _Quantity);
             }
             else
             {
@@ -59,9 +59,9 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, IStorage _NewImmediateParent, Room? _NewRoomParent, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
+        internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
         {
-            return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, _NewImmediateParent, _NewRoomParent, out _ErrorMessage);
+            return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
 
         public int TotalItemCount()
@@ -72,19 +72,19 @@ namespace BackEnd.ModelClasses
         {
             return ContainerStorage.TotalItemValue();
         }
-        public void AddItem(IStored _ItemToAdd)
-        {
-            ContainerStorage.AddItem(_ItemToAdd);
-        }
+        //public void AddItem(IStored _ItemToAdd)
+        //{
+        //    ContainerStorage.AddItem(_ItemToAdd);
+        //}
 
-        public void RemoveItem(IStored _ItemToRemove)
-        {
-            ContainerStorage.RemoveItem(_ItemToRemove);
-        }
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        {
-            ContainerStorage.MoveItem(_ItemToMove, _Destination);
-        }
+        //public void RemoveItem(IStored _ItemToRemove)
+        //{
+        //    ContainerStorage.RemoveItem(_ItemToRemove);
+        //}
+        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+        //{
+        //    ContainerStorage.MoveItem(_ItemToMove, _Destination);
+        //}
 
     }
 }

@@ -148,18 +148,18 @@ namespace BackEnd.ModelClasses
         {
             return RoomStorage.TotalItemValue();
         }
-        public void AddItem(IStored _ItemToAdd)
-        {
-            RoomStorage.AddItem(_ItemToAdd);
-        }
+        //public void AddItem(IStored _ItemToAdd)
+        //{
+        //    RoomStorage.AddItem(_ItemToAdd);
+        //}
 
-        public void RemoveItem(IStored _ItemToRemove)
-        {
-            RoomStorage.RemoveItem(_ItemToRemove);
-        }
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        {
-            RoomStorage.MoveItem(_ItemToMove, _Destination);
-        }
+        //public void RemoveItem(IStored _ItemToRemove)
+        //{
+        //    RoomStorage.RemoveItem(_ItemToRemove);
+        //}
+        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+        //{
+        //    RoomStorage.MoveItem(_ItemToMove, _Destination);
+        //}
     }
 }

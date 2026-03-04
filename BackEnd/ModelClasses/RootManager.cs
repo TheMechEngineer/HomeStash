@@ -102,19 +102,6 @@ namespace BackEnd.ModelClasses
             return ModifyUserSuccess;
         }
 
-        private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
-        {
-            bool SystemValid = true;
-
-            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
-            {
-                _ErrorMessage += $"{_Username} Already Exists. No Duplicate Usernames.\n";
-                SystemValid = false;
-            }
-
-            return SystemValid;
-        }
-
         public bool TryRemoveUser(User _UserToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -148,6 +135,19 @@ namespace BackEnd.ModelClasses
             __ActiveUser = _NewActiveUser;
             ActiveUserChanged?.Invoke();
             return true;
+        }
+
+        private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
+            {
+                _ErrorMessage += $"{_Username} Already Exists. No Duplicate Usernames.\n";
+                SystemValid = false;
+            }
+
+            return SystemValid;
         }
     }
 }

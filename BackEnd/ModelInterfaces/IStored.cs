@@ -18,7 +18,5 @@ namespace BackEnd.ModelInterfaces
         public string Description { get; }
         public double Value { get; }
         public int Quantity { get; }
-        public IStorageHolder ImmediateParent { get; }
-        public Room? RoomParent { get; }
     }
 }

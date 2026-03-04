@@ -10,7 +10,5 @@ namespace BackEnd.ModelInterfaces
     {
         public IStorage Storage { get; }
         public IReadOnlyList<IStored> StoredItems { get; }
-
     }
-
 }

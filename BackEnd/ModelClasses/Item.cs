@@ -14,20 +14,16 @@ namespace BackEnd.ModelClasses
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
-        public IStorageHolder ImmediateParent { get; private set; }
-        public Room? RoomParent { get; private set; }
 
-        protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent)
+        protected Item(string _ItemName, string _Description, double _Value, int _Quantity)
         {
             Name = _ItemName;
             Description = _Description;
             Value = _Value;
             Quantity = _Quantity;
-            ImmediateParent = _ImmediateParent;
-            RoomParent = _RoomParent;
         }
 
-        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent, out Item? _CreatedItem, out string? _ErrorMessage)
+        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, out Item? _CreatedItem, out string? _ErrorMessage)
         {
             _CreatedItem = null;
             _ErrorMessage = null;
@@ -50,7 +46,7 @@ namespace BackEnd.ModelClasses
 
             if (CreationSuccess)
             {
-                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent);
+                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity);
             }
             else
             {
@@ -60,12 +56,12 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, IStorage _NewImmediateParent, Room? _NewRoomParent, out string? _ErrorMessage)
+        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewItemName || this.Description != _NewDescription || this.Value != _NewValue || this.Quantity != _NewQuantity || this.ImmediateParent != _NewImmediateParent || this.RoomParent != _NewRoomParent)
+            if (this.Name != _NewItemName || this.Description != _NewDescription || this.Value != _NewValue || this.Quantity != _NewQuantity)
             {
                 if (this.Name != _NewItemName)
                 {
@@ -103,8 +99,6 @@ namespace BackEnd.ModelClasses
                 this.Description = _NewDescription;
                 this.Value = _NewValue;
                 this.Quantity = _NewQuantity;
-                this.ImmediateParent = _NewImmediateParent;
-                this.RoomParent = _NewRoomParent;
             }
             else
             {

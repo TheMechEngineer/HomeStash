@@ -227,6 +227,21 @@ namespace BackEnd.ModelClasses
             return ModifyRoomSuccess;
         }
 
+        public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!__RoomList.Contains(_RoomToRemove))
+            {
+                _ErrorMessage = "Room To Be Removed Must Exist In The Room List";
+                return false;
+            }
+
+            __RoomList.Remove(_RoomToRemove);
+            RoomListChanged?.Invoke();
+            return true;
+        }
+
         private bool RoomNameSystemValidation(string _RoomName, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
@@ -312,21 +327,6 @@ namespace BackEnd.ModelClasses
             return SystemValid;
         }
 
-        public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
-
-            if (!__RoomList.Contains(_RoomToRemove))
-            {
-                _ErrorMessage = "Room To Be Removed Must Exist In The Room List";
-                return false;
-            }
-
-            __RoomList.Remove(_RoomToRemove);
-            RoomListChanged?.Invoke();
-            return true;
-        }
-
         public int TotalItemCount()
         {
             return UnsortedItems.TotalItemCount() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemCount());
@@ -337,19 +337,19 @@ namespace BackEnd.ModelClasses
             return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
         }
 
-        public void AddItem(IStored _ItemToAdd)
-        {
-            UnsortedItems.AddItem(_ItemToAdd);
-        }
+        //public void AddItem(IStored _ItemToAdd)
+        //{
+        //    UnsortedItems.AddItem(_ItemToAdd);
+        //}
 
-        public void RemoveItem(IStored _ItemToRemove)
-        {
-            UnsortedItems.RemoveItem(_ItemToRemove);
-        }
+        //public void RemoveItem(IStored _ItemToRemove)
+        //{
+        //    UnsortedItems.RemoveItem(_ItemToRemove);
+        //}
 
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        {
-            UnsortedItems.MoveItem(_ItemToMove, _Destination);
-        }
+        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+        //{
+        //    UnsortedItems.MoveItem(_ItemToMove, _Destination);
+        //}
     }
 }

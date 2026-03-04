@@ -175,19 +175,6 @@ namespace BackEnd.ModelClasses
             return ModifyBuildingSuccess;
         }
 
-        private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
-        {
-            bool SystemValid = true;
-
-            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
-            {
-                _ErrorMessage += $"{_BuildingName} Already Exists. No Duplicate Building Names.\n";
-                SystemValid = false;
-            }
-
-            return SystemValid;
-        }
-
         public bool TryRemoveBuilding(Building _BuildingToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -226,6 +213,19 @@ namespace BackEnd.ModelClasses
         public void CopyBuilding(Building _BuildingToCopy)
         {
             //stub
+        }
+
+        private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
+            {
+                _ErrorMessage += $"{_BuildingName} Already Exists. No Duplicate Building Names.\n";
+                SystemValid = false;
+            }
+
+            return SystemValid;
         }
     }
 }
