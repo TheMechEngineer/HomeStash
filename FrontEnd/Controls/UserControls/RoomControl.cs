@@ -43,7 +43,7 @@ namespace FrontEnd.UserControls
         private void InitializeVisuals()
         {
             this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
-            this.lblRoomInfo.Text = $"{CurrentRoom.Name}\n{CurrentRoom.TotalItemValue():C2}";
+            this.lblRoomInfo.Text = $"{CurrentRoom.Name}\nItem Count: {CurrentRoom.TotalItemCount()}\nItem Value: {CurrentRoom.TotalItemValue():C2}";
 
             ScaleRoom();
         }

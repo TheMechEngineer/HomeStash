@@ -45,11 +45,11 @@ namespace BackEnd.DataContinuity
             ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room3",5,5,12,7,Color.Teal.ToArgb(), out _);
             ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room4",12,1,7.5f,1,Color.GreenYellow.ToArgb(), out _);
 
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddIstored(StoredItemType.Item, "Item1", "Test Description 1", 1, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item1", "Test Description 1", 1, 2, out _);
 
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIstored(StoredItemType.Item, "Item2", "Test Description 2", 0, 2, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIstored(StoredItemType.Item, "Item3", "Test Description 3", 1, 1, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIstored(StoredItemType.Item, "Item4", "Test Description 4", 5, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item2", "Test Description 2", 0, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item3", "Test Description 3", 1, 1, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item4", "Test Description 4", 5, 2, out _);
 
             return ReturnItem;
         }
