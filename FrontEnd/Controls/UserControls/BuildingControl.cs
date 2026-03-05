@@ -66,6 +66,9 @@ namespace FrontEnd.UserControls
             InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
             InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
+            this.Name = CurrentBuilding.Name;
+            this.Tag = CurrentBuilding;
+
             InitializeVisuals();
             Wire();
         }
@@ -186,8 +189,6 @@ namespace FrontEnd.UserControls
             {
                 RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
 
-                DisplayedRoom.Name = "DisplayedRoom" + CurrentRoom.Name;
-                DisplayedRoom.Tag = CurrentRoom;
                 DisplayedRoom.RoomClicked += Room_Click;
 
                 int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));

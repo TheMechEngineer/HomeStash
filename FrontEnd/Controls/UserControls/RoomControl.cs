@@ -36,6 +36,9 @@ namespace FrontEnd.UserControls
             InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentRoom.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
             InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
 
+            this.Name = CurrentRoom.Name;
+            this.Tag = CurrentRoom;
+
             InitializeVisuals();
             Wire();
         }
