@@ -4,6 +4,7 @@ using BackEnd.ModelInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -100,6 +101,11 @@ namespace BackEnd.ModelClasses
                     {
                         ModifySuccess = false;
                     }
+
+                    if (!SizeSystemValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
                 }
             }
             else
@@ -143,6 +149,26 @@ namespace BackEnd.ModelClasses
             {
                 _ErrorMessage += "Self Validation Error: Width And Height Dimensions Must Be Positive Numbers\n";
                 BuildingSizeValid = false;
+            }
+
+            return BuildingSizeValid;
+        }
+
+        private bool SizeSystemValidation(float _Width, float _Height, ref string? _ErrorMessage)
+        {
+            bool BuildingSizeValid = true;
+
+            foreach (Room CurrentRoom in this.__RoomList)
+            {
+                float CurrentRoomRightLocation = CurrentRoom.CenterX + CurrentRoom.Width / 2;
+                float CurrentRoomBottomLocation = CurrentRoom.CenterY + CurrentRoom.Height / 2;
+
+                if (_Width < CurrentRoomRightLocation || _Height < CurrentRoomBottomLocation)
+                {
+                    _ErrorMessage += "System Validation Error: Width And Height Dimensions Must Exceed All Room Boundaries\n";
+                    BuildingSizeValid = false;
+                    break;
+                }
             }
 
             return BuildingSizeValid;
