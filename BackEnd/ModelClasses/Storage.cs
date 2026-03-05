@@ -23,6 +23,7 @@ namespace BackEnd.ModelClasses
         }
 
         //I dont want this to be public, but to satisfy the compiler interface rules it must be. However since the class itself and inteface are internal, the front end wont be able to see the method anyways.
+        //From what I understand, because the interface method signature is private, the front end wont be able to access this even though its public
         public bool TryAddIStored(StoredItemType _IStoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
             _ErrorMessage = null;

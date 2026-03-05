@@ -25,11 +25,12 @@ namespace BackEnd.ModelClasses
 
         private Storage UnsortedItems = new Storage();
 
-        public IStorage Storage
+        public IStorage CurrentStorage
         {
             get
             { return UnsortedItems; }
         }
+
         public IReadOnlyList<IStored> StoredItems
         {
             get
@@ -334,28 +335,20 @@ namespace BackEnd.ModelClasses
             return SystemValid;
         }
 
-        public bool TryAddIstored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string _ErrorMessage)
+        public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
-            _ErrorMessage = null;
-
-            if (!UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage))
-            {
-                _ErrorMessage = _ErrorMessage?.TrimEnd();
-                return false;
-            }
-
-            return true;
+           return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
         }
 
-        //public void RemoveItem(IStored _ItemToRemove)
-        //{
-        //    UnsortedItems.RemoveItem(_ItemToRemove);
-        //}
+        public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
+        }
 
-        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        //{
-        //    UnsortedItems.MoveItem(_ItemToMove, _Destination);
-        //}
+        public bool TryMoveIStored(IStored _ItemToMove, IStorage _Destination, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
 
         public int TotalItemCount()
         {

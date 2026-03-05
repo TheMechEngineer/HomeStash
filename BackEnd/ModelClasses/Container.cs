@@ -1,4 +1,5 @@
-﻿using BackEnd.ModelInterfaces;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace BackEnd.ModelClasses
     public class Container : Item, IStorageHolder
     {
         private Storage ContainerStorage = new Storage();
-        public IStorage Storage
+        public IStorage CurrentStorage
         {
             get
             { return ContainerStorage; }
@@ -64,6 +65,21 @@ namespace BackEnd.ModelClasses
             return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
 
+        public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
+        {
+            return ContainerStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
+        }
+
+        public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
+        {
+            return ContainerStorage.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
+        }
+
+        public bool TryMoveIStored(IStored _ItemToMove, IStorage _Destination, out string? _ErrorMessage)
+        {
+            return ContainerStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
+
         public int TotalItemCount()
         {
             return ContainerStorage.TotalItemCount();
@@ -72,19 +88,5 @@ namespace BackEnd.ModelClasses
         {
             return ContainerStorage.TotalItemValue();
         }
-        //public void AddItem(IStored _ItemToAdd)
-        //{
-        //    ContainerStorage.AddItem(_ItemToAdd);
-        //}
-
-        //public void RemoveItem(IStored _ItemToRemove)
-        //{
-        //    ContainerStorage.RemoveItem(_ItemToRemove);
-        //}
-        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        //{
-        //    ContainerStorage.MoveItem(_ItemToMove, _Destination);
-        //}
-
     }
 }

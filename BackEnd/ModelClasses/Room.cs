@@ -11,6 +11,12 @@ namespace BackEnd.ModelClasses
 {
     public class Room : IStorageHolder
     {
+        public event Action? StoredItemsChanged
+        {
+            add { RoomStorage.StoredItemsChanged += value; }
+            remove { RoomStorage.StoredItemsChanged -= value; }
+        }
+
         public string Name { get; private set; }
         public float Width { get; private set; }
         public float Height { get; private set; }
@@ -19,8 +25,8 @@ namespace BackEnd.ModelClasses
         public int RoomColor { get; private set; }
 
         private Storage RoomStorage = new Storage();
-        
-        public IStorage Storage
+
+        public IStorage CurrentStorage
         {
             get
             { return RoomStorage; }
@@ -150,26 +156,19 @@ namespace BackEnd.ModelClasses
             return RoomStorage.TotalItemValue();
         }
 
-        public bool TryAddIstored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string _ErrorMessage)
+        public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
-            _ErrorMessage = null;
-
-            if (!RoomStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage))
-            {
-                _ErrorMessage = _ErrorMessage?.TrimEnd();
-                return false;
-            }
-
-            return true;
+            return RoomStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
         }
 
-        //public void RemoveItem(IStored _ItemToRemove)
-        //{
-        //    RoomStorage.RemoveItem(_ItemToRemove);
-        //}
-        //public void MoveItem(IStored _ItemToMove, IStorage _Destination)
-        //{
-        //    RoomStorage.MoveItem(_ItemToMove, _Destination);
-        //}
+        public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
+        {
+            return RoomStorage.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
+        }
+
+        public bool TryMoveIStored(IStored _ItemToMove, IStorage _Destination, out string? _ErrorMessage)
+        {
+            return RoomStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
     }
 }
