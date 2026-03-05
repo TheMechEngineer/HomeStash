@@ -15,7 +15,9 @@ namespace FrontEnd.UserControls
     internal partial class BuildingControl : UserControl
     {
         internal event Action? BuildingViewUpdated;
+        internal event Action? RoomListChanged;
         internal event Action<Room?>? RoomSelectionChanged;
+        internal event Action? StoredItemsChanged;
 
         private Building CurrentBuilding;
 
@@ -164,6 +166,7 @@ namespace FrontEnd.UserControls
         {
             ClearExistingRooms();
             GenerateNewRooms();
+            this.RoomListChanged?.Invoke();
         }
 
         private void ClearExistingRooms()
@@ -178,6 +181,7 @@ namespace FrontEnd.UserControls
             foreach (Control RoomToRemove in RemoveList)
             {
                 (RoomToRemove as RoomControl).RoomClicked -= Room_Click;
+                (RoomToRemove as RoomControl).StoredItemsChanged -= DisplayedRoom_StoredItemsChanged;
                 this.Controls.Remove(RoomToRemove);
                 RoomToRemove.Dispose();
             }
@@ -190,6 +194,7 @@ namespace FrontEnd.UserControls
                 RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
 
                 DisplayedRoom.RoomClicked += Room_Click;
+                DisplayedRoom.StoredItemsChanged += DisplayedRoom_StoredItemsChanged;
 
                 int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
                 int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
@@ -198,6 +203,11 @@ namespace FrontEnd.UserControls
 
                 this.Controls.Add(DisplayedRoom);
             }
+        }
+
+        private void DisplayedRoom_StoredItemsChanged()
+        {
+            this.StoredItemsChanged?.Invoke();
         }
 
         private void BuildingControl_Click(object sender, EventArgs e)

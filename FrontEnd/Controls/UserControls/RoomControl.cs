@@ -16,6 +16,12 @@ namespace FrontEnd.UserControls
     {
         internal event EventHandler? RoomClicked;
 
+        internal event Action? StoredItemsChanged
+        {
+            add { CurrentRoom.StoredItemsChanged += value; }
+            remove { CurrentRoom.StoredItemsChanged -= value; }
+        }
+
         private Room CurrentRoom;
 
         private int DefaultPixelsPerUnit;

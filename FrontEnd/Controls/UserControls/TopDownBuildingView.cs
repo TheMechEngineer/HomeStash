@@ -1,4 +1,5 @@
 ﻿using BackEnd.ModelClasses;
+using BackEnd.ModelInterfaces;
 using FrontEnd.Controls.Utilities;
 using FrontEnd.Utilities;
 using System;
@@ -52,21 +53,26 @@ namespace FrontEnd.UserControls
             this.CameraPanel.Controls.Add(CurrentBufferedBuilding);
 
             tsbtnEditRoom.Enabled = SelectedRoom != null;
+            tsbtnDeleteRoom.Enabled = SelectedRoom != null;
+            tsbtnAddItemToRoom.Enabled = SelectedRoom != null;
+            
         }
 
         private void Wire()
         {
             this.Load += TopDownBuildingView_Load;
             CurrentBufferedBuilding.RoomSelectionChanged += CurrentBufferedBuilding_RoomSelectionChanged;
+            CurrentBufferedBuilding.StoredItemsChanged += CurrentBufferedBuilding_StoredItemsChanged;
+            CurrentBufferedBuilding.RoomListChanged += CurrentBufferedBuilding_RoomListChanged;
             this.HandleDestroyed += UnWire;
         }
-
-
 
         private void UnWire(object? sender, EventArgs e)
         {
             this.Load -= TopDownBuildingView_Load;
             CurrentBufferedBuilding.RoomSelectionChanged -= CurrentBufferedBuilding_RoomSelectionChanged;
+            CurrentBufferedBuilding.StoredItemsChanged -= CurrentBufferedBuilding_StoredItemsChanged;
+            CurrentBufferedBuilding.RoomListChanged -= CurrentBufferedBuilding_RoomListChanged;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -126,6 +132,7 @@ namespace FrontEnd.UserControls
 
             splTopView.SplitterDistance = splTopView.ClientSize.Width - AddNewRoom.Width;
             splTopView.Panel2.Controls.Add(AddNewRoom);
+            AddNewRoom.BringToFront();
 
             tsrTopDown.Enabled = false;
 
@@ -151,6 +158,7 @@ namespace FrontEnd.UserControls
 
             splTopView.SplitterDistance = splTopView.ClientSize.Width - ModifyRoom.Width;
             splTopView.Panel2.Controls.Add(ModifyRoom);
+            ModifyRoom.BringToFront();
 
             tsrTopDown.Enabled = false;
 
@@ -164,12 +172,54 @@ namespace FrontEnd.UserControls
             BlockerPanel.BringToFront();
         }
 
+        private void DeleteRoom()
+        {
+            string? _ErrorMessage;
+
+            if (!CurrentBuilding.TryRemoveRoom(SelectedRoom, out _ErrorMessage))
+            {
+                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void GenerateTreeView()
+        {
+            tvBuildingInventory.Nodes.Clear();
+
+            TreeNode BuildingNode = new TreeNode(CurrentBuilding.Name);
+
+            foreach (IStored StoredObject in CurrentBuilding.StoredItems)
+            {
+                TreeNode StoredNode = new TreeNode(StoredObject.Name);
+
+                BuildingNode.Nodes.Add(StoredNode);
+            }
+
+            foreach (Room CurrentRoom in CurrentBuilding.RoomList)
+            {
+                TreeNode RoomNode = new TreeNode(CurrentRoom.Name);
+
+                foreach (IStored StoredObject in CurrentRoom.StoredItems)
+                {
+                    TreeNode StoredNode = new TreeNode(StoredObject.Name);
+
+                    RoomNode.Nodes.Add(StoredNode);
+                }
+
+                BuildingNode.Nodes.Add(RoomNode);
+            }
+
+            tvBuildingInventory.Nodes.Add(BuildingNode);
+            tvBuildingInventory.ExpandAll();
+        }
+
         private void TopDownBuildingView_Load(object sender, EventArgs e)
         {
             this.BeginInvoke(() =>
             {
                 FitBuildingToScreen();
                 CenterCameraView();
+                GenerateTreeView();
             });
         }
 
@@ -222,6 +272,16 @@ namespace FrontEnd.UserControls
         private void tsbtnAddRoom_Click(object sender, EventArgs e)
         {
             AddNewRoom();
+        }
+
+        private void tsbtnEditRoom_Click(object sender, EventArgs e)
+        {
+            ModifyRoom();
+        }
+
+        private void tsbtnDeleteRoom_Click(object sender, EventArgs e)
+        {
+            DeleteRoom();
         }
 
         private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _CurrentRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
@@ -289,11 +349,26 @@ namespace FrontEnd.UserControls
         {
             SelectedRoom = _SelectedRoom;
             tsbtnEditRoom.Enabled = SelectedRoom != null;
+            tsbtnAddItemToRoom.Enabled = SelectedRoom != null;
+            tsbtnDeleteRoom.Enabled = SelectedRoom != null;
         }
 
-        private void tsbtnEditRoom_Click(object sender, EventArgs e)
+
+
+        private void tsbtnAddItemToRoom_Click(object sender, EventArgs e)
         {
-            ModifyRoom();
+
         }
+        private void CurrentBufferedBuilding_StoredItemsChanged()
+        {
+            GenerateTreeView();
+        }
+
+        private void CurrentBufferedBuilding_RoomListChanged()
+        {
+            GenerateTreeView();
+        }
+
+
     }
 }
