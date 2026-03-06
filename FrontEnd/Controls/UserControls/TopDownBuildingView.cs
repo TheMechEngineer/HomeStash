@@ -221,28 +221,38 @@ namespace FrontEnd.UserControls
             OLVColumn ColName = new OLVColumn();
             ColName.Text = "Name";
             ColName.AspectName = "Name"; //Dont Need To Use Aspect Getter Because The Property Is The Same Name Across All Objects
-            ColName.Width = 200;
+            ColName.Width = 250;
 
             OLVColumn ColCount = new OLVColumn();
             ColCount.Text = "Count";
-            ColCount.Width = 120;
+            ColCount.Width = 130;
             ColCount.AspectGetter = delegate (object x) //Aspect Getter Is Used Becuase Properties Are Different Across Objects
             {
                 if (x is Building CurrentBuilding) { return "Total: " + CurrentBuilding.TotalItemCount().ToString(); }
                 if (x is Room CurrentRoom) { return "Subtotal: " + CurrentRoom.TotalItemCount(); }
-                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return CurrentContainer.Quantity; }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) 
+                    { 
+                    int ContainerQTY = CurrentContainer.Quantity;
+                    int ChildrenQTY = (CurrentContainer.TotalItemCount() / CurrentContainer.Quantity) - 1;
+                    return $"{ContainerQTY} ({ChildrenQTY} Children Each)";
+                    }
                 if (x is Item CurrentItem) { return CurrentItem.Quantity; }
                 return "";
             };
 
             OLVColumn ColUnitValue = new OLVColumn();
             ColUnitValue.Text = "Unit Value";
-            ColUnitValue.Width = 120;
+            ColUnitValue.Width = 200;
             ColUnitValue.AspectGetter = delegate (object x)
             {
                 if (x is Building CurrentBuilding) { return ""; }
                 if (x is Room CurrentRoom) { return ""; }
-                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return string.Format("{0:C2}", CurrentContainer.Value); }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) 
+                {
+                    double ContainerValue = CurrentContainer.Value;
+                    double ChildrenValue = (CurrentContainer.TotalItemValue() / CurrentContainer.Quantity) - CurrentContainer.Value;
+                    return $"{string.Format("{0:C2}", ContainerValue)} ({string.Format("{0:C2}", ChildrenValue)} Children Value Each)";
+                }
                 if (x is Item CurrentItem) { return string.Format("{0:C2}", CurrentItem.Value); }
                 return "";
             };
@@ -276,7 +286,7 @@ namespace FrontEnd.UserControls
             {
                 if (x is Building CurrentBuilding) { return CurrentBuilding.RoomList.Count > 0 || CurrentBuilding.StoredItems.Count > 0; }
                 if (x is Room CurrentRoom) { return CurrentRoom.StoredItems.Count > 0; }
-                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return true; } //CurrentContainer.StoredItems.Count > 0
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return CurrentContainer.StoredItems.Count > 0; }
                 if (x is Item CurrentItem) { return false; }
                 return false;
             };
