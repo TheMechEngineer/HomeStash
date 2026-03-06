@@ -34,7 +34,6 @@ namespace FrontEnd.UserControls
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TopDownBuildingView));
             splTopView = new SplitContainer();
             pnlTopViewCamera = new Panel();
-            tvBuildingInventory = new TreeView();
             ClickHoldTimer = new System.Windows.Forms.Timer(components);
             tsbtnScaleDown = new ToolStripButton();
             tsbtnScaleUp = new ToolStripButton();
@@ -42,21 +41,20 @@ namespace FrontEnd.UserControls
             toolStripSeparator1 = new ToolStripSeparator();
             tsbtnAddRoom = new ToolStripButton();
             tsrTopDown = new ToolStrip();
+            tslblBuilding = new ToolStripLabel();
             tsbtnFitToScreen = new ToolStripButton();
             toolStripLabel1 = new ToolStripLabel();
             tsnudHGridCount = new ToolStripNumericUpDown();
             toolStripLabel2 = new ToolStripLabel();
             tsnudVGridCount = new ToolStripNumericUpDown();
-            tsbtnEditRoom = new ToolStripButton();
-            toolStripSeparator2 = new ToolStripSeparator();
-            tsbtnAddItemToRoom = new ToolStripButton();
-            tsbtnDeleteRoom = new ToolStripButton();
-            tslblBuilding = new ToolStripLabel();
             tslblRoom = new ToolStripLabel();
+            tsbtnEditRoom = new ToolStripButton();
+            tsbtnDeleteRoom = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
             tslblStored = new ToolStripLabel();
+            tsbtnAddItemToRoom = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
-            splTopView.Panel2.SuspendLayout();
             splTopView.SuspendLayout();
             tsrTopDown.SuspendLayout();
             SuspendLayout();
@@ -75,9 +73,8 @@ namespace FrontEnd.UserControls
             // splTopView.Panel2
             // 
             splTopView.Panel2.BackColor = SystemColors.Window;
-            splTopView.Panel2.Controls.Add(tvBuildingInventory);
             splTopView.Size = new Size(897, 510);
-            splTopView.SplitterDistance = 666;
+            splTopView.SplitterDistance = 500;
             splTopView.SplitterWidth = 5;
             splTopView.TabIndex = 1;
             // 
@@ -88,16 +85,8 @@ namespace FrontEnd.UserControls
             pnlTopViewCamera.Dock = DockStyle.Fill;
             pnlTopViewCamera.Location = new Point(0, 0);
             pnlTopViewCamera.Name = "pnlTopViewCamera";
-            pnlTopViewCamera.Size = new Size(666, 510);
+            pnlTopViewCamera.Size = new Size(500, 510);
             pnlTopViewCamera.TabIndex = 0;
-            // 
-            // tvBuildingInventory
-            // 
-            tvBuildingInventory.Dock = DockStyle.Fill;
-            tvBuildingInventory.Location = new Point(0, 0);
-            tvBuildingInventory.Name = "tvBuildingInventory";
-            tvBuildingInventory.Size = new Size(226, 510);
-            tvBuildingInventory.TabIndex = 0;
             // 
             // ClickHoldTimer
             // 
@@ -169,6 +158,12 @@ namespace FrontEnd.UserControls
             tsrTopDown.TabIndex = 0;
             tsrTopDown.Text = "toolStrip1";
             // 
+            // tslblBuilding
+            // 
+            tslblBuilding.Name = "tslblBuilding";
+            tslblBuilding.Size = new Size(102, 23);
+            tslblBuilding.Text = "Building Controls:";
+            // 
             // tsbtnFitToScreen
             // 
             tsbtnFitToScreen.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -216,6 +211,12 @@ namespace FrontEnd.UserControls
             tsnudVGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudVGridCount.ValueChanged += tsnudVGridCount_ValueChanged;
             // 
+            // tslblRoom
+            // 
+            tslblRoom.Name = "tslblRoom";
+            tslblRoom.Size = new Size(90, 23);
+            tslblRoom.Text = "Room Controls:";
+            // 
             // tsbtnEditRoom
             // 
             tsbtnEditRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -227,10 +228,26 @@ namespace FrontEnd.UserControls
             tsbtnEditRoom.ToolTipText = "Edit A Selected Room";
             tsbtnEditRoom.Click += tsbtnEditRoom_Click;
             // 
+            // tsbtnDeleteRoom
+            // 
+            tsbtnDeleteRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnDeleteRoom.Image = Properties.Resources.bin;
+            tsbtnDeleteRoom.ImageTransparentColor = Color.Magenta;
+            tsbtnDeleteRoom.Name = "tsbtnDeleteRoom";
+            tsbtnDeleteRoom.Size = new Size(23, 23);
+            tsbtnDeleteRoom.Text = "toolStripButton1";
+            tsbtnDeleteRoom.Click += tsbtnDeleteRoom_Click;
+            // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(6, 26);
+            // 
+            // tslblStored
+            // 
+            tslblStored.Name = "tslblStored";
+            tslblStored.Size = new Size(82, 23);
+            tslblStored.Text = "Item Controls:";
             // 
             // tsbtnAddItemToRoom
             // 
@@ -243,34 +260,6 @@ namespace FrontEnd.UserControls
             tsbtnAddItemToRoom.ToolTipText = "Add A New Item To The Selected Room";
             tsbtnAddItemToRoom.Click += tsbtnAddItemToRoom_Click;
             // 
-            // tsbtnDeleteRoom
-            // 
-            tsbtnDeleteRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsbtnDeleteRoom.Image = Properties.Resources.bin;
-            tsbtnDeleteRoom.ImageTransparentColor = Color.Magenta;
-            tsbtnDeleteRoom.Name = "tsbtnDeleteRoom";
-            tsbtnDeleteRoom.Size = new Size(23, 23);
-            tsbtnDeleteRoom.Text = "toolStripButton1";
-            tsbtnDeleteRoom.Click += tsbtnDeleteRoom_Click;
-            // 
-            // tslblBuilding
-            // 
-            tslblBuilding.Name = "tslblBuilding";
-            tslblBuilding.Size = new Size(102, 23);
-            tslblBuilding.Text = "Building Controls:";
-            // 
-            // tslblRoom
-            // 
-            tslblRoom.Name = "tslblRoom";
-            tslblRoom.Size = new Size(90, 23);
-            tslblRoom.Text = "Room Controls:";
-            // 
-            // tslblStored
-            // 
-            tslblStored.Name = "tslblStored";
-            tslblStored.Size = new Size(82, 23);
-            tslblStored.Text = "Item Controls:";
-            // 
             // TopDownBuildingView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -281,7 +270,6 @@ namespace FrontEnd.UserControls
             Name = "TopDownBuildingView";
             Size = new Size(897, 536);
             splTopView.Panel1.ResumeLayout(false);
-            splTopView.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splTopView).EndInit();
             splTopView.ResumeLayout(false);
             tsrTopDown.ResumeLayout(false);
@@ -308,7 +296,6 @@ namespace FrontEnd.UserControls
         private ToolStripButton tsbtnEditRoom;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton tsbtnAddItemToRoom;
-        private TreeView tvBuildingInventory;
         private ToolStripButton tsbtnDeleteRoom;
         private ToolStripLabel tslblBuilding;
         private ToolStripLabel tslblRoom;

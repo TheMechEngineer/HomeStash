@@ -56,6 +56,13 @@ namespace BackEnd.DataContinuity
 
             ReturnItem.ActiveUser.ActiveBuilding.RoomList[2].TryAddIStored(StoredItemType.Item, "Item7", "Test Description 7", 100, 1, out _);
 
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].TryAddIStored(StoredItemType.Container, "Container 1", "First Container", 1, 2, out _);
+
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].StoredItems[0] as Container).TryAddIStored(StoredItemType.Item, "Container Item 1", "First Container Item", 3, 18, out _);
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].StoredItems[0] as Container).TryAddIStored(StoredItemType.Item, "Container Item 2", "Second Container Item", 1, 117, out _);
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].StoredItems[0] as Container).TryAddIStored(StoredItemType.Container, "Container 2", "Second Container", 3, 5, out _);
+            ((ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].StoredItems[0] as Container).StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Sub Container Item 1", "Second Container", 15, 4, out _);
+
             return ReturnItem;
         }
 

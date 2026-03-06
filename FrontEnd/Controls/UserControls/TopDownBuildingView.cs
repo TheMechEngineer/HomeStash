@@ -1,8 +1,10 @@
 ﻿using BackEnd.ModelClasses;
 using BackEnd.ModelInterfaces;
+using BrightIdeasSoftware;
 using FrontEnd.Controls.Utilities;
 using FrontEnd.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static BrightIdeasSoftware.TreeListView;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+
 
 namespace FrontEnd.UserControls
 {
@@ -24,9 +30,10 @@ namespace FrontEnd.UserControls
 
         private Panel CameraPanel;
 
+        TreeListView CurrentTreeListView = new TreeListView();
+
         internal TopDownBuildingView(ref RootManager _ProgramRoot)
         {
-
             InitializeComponent();
 
             this.RootManagerInstance = _ProgramRoot;
@@ -34,10 +41,15 @@ namespace FrontEnd.UserControls
 
             InitializeVisuals();
             Wire();
+            
         }
 
         private void InitializeVisuals()
         {
+            GenerateTreeListView();
+
+            splTopView.Panel2.Controls.Add(CurrentTreeListView);
+
             this.CameraPanel = splTopView.Panel1.Controls["pnlTopViewCamera"] as Panel;
 
             this.CurrentBufferedBuilding = new BuildingControlBuffer(CurrentBuilding);
@@ -55,7 +67,6 @@ namespace FrontEnd.UserControls
             tsbtnEditRoom.Enabled = SelectedRoom != null;
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
             tsbtnAddItemToRoom.Enabled = SelectedRoom != null;
-            
         }
 
         private void Wire()
@@ -74,6 +85,16 @@ namespace FrontEnd.UserControls
             CurrentBufferedBuilding.StoredItemsChanged -= CurrentBufferedBuilding_StoredItemsChanged;
             CurrentBufferedBuilding.RoomListChanged -= CurrentBufferedBuilding_RoomListChanged;
             this.HandleDestroyed -= UnWire;
+        }
+
+        private void TopDownBuildingView_Load(object sender, EventArgs e)
+        {
+            this.BeginInvoke(() =>
+            {
+                ResetSplitPanelSize();
+                FitBuildingToScreen();
+                CenterCameraView();
+            });
         }
 
         private void CenterCameraView()
@@ -182,8 +203,125 @@ namespace FrontEnd.UserControls
             }
         }
 
+        private void GenerateTreeListView()
+        {
+            //TreeListView TestView = new TreeListView();
+            CurrentTreeListView.Dock = DockStyle.Fill;
+
+            CurrentTreeListView.UseAlternatingBackColors = true;
+            CurrentTreeListView.AlternateRowBackColor = Color.Beige;
+
+            //I dont think this is needed, but if I want to add images later (icons next to building room item container, maybe i need this)
+            ImageList IMG = new ImageList();
+            IMG.ImageSize = new Size(16, 16);
+            CurrentTreeListView.SmallImageList = IMG;
+
+            // Could also be done like: OLVColumn nameColumn = new OLVColumn("Name", "Name");
+            //But I like the more verbose approach
+            OLVColumn ColName = new OLVColumn();
+            ColName.Text = "Name";
+            ColName.AspectName = "Name"; //Dont Need To Use Aspect Getter Because The Property Is The Same Name Across All Objects
+            ColName.Width = 200;
+
+            OLVColumn ColCount = new OLVColumn();
+            ColCount.Text = "Count";
+            ColCount.Width = 120;
+            ColCount.AspectGetter = delegate (object x) //Aspect Getter Is Used Becuase Properties Are Different Across Objects
+            {
+                if (x is Building CurrentBuilding) { return "Total: " + CurrentBuilding.TotalItemCount().ToString(); }
+                if (x is Room CurrentRoom) { return "Subtotal: " + CurrentRoom.TotalItemCount(); }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return CurrentContainer.Quantity; }
+                if (x is Item CurrentItem) { return CurrentItem.Quantity; }
+                return "";
+            };
+
+            OLVColumn ColUnitValue = new OLVColumn();
+            ColUnitValue.Text = "Unit Value";
+            ColUnitValue.Width = 120;
+            ColUnitValue.AspectGetter = delegate (object x)
+            {
+                if (x is Building CurrentBuilding) { return ""; }
+                if (x is Room CurrentRoom) { return ""; }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return string.Format("{0:C2}", CurrentContainer.Value); }
+                if (x is Item CurrentItem) { return string.Format("{0:C2}", CurrentItem.Value); }
+                return "";
+            };
+
+            OLVColumn ColTotalValue = new OLVColumn();
+            ColTotalValue.Text = "Total Value";
+            ColTotalValue.Width = 120;
+            ColTotalValue.AspectGetter = delegate (object x)
+            {
+                if (x is Building CurrentBuilding) { return "Total: " + string.Format("{0:C2}", CurrentBuilding.TotalItemValue()); }
+                if (x is Room CurrentRoom) { return "Subtotal: " + string.Format("{0:C2}", CurrentRoom.TotalItemValue()); }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return "Subtotal: " + string.Format("{0:C2}", CurrentContainer.TotalItemValue()); }
+                if (x is Item CurrentItem) { return string.Format("{0:C2}", CurrentItem.Value * CurrentItem.Quantity); }
+                return "";
+            };
+
+            List<OLVColumn> ColumnList = new List<OLVColumn> { ColName, ColCount, ColUnitValue, ColTotalValue };
+
+            foreach (OLVColumn CurrentColumn in ColumnList)
+            {
+                CurrentTreeListView.AllColumns.Add(CurrentColumn);
+            }
+
+            //This Is Needed Or The Columns Dont Appear
+            CurrentTreeListView.RebuildColumns();
+
+            //This Also Works Instead Of The Above Approach Of Adding Columns
+            //TestView.Columns.AddRange(ColumnList.Cast<ColumnHeader>().ToArray());
+
+            CurrentTreeListView.CanExpandGetter = delegate (object x)
+            {
+                if (x is Building CurrentBuilding) { return CurrentBuilding.RoomList.Count > 0 || CurrentBuilding.StoredItems.Count > 0; }
+                if (x is Room CurrentRoom) { return CurrentRoom.StoredItems.Count > 0; }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return true; } //CurrentContainer.StoredItems.Count > 0
+                if (x is Item CurrentItem) { return false; }
+                return false;
+            };
+
+            CurrentTreeListView.ChildrenGetter = delegate (object x)
+            {
+                if (x is Building CurrentBuilding)
+                {
+                    List<object> Children = new List<object>();
+                    Children.AddRange(CurrentBuilding.RoomList);
+                    Children.AddRange(CurrentBuilding.StoredItems);
+                    return Children;
+                }
+                if (x is Room CurrentRoom) { return CurrentRoom.StoredItems; }
+                if (x is BackEnd.ModelClasses.Container CurrentContainer) { return CurrentContainer.StoredItems; }
+                return null;
+            };
+
+            CurrentTreeListView.Roots = new List<Building> { CurrentBuilding };
+
+            CurrentTreeListView.ExpandAll();
+            CurrentTreeListView.FullRowSelect = true;
+        }
+
+        private void RefreshTreeListView()
+        {
+            CurrentTreeListView.RebuildAll(true);
+        }
+
+        private void ResetSplitPanelSize()
+        {
+            int CombinedColumnWidth = CurrentTreeListView.AllColumns.Sum(CurrentColumn => CurrentColumn.Width);
+            splTopView.SplitterDistance = this.Width - CombinedColumnWidth;
+        }
+
+
+        //This Is Obsolete After Implementing The Tree List View, However I still Want To Keep It In Because I Had To Learn It
         private void GenerateTreeView()
         {
+            System.Windows.Forms.TreeView tvBuildingInventory = new System.Windows.Forms.TreeView();
+
+            tvBuildingInventory.Dock = DockStyle.Fill;
+
+            splTopView.Panel2.Controls.Add(tvBuildingInventory);
+
             tvBuildingInventory.Nodes.Clear();
 
             TreeNode BuildingNode = new TreeNode(CurrentBuilding.Name);
@@ -211,16 +349,6 @@ namespace FrontEnd.UserControls
 
             tvBuildingInventory.Nodes.Add(BuildingNode);
             tvBuildingInventory.ExpandAll();
-        }
-
-        private void TopDownBuildingView_Load(object sender, EventArgs e)
-        {
-            this.BeginInvoke(() =>
-            {
-                FitBuildingToScreen();
-                CenterCameraView();
-                GenerateTreeView();
-            });
         }
 
         private void tsbtnScale_Click(object sender, EventArgs e)
@@ -325,6 +453,8 @@ namespace FrontEnd.UserControls
             this.CameraPanel.Controls.Remove(BlockerPanel);
             BlockerPanel.Dispose();
 
+            ResetSplitPanelSize();
+
             splTopView.Panel2.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
@@ -361,12 +491,12 @@ namespace FrontEnd.UserControls
         }
         private void CurrentBufferedBuilding_StoredItemsChanged()
         {
-            GenerateTreeView();
+            RefreshTreeListView();
         }
 
         private void CurrentBufferedBuilding_RoomListChanged()
         {
-            GenerateTreeView();
+            RefreshTreeListView();
         }
 
 

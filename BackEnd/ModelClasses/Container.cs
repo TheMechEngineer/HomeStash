@@ -82,11 +82,11 @@ namespace BackEnd.ModelClasses
 
         public int TotalItemCount()
         {
-            return ContainerStorage.TotalItemCount();
+            return (ContainerStorage.TotalItemCount() + 1) * this.Quantity;
         }
         public double TotalItemValue()
         {
-            return ContainerStorage.TotalItemValue();
+            return (ContainerStorage.TotalItemValue() + this.Value) * this.Quantity;
         }
     }
 }

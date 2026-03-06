@@ -138,10 +138,25 @@ namespace BackEnd.ModelClasses
 
         public int TotalItemCount()
         {
-            return __StoredItems.Sum(CurrentItem => CurrentItem.Quantity);
+            int TotalItemCount = 0;
+
+            foreach (IStored CurrentStored in __StoredItems)
+            {
+                TotalItemCount += (CurrentStored.GetType() == typeof(Container) ? (CurrentStored as Container).TotalItemCount() : CurrentStored.Quantity);
+            }
+
+            return TotalItemCount;
         }
         public double TotalItemValue()
         {
+            double TotalItemValue = 0;
+
+            foreach (IStored CurrentStored in __StoredItems)
+            {
+                TotalItemValue += (CurrentStored.GetType() == typeof(Container) ? (CurrentStored as Container).TotalItemValue() : CurrentStored.Quantity * CurrentStored.Value);
+            }
+
+            return TotalItemValue;
             return __StoredItems.Sum(Item => Item.Value * Item.Quantity);
         }
     }
