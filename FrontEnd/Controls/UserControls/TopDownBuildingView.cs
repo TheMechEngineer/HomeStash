@@ -222,10 +222,12 @@ namespace FrontEnd.UserControls
             ColName.Text = "Name";
             ColName.AspectName = "Name"; //Dont Need To Use Aspect Getter Because The Property Is The Same Name Across All Objects
             ColName.Width = 250;
+            ColName.Sortable = false;
 
             OLVColumn ColCount = new OLVColumn();
             ColCount.Text = "Count";
             ColCount.Width = 130;
+            ColCount.Sortable = false;
             ColCount.AspectGetter = delegate (object x) //Aspect Getter Is Used Becuase Properties Are Different Across Objects
             {
                 if (x is Building CurrentBuilding) { return "Total: " + CurrentBuilding.TotalItemCount().ToString(); }
@@ -243,6 +245,7 @@ namespace FrontEnd.UserControls
             OLVColumn ColUnitValue = new OLVColumn();
             ColUnitValue.Text = "Unit Value";
             ColUnitValue.Width = 200;
+            ColUnitValue.Sortable = false;
             ColUnitValue.AspectGetter = delegate (object x)
             {
                 if (x is Building CurrentBuilding) { return ""; }
@@ -260,6 +263,7 @@ namespace FrontEnd.UserControls
             OLVColumn ColTotalValue = new OLVColumn();
             ColTotalValue.Text = "Total Value";
             ColTotalValue.Width = 120;
+            ColTotalValue.Sortable = false;
             ColTotalValue.AspectGetter = delegate (object x)
             {
                 if (x is Building CurrentBuilding) { return "Total: " + string.Format("{0:C2}", CurrentBuilding.TotalItemValue()); }
