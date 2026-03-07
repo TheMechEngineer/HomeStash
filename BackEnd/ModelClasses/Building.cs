@@ -357,7 +357,7 @@ namespace BackEnd.ModelClasses
             }
 
             _RoomToRemove.StoredItemsChanged -= Room_StoredItemsChanged;
-            _RoomToRemove.StoredItemModified += Room_StoredItemModified;
+            _RoomToRemove.StoredItemModified -= Room_StoredItemModified;
             _RoomToRemove.RoomNameChanged -= Room_RoomNameChanged;
             _RoomToRemove.RoomDimensionsChanged -= Room_RoomDimensionsChanged;
             _RoomToRemove.RoomColorChanged -= Room_RoomColorChanged;
@@ -460,6 +460,11 @@ namespace BackEnd.ModelClasses
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
            return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
+        }
+
+        public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
 
         public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)

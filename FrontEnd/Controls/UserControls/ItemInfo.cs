@@ -23,10 +23,10 @@ namespace FrontEnd.UserControls
         internal event Action<FormType, Item?, ItemInfo, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, StoredItemType CreationType)>? ConfirmClicked;
         internal event Action<ItemInfo>? CancelClicked;
 
+        private Building CurrentBuilding;
         private Item? CurrentItem;
         private FormType CurrentFormType;
-
-        private Building CurrentBuilding;
+        private bool ModifyOrMove;
 
         internal ItemInfo(Building _CurrentBuilding)
         {
@@ -34,31 +34,32 @@ namespace FrontEnd.UserControls
 
             CurrentBuilding = _CurrentBuilding;
             CurrentFormType = FormType.Add;
-
-            rdoItem.Tag = StoredItemType.Item;
-            rdoContainer.Tag = StoredItemType.Container;
-
+            
             InitializeVisuals();
         }
 
-        internal ItemInfo(Item _ItemToModify, Building _CurrentBuilding)
+        internal ItemInfo(bool _ModifyOrMove, Item _ItemToModify, Building _CurrentBuilding)
         {
             InitializeComponent();
 
             CurrentBuilding = _CurrentBuilding;
-            CurrentFormType = FormType.Modify;
             CurrentItem = _ItemToModify;
+            CurrentFormType = FormType.Modify;
+            ModifyOrMove = _ModifyOrMove;
 
             InitializeVisuals();
         }
 
         private void InitializeVisuals()
         {
+            rdoItem.Tag = StoredItemType.Item;
+            rdoContainer.Tag = StoredItemType.Container;
+
+            PopulateComboBox();
+
             if (CurrentFormType == FormType.Add)
             {
                 lblTitle.Text = "Add New Item";
-
-                PopulateComboBox();
 
                 if (cmbLocationInput.Items.Count > 0)
                 {
@@ -68,17 +69,28 @@ namespace FrontEnd.UserControls
             }
             else if (CurrentFormType == FormType.Modify)
             {
-                //lblTitle.Text = "Modify Item";
+                txtNameInput.Text = CurrentItem.Name;
+                txtDescriptionInput.Text = CurrentItem.Description;
+                txtValueInput.Text = CurrentItem.Value.ToString();
+                txtQuantityInput.Text = CurrentItem.Quantity.ToString();
+                cmbLocationInput.SelectedItem = SetComboBoxSelection();
 
-                //txtNameInput.Text = CurrentItem.Name;
-                //txtWidthInput.Text = CurrentItem.Width.ToString();
-                //txtHeightInput.Text = CurrentItem.Height.ToString();
-                //txtQuantityInput.Text = CurrentItem.CenterX.ToString();
-                //txtYCoordInput.Text = CurrentItem.CenterY.ToString();
+                SetRadioButtonSelection();
+                grpItemType.Enabled = false;
 
-                //txtLocationInput.Text = CurrentItem.ItemColor.ToString();
-                //txtLocationInput.BackColor = Color.FromArgb(CurrentItem.ItemColor);
-                //txtLocationInput.ForeColor = Color.FromArgb(CurrentItem.ItemColor);
+                if (ModifyOrMove)
+                {
+                    lblTitle.Text = "Modify Item";
+                    cmbLocationInput.Enabled = false;
+                }
+                else
+                {
+                    lblTitle.Text = "Move Item";
+                    txtNameInput.Enabled = false;
+                    txtDescriptionInput.Enabled = false;
+                    txtValueInput.Enabled = false;
+                    txtQuantityInput.Enabled = false;
+                }
             }
         }
 
@@ -119,6 +131,31 @@ namespace FrontEnd.UserControls
             }
 
             return ValidContainerList;
+        }
+
+        private ComboBoxLineItem SetComboBoxSelection()
+        {
+            foreach (ComboBoxLineItem CurrentLineItem in cmbLocationInput.Items)
+            {
+                if (CurrentLineItem.Tag == CurrentItem.ImmediateParent)
+                {
+                    return CurrentLineItem;
+                }
+            }
+
+            return null;
+        }
+
+        private void SetRadioButtonSelection()
+        {
+            if (CurrentItem.GetType() == typeof(Item))
+            {
+                rdoItem.Checked = true;
+            }
+            else
+            {
+                rdoContainer.Checked = true;
+            }
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)

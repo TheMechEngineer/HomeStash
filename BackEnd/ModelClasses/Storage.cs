@@ -62,6 +62,7 @@ namespace BackEnd.ModelClasses
                 if (StoredObject is Container NewContainer)
                 {
                     NewContainer.StoredItemsChanged += StoredItemsChangedFowarding;
+                    NewContainer.StoredItemModified += StoredItemModifiedFowarding;
                 }
 
                 StoredItemsChanged?.Invoke();
@@ -130,6 +131,7 @@ namespace BackEnd.ModelClasses
             if (_IStoredToRemove is Container RemovedContainer)
             {
                 RemovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
+                RemovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
             }
 
             __StoredItems.Remove(_IStoredToRemove);
@@ -151,9 +153,11 @@ namespace BackEnd.ModelClasses
 
             if (_IStoredToMove is Container MovedContainer)
             {
-                //I may need to add a poriton here to handle the StoredItemModifedEvent Too
                 MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
                 MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
+
+                MovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
+                MovedContainer.StoredItemModified += StorageDestination.StoredItemModifiedFowarding;
             }
 
             StorageDestination.__StoredItems.Add(_IStoredToMove);
@@ -192,6 +196,11 @@ namespace BackEnd.ModelClasses
         private void StoredItemsChangedFowarding()
         {
             this.StoredItemsChanged?.Invoke();
+        }
+
+        private void StoredItemModifiedFowarding()
+        {
+            this.StoredItemModified?.Invoke();
         }
     }
 }

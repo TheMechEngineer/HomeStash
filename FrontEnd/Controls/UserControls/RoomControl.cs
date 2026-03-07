@@ -52,6 +52,8 @@ namespace FrontEnd.UserControls
         private void Wire()
         {
             CurrentRoom.StoredItemsChanged += CurrentRoom_StoredItemsChanged;
+            CurrentRoom.StoredItemModified += CurrentRoom_StoredItemModified;
+
             CurrentRoom.RoomNameChanged += CurrentRoom_RoomNameChanged;
             CurrentRoom.RoomDimensionsChanged += CurrentRoom_RoomDimensionsChanged;
             CurrentRoom.RoomColorChanged += CurrentRoom_RoomColorChanged;
@@ -122,6 +124,11 @@ namespace FrontEnd.UserControls
         }
 
         private void CurrentRoom_StoredItemsChanged()
+        {
+            SetText();
+        }
+
+        private void CurrentRoom_StoredItemModified()
         {
             SetText();
         }

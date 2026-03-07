@@ -235,19 +235,19 @@ namespace FrontEnd.UserControls
             BlockerPanel.BringToFront();
         }
 
-        private void ModifyItem()
+        private void ModifyItem(bool _ModifyOrMove)
         {
-            RoomInfo ModifyRoom = new RoomInfo(SelectedRoom);
+            ItemInfo ModifyItem = new ItemInfo(_ModifyOrMove, SelectedItem, CurrentBuilding);
 
-            ModifyRoom.ConfirmClicked += RoomInfo_ConfirmClicked;
-            ModifyRoom.CancelClicked += RoomInfo_CancelClicked;
+            ModifyItem.ConfirmClicked += ItemInfo_ConfirmClicked;
+            ModifyItem.CancelClicked += ItemInfo_CancelClicked;
 
-            ModifyRoom.Dock = DockStyle.Fill;
-            ModifyRoom.Name = "ModifyRoom";
+            ModifyItem.Dock = DockStyle.Fill;
+            ModifyItem.Name = "ModifyItem";
 
-            splTopView.SplitterDistance = splTopView.ClientSize.Width - ModifyRoom.Width;
-            splTopView.Panel2.Controls.Add(ModifyRoom);
-            ModifyRoom.BringToFront();
+            splTopView.SplitterDistance = splTopView.ClientSize.Width - ModifyItem.Width;
+            splTopView.Panel2.Controls.Add(ModifyItem);
+            ModifyItem.BringToFront();
 
             tsrTopDown.Enabled = false;
 
@@ -520,7 +520,7 @@ namespace FrontEnd.UserControls
 
         private void tsbtnEditItem_Click(object sender, EventArgs e)
         {
-            ModifyItem();
+            ModifyItem(true);
         }
 
         private void tsbtnDeleteItem_Click(object sender, EventArgs e)
@@ -591,15 +591,17 @@ namespace FrontEnd.UserControls
                 }
             }
             else if (_FormType == FormType.Modify)
+
+                //new to add a nested if here to account for move or modify
             {
-                //if (CurrentBuilding.TryModifyRoom(_CurrentRoom, _RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
-                //{
-                //    RoomInfo_CancelClicked(_CurrentControl);
-                //}
-                //else
-                //{
-                //    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
+                if (_ItemValues.Location.TryModifyIStored(_ModifiedItem, _ItemValues.Name, _ItemValues.Description, _ItemValues.Value, _ItemValues.Quantity, out _ErrorMessage))
+                {
+                    ItemInfo_CancelClicked(_CurrentControl);
+                }
+                else
+                {
+                    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
