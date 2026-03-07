@@ -235,6 +235,42 @@ namespace FrontEnd.UserControls
             BlockerPanel.BringToFront();
         }
 
+        private void ModifyItem()
+        {
+            RoomInfo ModifyRoom = new RoomInfo(SelectedRoom);
+
+            ModifyRoom.ConfirmClicked += RoomInfo_ConfirmClicked;
+            ModifyRoom.CancelClicked += RoomInfo_CancelClicked;
+
+            ModifyRoom.Dock = DockStyle.Fill;
+            ModifyRoom.Name = "ModifyRoom";
+
+            splTopView.SplitterDistance = splTopView.ClientSize.Width - ModifyRoom.Width;
+            splTopView.Panel2.Controls.Add(ModifyRoom);
+            ModifyRoom.BringToFront();
+
+            tsrTopDown.Enabled = false;
+
+            TransparentPanel BlockerPanel = new TransparentPanel();
+            BlockerPanel.Name = "Blocker";
+            BlockerPanel.Dock = DockStyle.Fill;
+            BlockerPanel.BackColor = Color.Black;
+            BlockerPanel.Opacity = 20;
+
+            this.CameraPanel.Controls.Add(BlockerPanel);
+            BlockerPanel.BringToFront();
+        }
+
+        private void DeleteItem()
+        {
+            string? _ErrorMessage;
+
+            if (!SelectedItem.ImmediateParent.TryRemoveIStored(SelectedItem, out _ErrorMessage))
+            {
+                MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void GenerateTreeListView()
         {
             CurrentTreeListView.SelectionChanged += CurrentTreeListView_SelectionChanged;
@@ -484,16 +520,12 @@ namespace FrontEnd.UserControls
 
         private void tsbtnEditItem_Click(object sender, EventArgs e)
         {
-            Type SelectedType = CurrentTreeListView.SelectedObject.GetType();
-            MessageBox.Show(SelectedType.ToString());
-
-
-            //MessageBox.Show(((Item)CurrentTreeListView.SelectedObject).Name);
+            ModifyItem();
         }
 
         private void tsbtnDeleteItem_Click(object sender, EventArgs e)
         {
-
+            DeleteItem();
         }
 
         private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _ModifiedRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)

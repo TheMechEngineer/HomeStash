@@ -89,7 +89,7 @@ namespace BackEnd.ModelClasses
         public float Width { get; private set; }
         public float Height { get; private set; }
 
-        private Storage UnsortedItems = new Storage();
+        private Storage UnsortedItems;
 
         public IStorage CurrentStorage
         {
@@ -115,6 +115,8 @@ namespace BackEnd.ModelClasses
             this.Name = _Name;
             this.Width = _Width;
             this.Height = _Height;
+
+            UnsortedItems = new Storage(this);
         }
 
         internal static bool TryCreate(string _BuildingName, float _Width, float _Height, out Building? _CreatedBuilding, out string? _ErrorMessage)

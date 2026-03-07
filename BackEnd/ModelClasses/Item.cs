@@ -12,22 +12,25 @@ namespace BackEnd.ModelClasses
         public event Action? TextChanged;
         public event Action? ValueChanged;
         public event Action? QuantityChanged;
+        public event Action? ImmediateParentChanged;
 
         //public int ID { get; set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
+        public IStorageHolder ImmediateParent { get; private set; }
 
-        protected Item(string _ItemName, string _Description, double _Value, int _Quantity)
+        protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
         {
             Name = _ItemName;
             Description = _Description;
             Value = _Value;
             Quantity = _Quantity;
+            ImmediateParent = _ImmediateParent;
         }
 
-        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, out Item? _CreatedItem, out string? _ErrorMessage)
+        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent, out Item? _CreatedItem, out string? _ErrorMessage)
         {
             _CreatedItem = null;
             _ErrorMessage = null;
@@ -48,9 +51,14 @@ namespace BackEnd.ModelClasses
                 CreationSuccess = false;
             }
 
+            if (!ImmediateParentSelfValidation(_ImmediateParent, ref _ErrorMessage))
+            {
+                CreationSuccess = false;
+            }
+
             if (CreationSuccess)
             {
-                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity);
+                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity, _ImmediateParent);
             }
             else
             {
@@ -60,7 +68,7 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
+        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, IStorageHolder _NewImmediateParent, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool ModifySuccess = true;
@@ -68,8 +76,9 @@ namespace BackEnd.ModelClasses
             bool TextChanged = this.Name != _NewItemName || this.Description != _NewDescription;
             bool ValueChanged = this.Value != _NewValue;
             bool QuantityChanged = this.Quantity != _NewQuantity;
+            bool ImmediateParentChanged = this.ImmediateParent != _NewImmediateParent;
 
-            if (TextChanged || ValueChanged || QuantityChanged)
+            if (TextChanged || ValueChanged || QuantityChanged || ImmediateParentChanged)
             {
                 if (TextChanged)
                 {
@@ -90,6 +99,14 @@ namespace BackEnd.ModelClasses
                 if (QuantityChanged)
                 {
                     if (!QuantitySelfValidation(_NewQuantity, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
+
+                if (ImmediateParentChanged)
+                {
+                    if (!ImmediateParentSelfValidation(_NewImmediateParent, ref _ErrorMessage))
                     {
                         ModifySuccess = false;
                     }
@@ -121,6 +138,11 @@ namespace BackEnd.ModelClasses
                 if (QuantityChanged)
                 {
                     this.QuantityChanged?.Invoke();
+                }
+
+                if (ImmediateParentChanged)
+                {
+                    this.ImmediateParentChanged?.Invoke();
                 }
             }
             else
@@ -170,5 +192,17 @@ namespace BackEnd.ModelClasses
             return QuantityValid;
         }
 
+        protected static bool ImmediateParentSelfValidation(IStorageHolder _ImmediateParent, ref string? _ErrorMessage)
+        {
+            bool ImmediateParentValid = true;
+
+            if (_ImmediateParent == null)
+            {
+                _ErrorMessage += "Self Validation Error: Must Select A Valid Parent\n";
+                ImmediateParentValid = false;
+            }
+
+            return ImmediateParentValid;
+        }
     }
 }

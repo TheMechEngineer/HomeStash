@@ -34,7 +34,7 @@ namespace BackEnd.ModelClasses
         public float CenterY { get; private set; }
         public int RoomColor { get; private set; }
 
-        private Storage RoomStorage = new Storage();
+        private Storage RoomStorage;
 
         public IStorage CurrentStorage
         {
@@ -55,6 +55,8 @@ namespace BackEnd.ModelClasses
             CenterX = _CenterX;
             CenterY = _CenterY;
             RoomColor = _RoomColor;
+
+            RoomStorage = new Storage(this);
         }
 
         internal static bool TryCreate(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out Room? _CreatedRoom, out string? _ErrorMessage)

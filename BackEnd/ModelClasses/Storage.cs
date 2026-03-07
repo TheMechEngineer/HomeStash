@@ -23,6 +23,13 @@ namespace BackEnd.ModelClasses
             { return __StoredItems.AsReadOnly(); }
         }
 
+        IStorageHolder ImmediateParent;
+
+        internal Storage(IStorageHolder _ImmediateParent)
+        {
+            ImmediateParent = _ImmediateParent;
+        }
+
         //I dont want this to be public, but to satisfy the compiler interface rules it must be. However since the class itself and inteface are internal, the front end wont be able to see the method anyways.
         //From what I understand, because the interface method signature is private, the front end wont be able to access this even though its public
         public bool TryAddIStored(StoredItemType _IStoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
@@ -38,12 +45,12 @@ namespace BackEnd.ModelClasses
             {
                 case StoredItemType.Item:
                     Item? _NewStoredItem;
-                    AddIStoredSuccess = Item.TryCreate(_StoredName, _Description, _Value, _Quantity, out _NewStoredItem, out _ErrorMessage);
+                    AddIStoredSuccess = Item.TryCreate(_StoredName, _Description, _Value, _Quantity, this.ImmediateParent, out _NewStoredItem, out _ErrorMessage);
                     StoredObject = _NewStoredItem;
                     break;
                 case StoredItemType.Container:
                     Container? _NewStoredContainer;
-                    AddIStoredSuccess = Container.TryCreate(_StoredName, _Description, _Value, _Quantity, out _NewStoredContainer, out _ErrorMessage);
+                    AddIStoredSuccess = Container.TryCreate(_StoredName, _Description, _Value, _Quantity, this.ImmediateParent, out _NewStoredContainer, out _ErrorMessage);
                     StoredObject = _NewStoredContainer;
                     break;
             }
@@ -83,10 +90,10 @@ namespace BackEnd.ModelClasses
                 switch (SelectionType)
                 {
                     case Type CurrentType when SelectionType == typeof(Item):
-                        ModifyIStoredSuccess = (_IStoredToModify as Item).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+                        ModifyIStoredSuccess = (_IStoredToModify as Item).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, this.ImmediateParent, out _ErrorMessage);
                         break;
                     case Type CurrentType when SelectionType == typeof(Container):
-                        ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+                        ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, this.ImmediateParent, out _ErrorMessage);
                         break;
                 }
             }
@@ -144,6 +151,7 @@ namespace BackEnd.ModelClasses
 
             if (_IStoredToMove is Container MovedContainer)
             {
+                //I may need to add a poriton here to handle the StoredItemModifedEvent Too
                 MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
                 MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
             }

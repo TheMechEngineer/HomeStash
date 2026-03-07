@@ -22,7 +22,7 @@ namespace BackEnd.ModelClasses
             remove { ContainerStorage.StoredItemModified -= value; }
         }
 
-        private Storage ContainerStorage = new Storage();
+        private Storage ContainerStorage;
         public IStorage CurrentStorage
         {
             get
@@ -35,11 +35,13 @@ namespace BackEnd.ModelClasses
             { return ContainerStorage.StoredItems; }
         }
 
-        private Container(string _ItemName, string _Description, double _Value, int _Quantity)
-            : base(_ItemName, _Description, _Value, _Quantity)
-        {}
+        private Container(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
+            : base(_ItemName, _Description, _Value, _Quantity, _ImmediateParent)
+        {
+            ContainerStorage = new Storage(this);
+        }
 
-        internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, out Container? _CreatedContainer, out string? _ErrorMessage)
+        internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent, out Container? _CreatedContainer, out string? _ErrorMessage)
         {
             _CreatedContainer = null;
             _ErrorMessage = null;
@@ -60,9 +62,14 @@ namespace BackEnd.ModelClasses
                 CreationSuccess = false;
             }
 
+            if (!ImmediateParentSelfValidation(_ImmediateParent, ref _ErrorMessage))
+            {
+                CreationSuccess = false;
+            }
+
             if (CreationSuccess)
             {
-                _CreatedContainer = new Container(_ContainerName, _Description, _Value, _Quantity);
+                _CreatedContainer = new Container(_ContainerName, _Description, _Value, _Quantity, _ImmediateParent);
             }
             else
             {
@@ -72,9 +79,9 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
+        internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, IStorageHolder _NewImmediateParent, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
         {
-            return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+            return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, _NewImmediateParent, out _ErrorMessage);
         }
 
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
