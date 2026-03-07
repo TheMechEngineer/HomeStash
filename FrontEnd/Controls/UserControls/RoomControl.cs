@@ -100,6 +100,12 @@ namespace FrontEnd.UserControls
             this.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
         }
 
+        internal void SetRoomScale(float _NewScalingFactor)
+        {
+            ScalingFactor = _NewScalingFactor;
+            SetDimensions();
+        }
+
         private void RoomControl_Click(object? sender, EventArgs e)
         {
             RoomClicked?.Invoke(this, e);

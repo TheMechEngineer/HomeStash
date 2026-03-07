@@ -76,25 +76,30 @@ namespace FrontEnd.UserControls
 
             this.Controls.Add(this.DisplayedBuilding);
 
-            RefreshGridLabels();
+            RefreshSize();
         }
 
         private void Wire()
         {
-            DisplayedBuilding.BuildingViewUpdated += RefreshGridLabels;
+            DisplayedBuilding.BuildingViewUpdated += RefreshSize;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
-            DisplayedBuilding.BuildingViewUpdated -= RefreshGridLabels;
+            DisplayedBuilding.BuildingViewUpdated -= RefreshSize;
             this.HandleDestroyed -= UnWire;
         }
 
-        private void RefreshGridLabels()
+        private void RefreshSize()
         {
             this.Width = this.DisplayedBuilding.Width + 2 * BuildingOffsetBuffer;
             this.Height = this.DisplayedBuilding.Height + 2 * BuildingOffsetBuffer;
 
+            RefreshGridLabels();
+        }
+
+        private void RefreshGridLabels()
+        {
             ClearExistingGridLabels();
             GenerateNewGridLabels();
         }
@@ -117,8 +122,6 @@ namespace FrontEnd.UserControls
 
         private void GenerateNewGridLabels()
         {
-            this.SuspendLayout();
-
             float HorizontalGap = Convert.ToSingle(DisplayedBuilding.Width) / HGridCount;
 
             //Labels For Vertical Grid Lines
@@ -165,7 +168,6 @@ namespace FrontEnd.UserControls
                 }
             }
 
-            this.ResumeLayout();
         }
 
         internal void ScaleBuilding(float _ScaleModifier)

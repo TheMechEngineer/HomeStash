@@ -17,7 +17,6 @@ using static BrightIdeasSoftware.TreeListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
-
 namespace FrontEnd.UserControls
 {
     internal partial class TopDownBuildingView : UserControl
@@ -41,7 +40,6 @@ namespace FrontEnd.UserControls
 
             InitializeVisuals();
             Wire();
-
         }
 
         private void InitializeVisuals()
@@ -92,7 +90,6 @@ namespace FrontEnd.UserControls
             {
                 ResetSplitPanelSize();
                 FitBuildingToScreen();
-                CenterCameraView();
             });
         }
 

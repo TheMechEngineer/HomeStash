@@ -76,33 +76,31 @@ namespace FrontEnd.UserControls
         private void InitializeVisuals()
         {
             ScaleBuilding(1);
+            RegenerateRooms();
         }
 
         private void Wire()
         {
-            CurrentBuilding.RoomListChanged += RefreshRooms;
+            CurrentBuilding.RoomListChanged += RegenerateRooms;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
-            CurrentBuilding.RoomListChanged -= RefreshRooms;
+            CurrentBuilding.RoomListChanged -= RegenerateRooms;
             this.HandleDestroyed -= UnWire;
         }
 
         internal void ScaleBuilding(float _ScaleModifier)
         {
-            this.SuspendLayout();
-
             ScalingFactor *= _ScaleModifier;
 
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
             this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
             this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
+            BuildingViewUpdated?.Invoke();
 
             RefreshRooms();
-            
-            this.ResumeLayout();
         }
 
         private void DrawGrid(Graphics _GraphicsTool)
@@ -148,11 +146,19 @@ namespace FrontEnd.UserControls
             }
         }
 
-        private void RefreshRooms()
+        private void RegenerateRooms()
         {
             ClearExistingRooms();
             GenerateNewRooms();
             BuildingViewUpdated?.Invoke();
+        }
+
+        private void RefreshRooms()
+        {
+            foreach (RoomControl CurrentRoomControl in this.Controls.OfType<RoomControl>())
+            {
+                CurrentRoomControl.SetRoomScale(ScalingFactor);
+            }
         }
 
         private void ClearExistingRooms()
