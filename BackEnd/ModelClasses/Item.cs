@@ -9,6 +9,10 @@ namespace BackEnd.ModelClasses
 {
     public class Item : IStored
     {
+        public event Action? TextChanged;
+        public event Action? ValueChanged;
+        public event Action? QuantityChanged;
+
         //public int ID { get; set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -61,9 +65,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewItemName || this.Description != _NewDescription || this.Value != _NewValue || this.Quantity != _NewQuantity)
+            bool TextChanged = this.Name != _NewItemName || this.Description != _NewDescription;
+            bool ValueChanged = this.Value != _NewValue;
+            bool QuantityChanged = this.Quantity != _NewQuantity;
+
+            if (TextChanged || ValueChanged || QuantityChanged)
             {
-                if (this.Name != _NewItemName)
+                if (TextChanged)
                 {
                     if (!NameSelfValidation(_NewItemName, ref _ErrorMessage))
                     {
@@ -71,7 +79,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Value != _NewValue)
+                if (ValueChanged)
                 {
                     if (!ValueSelfValidation(_NewValue, ref _ErrorMessage))
                     {
@@ -79,7 +87,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Quantity != _NewQuantity)
+                if (QuantityChanged)
                 {
                     if (!QuantitySelfValidation(_NewQuantity, ref _ErrorMessage))
                     {
@@ -99,6 +107,21 @@ namespace BackEnd.ModelClasses
                 this.Description = _NewDescription;
                 this.Value = _NewValue;
                 this.Quantity = _NewQuantity;
+
+                if (TextChanged)
+                {
+                    this.TextChanged?.Invoke();
+                }
+
+                if (ValueChanged)
+                {
+                    this.ValueChanged?.Invoke();
+                }
+
+                if (QuantityChanged)
+                {
+                    this.QuantityChanged?.Invoke();
+                }
             }
             else
             {

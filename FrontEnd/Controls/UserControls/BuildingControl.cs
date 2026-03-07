@@ -180,11 +180,6 @@ namespace FrontEnd.UserControls
 
                 DisplayedRoom.RoomClicked += Room_Click;
 
-                int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
-                int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
-
-                DisplayedRoom.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
-
                 this.Controls.Add(DisplayedRoom);
             }
         }

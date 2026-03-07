@@ -17,6 +17,16 @@ namespace BackEnd.ModelClasses
             remove { RoomStorage.StoredItemsChanged -= value; }
         }
 
+        public event Action? StoredItemModified
+        {
+            add { RoomStorage.StoredItemModified += value; }
+            remove { RoomStorage.StoredItemModified -= value; }
+        }
+
+        public event Action? RoomNameChanged;
+        public event Action? RoomDimensionsChanged;
+        public event Action? RoomColorChanged;
+
         public string Name { get; private set; }
         public float Width { get; private set; }
         public float Height { get; private set; }
@@ -80,9 +90,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewRoomName || this.Width != _NewWidth || this.Height != _NewHeight || this.CenterX != _NewCenterX || this.CenterY != _NewCenterY || this.RoomColor != _NewRoomColor)
+            bool NameChanged = this.Name != _NewRoomName;
+            bool DimensionsChanged = this.Width != _NewWidth || this.Height != _NewHeight || this.CenterX != _NewCenterX || this.CenterY != _NewCenterY;
+            bool ColorChanged = this.RoomColor != _NewRoomColor;
+
+            if (NameChanged || DimensionsChanged || ColorChanged)
             {
-                if (this.Name != _NewRoomName)
+                if (NameChanged)
                 {
                     if (!NameSelfValidation(_NewRoomName, ref _ErrorMessage))
                     {
@@ -90,7 +104,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                if (DimensionsChanged)
                 {
                     if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
                     {
@@ -112,6 +126,21 @@ namespace BackEnd.ModelClasses
                 this.CenterX = _NewCenterX;
                 this.CenterY = _NewCenterY;
                 this.RoomColor = _NewRoomColor;
+
+                if (NameChanged)
+                {
+                    this.RoomNameChanged?.Invoke();
+                }
+
+                if (DimensionsChanged)
+                {
+                    this.RoomDimensionsChanged?.Invoke();
+                }
+
+                if (ColorChanged)
+                {
+                    this.RoomColorChanged?.Invoke();
+                }
             }
             else
             {

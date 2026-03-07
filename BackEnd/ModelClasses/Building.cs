@@ -13,20 +13,75 @@ namespace BackEnd.ModelClasses
     public class Building : IStorageHolder
     {
         public event Action? RoomListChanged;
-        public event Action? __StoredItemsChanged;
+        public event Action? BuildingNameChanged;
+        public event Action? BuildingDimensionsChanged;
 
+        private event Action? __StoredItemsChanged;
         public event Action? StoredItemsChanged
         {
-            add 
-            { 
-                UnsortedItems.StoredItemsChanged += value; 
-                __StoredItemsChanged += value; 
-                    
+            add
+            {
+                UnsortedItems.StoredItemsChanged += value;
+                __StoredItemsChanged += value;
             }
-            remove 
-            { 
+            remove
+            {
                 UnsortedItems.StoredItemsChanged -= value;
                 __StoredItemsChanged -= value;
+            }
+        }
+
+        private event Action? __StoredItemModified;
+        public event Action? StoredItemModified
+        {
+            add 
+            {
+                UnsortedItems.StoredItemModified += value;
+                __StoredItemModified += value;
+            }
+            remove 
+            {
+                UnsortedItems.StoredItemModified -= value;
+                __StoredItemModified += value;
+            }
+        }
+
+        private event Action? __RoomNameChanged;
+        public event Action? RoomNameChanged
+        {
+            add
+            {
+                __RoomNameChanged += value;
+            }
+            remove
+            {
+                __RoomNameChanged -= value;
+            }
+        }
+
+        private event Action? __RoomDimensionsChanged;
+        public event Action? RoomDimensionsChanged
+        {
+            add
+            {
+                __RoomDimensionsChanged += value;
+            }
+            remove
+            {
+                __RoomDimensionsChanged -= value;
+            }
+        }
+
+        private event Action? __RoomColorChanged;
+        public event Action? RoomColorChanged
+        {
+            add
+            {
+                __RoomColorChanged += value;
+            }
+            remove
+            {
+                __RoomColorChanged -= value;
             }
         }
 
@@ -95,9 +150,12 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewBuildingName || this.Width != _NewWidth || this.Height != _NewHeight)
+            bool NameChanged = this.Name != _NewBuildingName;
+            bool DimensionsChanged = this.Width != _NewWidth || this.Height != _NewHeight;
+
+            if (NameChanged || DimensionsChanged)
             {
-                if (this.Name != _NewBuildingName)
+                if (NameChanged)
                 {
                     if (!NameSelfValidation(_NewBuildingName, ref _ErrorMessage))
                     {
@@ -105,7 +163,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                if (DimensionsChanged)
                 {
                     if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
                     {
@@ -129,6 +187,16 @@ namespace BackEnd.ModelClasses
                 this.Name = _NewBuildingName;
                 this.Width = _NewWidth;
                 this.Height = _NewHeight;
+
+                if (NameChanged)
+                {
+                    this.BuildingNameChanged?.Invoke();
+                }
+
+                if (DimensionsChanged)
+                {
+                    this.BuildingDimensionsChanged?.Invoke();
+                }
             }
             else
             {
@@ -206,7 +274,11 @@ namespace BackEnd.ModelClasses
                 if (Room.TryCreate(_RoomName, _Width, _Height, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
                 {
                     __RoomList.Add(NewRoom);
-                    NewRoom.StoredItemsChanged += StoredItemsChangedForwarding;
+                    NewRoom.StoredItemsChanged += Room_StoredItemsChanged;
+                    NewRoom.StoredItemModified += Room_StoredItemModified;
+                    NewRoom.RoomNameChanged += Room_RoomNameChanged;
+                    NewRoom.RoomDimensionsChanged += Room_RoomDimensionsChanged;
+                    NewRoom.RoomColorChanged += Room_RoomColorChanged;
                     RoomListChanged?.Invoke();
                 }
                 else
@@ -228,9 +300,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyRoomSuccess = true;
 
-            if (_RoomToModify.Name != _NewRoomName || _RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY || _RoomToModify.RoomColor != _NewRoomColor)
+            bool NameChanged = _RoomToModify.Name != _NewRoomName;
+            bool DimensionsChanged = _RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY;
+            bool ColorChanged = _RoomToModify.RoomColor != _NewRoomColor;
+
+            if (NameChanged || DimensionsChanged || ColorChanged)
             {
-                if (_RoomToModify.Name != _NewRoomName)
+                if (NameChanged)
                 {
                     if (!RoomNameSystemValidation(_NewRoomName, ref _ErrorMessage))
                     {
@@ -238,7 +314,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (_RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY)
+                if (DimensionsChanged)
                 {
                     if (!RoomDimensionValidation(_NewWidth, _NewHeight, _NewCenterX, _NewCenterY, ref _ErrorMessage, _RoomToModify))
                     {
@@ -248,11 +324,7 @@ namespace BackEnd.ModelClasses
 
                 if (ModifyRoomSuccess)
                 {
-                    if (_RoomToModify.TryModify(_NewRoomName, _NewWidth, _NewHeight, _NewCenterX, _NewCenterY, _NewRoomColor, out _ErrorMessage))
-                    {
-                        RoomListChanged?.Invoke();
-                    }
-                    else
+                    if (!_RoomToModify.TryModify(_NewRoomName, _NewWidth, _NewHeight, _NewCenterX, _NewCenterY, _NewRoomColor, out _ErrorMessage))
                     {
                         ModifyRoomSuccess = false;
                     }
@@ -282,7 +354,12 @@ namespace BackEnd.ModelClasses
                 return false;
             }
 
-            _RoomToRemove.StoredItemsChanged -= StoredItemsChangedForwarding;
+            _RoomToRemove.StoredItemsChanged -= Room_StoredItemsChanged;
+            _RoomToRemove.StoredItemModified += Room_StoredItemModified;
+            _RoomToRemove.RoomNameChanged -= Room_RoomNameChanged;
+            _RoomToRemove.RoomDimensionsChanged -= Room_RoomDimensionsChanged;
+            _RoomToRemove.RoomColorChanged -= Room_RoomColorChanged;
+
             __RoomList.Remove(_RoomToRemove);
             RoomListChanged?.Invoke();
 
@@ -403,9 +480,29 @@ namespace BackEnd.ModelClasses
             return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
         }
 
-        private void StoredItemsChangedForwarding()
+        private void Room_StoredItemsChanged()
         {
             __StoredItemsChanged?.Invoke();
+        }
+
+        private void Room_StoredItemModified()
+        {
+            __StoredItemModified?.Invoke();
+        }
+
+        private void Room_RoomNameChanged()
+        {
+            __RoomNameChanged?.Invoke();
+        }
+
+        private void Room_RoomDimensionsChanged()
+        {
+            __RoomDimensionsChanged?.Invoke();
+        }
+
+        private void Room_RoomColorChanged()
+        {
+            __RoomColorChanged?.Invoke();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace BackEnd.ModelClasses
     internal class Storage : IStorage
     {
         internal event Action? StoredItemsChanged;
+        internal event Action? StoredItemModified;
 
         private List<IStored> __StoredItems = new List<IStored>();
         public IReadOnlyList<IStored> StoredItems
@@ -70,7 +71,10 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyIStoredSuccess = true;
 
-            if (_IStoredToModify.Name != _NewStoredName || _IStoredToModify.Description != _NewDescription || _IStoredToModify.Value != _NewValue || _IStoredToModify.Quantity != _NewQuantity)
+            bool TextChanged = _IStoredToModify.Name != _NewStoredName || _IStoredToModify.Description != _NewDescription;
+            bool NumericsChanged = _IStoredToModify.Value != _NewValue || _IStoredToModify.Quantity != _NewQuantity;
+
+            if ( TextChanged  || NumericsChanged)
             {
                 //No System Validation For Adding Stored Items At This Point
 
@@ -85,7 +89,6 @@ namespace BackEnd.ModelClasses
                         ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
                         break;
                 }
-
             }
             else
             {
@@ -95,7 +98,8 @@ namespace BackEnd.ModelClasses
 
             if (ModifyIStoredSuccess)
             {
-                StoredItemsChanged?.Invoke();
+                //If This Isn't Sufficient, I Could Change To Do Event Fowarding From Item Class ( I might have to figure out if that would work with containers too, since they inherit from item)
+                StoredItemModified?.Invoke();
             }
             else
             {

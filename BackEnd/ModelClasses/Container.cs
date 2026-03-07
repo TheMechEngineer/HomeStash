@@ -16,6 +16,12 @@ namespace BackEnd.ModelClasses
             remove { ContainerStorage.StoredItemsChanged -= value; }
         }
 
+        public event Action? StoredItemModified
+        {
+            add { ContainerStorage.StoredItemModified += value; }
+            remove { ContainerStorage.StoredItemModified -= value; }
+        }
+
         private Storage ContainerStorage = new Storage();
         public IStorage CurrentStorage
         {

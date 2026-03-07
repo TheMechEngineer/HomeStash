@@ -66,9 +66,11 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyUserSuccess = true;
 
-            if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            bool UsernameChanged = _UserToModify.Username != _NewUsername;
+
+            if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
             {
-                if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
                 {
                     if (!UsernameSystemValidation(_NewUsername, ref _ErrorMessage))
                     {

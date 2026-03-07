@@ -60,9 +60,11 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            bool UsernameChanged = this.Username != _NewUsername;
+
+            if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
             {
-                if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
                 {
                     if (!UsernameSelfValidation(_NewUsername, ref _ErrorMessage))
                     {
@@ -139,9 +141,12 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyBuildingSuccess = true;
 
-            if (_BuildingToModify.Name != _NewBuildingName || _BuildingToModify.Width != _NewWidth || _BuildingToModify.Height != _NewHeight)
+            bool NameChanged = _BuildingToModify.Name != _NewBuildingName;
+            bool DimensionsChanged = _BuildingToModify.Width != _NewWidth || _BuildingToModify.Height != _NewHeight;
+
+            if (NameChanged || DimensionsChanged)
             {
-                if (_BuildingToModify.Name != _NewBuildingName)
+                if (NameChanged)
                 {
                     if (!BuildingNameSystemValidation(_NewBuildingName, ref _ErrorMessage))
                     {

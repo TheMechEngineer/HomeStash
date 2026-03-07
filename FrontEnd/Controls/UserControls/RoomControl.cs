@@ -45,13 +45,17 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            SetRoomTextAndColor();
-            ScaleRoom();
+            SetText();
+            SetColor();
+            SetDimensions();
         }
 
         private void Wire()
         {
             CurrentRoom.StoredItemsChanged += CurrentRoom_StoredItemsChanged;
+            CurrentRoom.RoomNameChanged += CurrentRoom_RoomNameChanged;
+            CurrentRoom.RoomDimensionsChanged += CurrentRoom_RoomDimensionsChanged;
+            CurrentRoom.RoomColorChanged += CurrentRoom_RoomColorChanged;
 
             this.Click += RoomControl_Click;
 
@@ -75,16 +79,25 @@ namespace FrontEnd.UserControls
             this.HandleDestroyed -= UnWire;
         }
 
-        private void SetRoomTextAndColor()
+        private void SetText()
         {
-            this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
             this.lblRoomInfo.Text = $"{CurrentRoom.Name}\nItem Count: {CurrentRoom.TotalItemCount()}\nItem Value: {CurrentRoom.TotalItemValue():C2}";
         }
 
-        private void ScaleRoom()
+        private void SetColor()
+        {
+            this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
+        }
+
+        private void SetDimensions()
         {
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
             this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
+
+            int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
+            int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
+
+            this.Location = new Point(DisplayedRoomLeft, DisplayedRoomTop);
         }
 
         private void RoomControl_Click(object? sender, EventArgs e)
@@ -94,7 +107,24 @@ namespace FrontEnd.UserControls
 
         private void CurrentRoom_StoredItemsChanged()
         {
-            SetRoomTextAndColor();
+            SetText();
         }
+
+        private void CurrentRoom_RoomNameChanged()
+        {
+            SetText();
+        }
+
+        private void CurrentRoom_RoomColorChanged()
+        {
+            SetColor();
+        }
+
+        private void CurrentRoom_RoomDimensionsChanged()
+        {
+            SetDimensions();
+        }
+
+
     }
 }
