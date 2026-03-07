@@ -35,6 +35,9 @@ namespace FrontEnd.UserControls
             CurrentBuilding = _CurrentBuilding;
             CurrentFormType = FormType.Add;
 
+            rdoItem.Tag = StoredItemType.Item;
+            rdoContainer.Tag = StoredItemType.Container;
+
             InitializeVisuals();
         }
 
@@ -120,6 +123,17 @@ namespace FrontEnd.UserControls
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
+            StoredItemType StoredItemType = StoredItemType.Item;
+
+            foreach (RadioButton CurrentRadioButton in grpItemType.Controls)
+            {
+                if (CurrentRadioButton.Checked)
+                {
+                    StoredItemType = (StoredItemType)CurrentRadioButton.Tag;
+                    break;
+                }
+            }
+
             try
             {
                 ConfirmClicked?.Invoke(CurrentFormType, CurrentItem, this,
@@ -129,7 +143,7 @@ namespace FrontEnd.UserControls
                         Convert.ToDouble(txtValueInput.Text),
                         Convert.ToInt32(txtQuantityInput.Text),
                         (cmbLocationInput.SelectedItem as ComboBoxLineItem).Tag,
-                        StoredItemType.Item
+                        StoredItemType
                     )
                 );
             }
