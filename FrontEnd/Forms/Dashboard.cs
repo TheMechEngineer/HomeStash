@@ -29,7 +29,7 @@ namespace FrontEnd.Forms
 
             UserSelection();
         }
-        
+
         private void InitializeVisuals()
         {
             this.WindowState = FormWindowState.Maximized;

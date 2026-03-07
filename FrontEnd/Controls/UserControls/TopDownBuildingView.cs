@@ -41,7 +41,7 @@ namespace FrontEnd.UserControls
 
             InitializeVisuals();
             Wire();
-            
+
         }
 
         private void InitializeVisuals()
@@ -66,7 +66,6 @@ namespace FrontEnd.UserControls
 
             tsbtnEditRoom.Enabled = SelectedRoom != null;
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
-            tsbtnAddItemToRoom.Enabled = SelectedRoom != null;
         }
 
         private void Wire()
@@ -203,6 +202,32 @@ namespace FrontEnd.UserControls
             }
         }
 
+        private void AddNewItem()
+        {
+            ItemInfo AddNewItem = new ItemInfo(CurrentBuilding);
+
+            AddNewItem.ConfirmClicked += ItemInfo_ConfirmClicked;
+            AddNewItem.CancelClicked += ItemInfo_CancelClicked;
+
+            AddNewItem.Dock = DockStyle.Fill;
+            AddNewItem.Name = "AddNewItem";
+
+            splTopView.SplitterDistance = splTopView.ClientSize.Width - AddNewItem.Width;
+            splTopView.Panel2.Controls.Add(AddNewItem);
+            AddNewItem.BringToFront();
+
+            tsrTopDown.Enabled = false;
+
+            TransparentPanel BlockerPanel = new TransparentPanel();
+            BlockerPanel.Name = "Blocker";
+            BlockerPanel.Dock = DockStyle.Fill;
+            BlockerPanel.BackColor = Color.Black;
+            BlockerPanel.Opacity = 20;
+
+            this.CameraPanel.Controls.Add(BlockerPanel);
+            BlockerPanel.BringToFront();
+        }
+
         private void GenerateTreeListView()
         {
             //TreeListView TestView = new TreeListView();
@@ -232,12 +257,12 @@ namespace FrontEnd.UserControls
             {
                 if (x is Building CurrentBuilding) { return "Total: " + CurrentBuilding.TotalItemCount().ToString(); }
                 if (x is Room CurrentRoom) { return "Subtotal: " + CurrentRoom.TotalItemCount(); }
-                if (x is BackEnd.ModelClasses.Container CurrentContainer) 
-                    { 
+                if (x is BackEnd.ModelClasses.Container CurrentContainer)
+                {
                     int ContainerQTY = CurrentContainer.Quantity;
                     int ChildrenQTY = (CurrentContainer.TotalItemCount() / CurrentContainer.Quantity) - 1;
                     return $"{ContainerQTY} ({ChildrenQTY} Children Each)";
-                    }
+                }
                 if (x is Item CurrentItem) { return CurrentItem.Quantity; }
                 return "";
             };
@@ -250,7 +275,7 @@ namespace FrontEnd.UserControls
             {
                 if (x is Building CurrentBuilding) { return ""; }
                 if (x is Room CurrentRoom) { return ""; }
-                if (x is BackEnd.ModelClasses.Container CurrentContainer) 
+                if (x is BackEnd.ModelClasses.Container CurrentContainer)
                 {
                     double ContainerValue = CurrentContainer.Value;
                     double ChildrenValue = (CurrentContainer.TotalItemValue() / CurrentContainer.Quantity) - CurrentContainer.Value;
@@ -323,6 +348,9 @@ namespace FrontEnd.UserControls
         private void ResetSplitPanelSize()
         {
             int CombinedColumnWidth = CurrentTreeListView.AllColumns.Sum(CurrentColumn => CurrentColumn.Width);
+            // If I have time to refactor, have this resize based on if the vertical scrollbar appear
+            //Reference what i did in the selection control
+            CombinedColumnWidth = Convert.ToInt32(CombinedColumnWidth * 1.05);
             splTopView.SplitterDistance = this.Width - CombinedColumnWidth;
         }
 
@@ -426,7 +454,11 @@ namespace FrontEnd.UserControls
             DeleteRoom();
         }
 
-        private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _CurrentRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
+        private void tsbtnAddItem_Click(object sender, EventArgs e)
+        {
+            AddNewItem();
+        }
+        private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _ModifiedRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
         {
             string? _ErrorMessage;
 
@@ -443,7 +475,7 @@ namespace FrontEnd.UserControls
             }
             else if (_FormType == FormType.Modify)
             {
-                if (CurrentBuilding.TryModifyRoom(_CurrentRoom, _RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+                if (CurrentBuilding.TryModifyRoom(_ModifiedRoom, _RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
                 {
                     RoomInfo_CancelClicked(_CurrentControl);
                 }
@@ -458,6 +490,53 @@ namespace FrontEnd.UserControls
         {
             _CurrentControl.ConfirmClicked -= RoomInfo_ConfirmClicked;
             _CurrentControl.CancelClicked -= RoomInfo_CancelClicked;
+
+            CurrentBufferedBuilding.ResetSelectedRoom();
+
+            tsrTopDown.Enabled = true;
+
+            TransparentPanel BlockerPanel = this.CameraPanel.Controls["Blocker"] as TransparentPanel;
+            this.CameraPanel.Controls.Remove(BlockerPanel);
+            BlockerPanel.Dispose();
+
+            ResetSplitPanelSize();
+
+            splTopView.Panel2.Controls.Remove(_CurrentControl);
+            _CurrentControl.Dispose();
+        }
+
+        private void ItemInfo_ConfirmClicked(FormType _FormType, Item? _ModifiedItem, ItemInfo _CurrentControl, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, BackEnd.Enumerations.StoredItemType CreationType) _ItemValues)
+        {
+            string? _ErrorMessage;
+
+            if (_FormType == FormType.Add)
+            {
+                if (_ItemValues.Location.TryAddIStored(_ItemValues.CreationType, _ItemValues.Name, _ItemValues.Description, _ItemValues.Value, _ItemValues.Quantity, out _ErrorMessage))
+                {
+                    ItemInfo_CancelClicked(_CurrentControl);
+                }
+                else
+                {
+                    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (_FormType == FormType.Modify)
+            {
+                //if (CurrentBuilding.TryModifyRoom(_CurrentRoom, _RoomValues.Name, _RoomValues.Width, _RoomValues.Height, _RoomValues.CenterX, _RoomValues.CenterY, _RoomValues.ColorValue, out _ErrorMessage))
+                //{
+                //    RoomInfo_CancelClicked(_CurrentControl);
+                //}
+                //else
+                //{
+                //    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //}
+            }
+        }
+
+        private void ItemInfo_CancelClicked(ItemInfo _CurrentControl)
+        {
+            _CurrentControl.ConfirmClicked -= ItemInfo_ConfirmClicked;
+            _CurrentControl.CancelClicked -= ItemInfo_CancelClicked;
 
             CurrentBufferedBuilding.ResetSelectedRoom();
 
@@ -493,16 +572,9 @@ namespace FrontEnd.UserControls
         {
             SelectedRoom = _SelectedRoom;
             tsbtnEditRoom.Enabled = SelectedRoom != null;
-            tsbtnAddItemToRoom.Enabled = SelectedRoom != null;
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
         }
 
-
-
-        private void tsbtnAddItemToRoom_Click(object sender, EventArgs e)
-        {
-
-        }
         private void CurrentBufferedBuilding_StoredItemsChanged()
         {
             RefreshTreeListView();

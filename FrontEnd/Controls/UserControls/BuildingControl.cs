@@ -14,10 +14,22 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
+        internal event Action? StoredItemsChanged
+        {
+            add { CurrentBuilding.StoredItemsChanged += value; }
+            remove { CurrentBuilding.StoredItemsChanged -= value; }
+        }
+
+        internal event Action? RoomListChanged
+        {
+            add { CurrentBuilding.RoomListChanged += value; }
+            remove { CurrentBuilding.RoomListChanged -= value; }
+        }
+
         internal event Action? BuildingViewUpdated;
-        internal event Action? RoomListChanged;
+        //internal event Action? RoomListChanged;
         internal event Action<Room?>? RoomSelectionChanged;
-        internal event Action? StoredItemsChanged;
+        //internal event Action? StoredItemsChanged;
 
         private Building CurrentBuilding;
 
@@ -83,11 +95,13 @@ namespace FrontEnd.UserControls
         private void Wire()
         {
             CurrentBuilding.RoomListChanged += RefreshRooms;
+            CurrentBuilding.StoredItemsChanged += RefreshRooms;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
             CurrentBuilding.RoomListChanged -= RefreshRooms;
+            CurrentBuilding.StoredItemsChanged -= RefreshRooms;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -166,7 +180,6 @@ namespace FrontEnd.UserControls
         {
             ClearExistingRooms();
             GenerateNewRooms();
-            this.RoomListChanged?.Invoke();
         }
 
         private void ClearExistingRooms()

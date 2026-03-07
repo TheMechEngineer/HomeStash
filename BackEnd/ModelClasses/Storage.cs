@@ -50,6 +50,12 @@ namespace BackEnd.ModelClasses
             if (AddIStoredSuccess)
             {
                 __StoredItems.Add(StoredObject);
+
+                if (StoredObject is Container NewContainer)
+                {
+                    NewContainer.StoredItemsChanged += StoredItemsChangedFowarding;
+                }
+
                 StoredItemsChanged?.Invoke();
             }
             else
@@ -110,6 +116,11 @@ namespace BackEnd.ModelClasses
                 return false;
             }
 
+            if (_IStoredToRemove is Container RemovedContainer)
+            {
+                RemovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
+            }
+
             __StoredItems.Remove(_IStoredToRemove);
             StoredItemsChanged?.Invoke();
             return true;
@@ -126,6 +137,12 @@ namespace BackEnd.ModelClasses
             }
 
             Storage StorageDestination = _Destination as Storage;
+
+            if (_IStoredToMove is Container MovedContainer)
+            {
+                MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
+                MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
+            }
 
             StorageDestination.__StoredItems.Add(_IStoredToMove);
             StorageDestination.StoredItemsChanged?.Invoke();
@@ -158,6 +175,11 @@ namespace BackEnd.ModelClasses
 
             return TotalItemValue;
             return __StoredItems.Sum(Item => Item.Value * Item.Quantity);
+        }
+
+        private void StoredItemsChangedFowarding()
+        {
+            this.StoredItemsChanged?.Invoke();
         }
     }
 }

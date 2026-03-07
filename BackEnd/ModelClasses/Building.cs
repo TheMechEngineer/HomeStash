@@ -13,11 +13,21 @@ namespace BackEnd.ModelClasses
     public class Building : IStorageHolder
     {
         public event Action? RoomListChanged;
+        public event Action? __StoredItemsChanged;
 
         public event Action? StoredItemsChanged
         {
-            add { UnsortedItems.StoredItemsChanged += value; }
-            remove { UnsortedItems.StoredItemsChanged -= value; }
+            add 
+            { 
+                UnsortedItems.StoredItemsChanged += value; 
+                __StoredItemsChanged += value; 
+                    
+            }
+            remove 
+            { 
+                UnsortedItems.StoredItemsChanged -= value;
+                __StoredItemsChanged -= value;
+            }
         }
 
         public string Name { get; private set; }
@@ -196,6 +206,7 @@ namespace BackEnd.ModelClasses
                 if (Room.TryCreate(_RoomName, _Width, _Height, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
                 {
                     __RoomList.Add(NewRoom);
+                    NewRoom.StoredItemsChanged += StoredItemsChangedForwarding;
                     RoomListChanged?.Invoke();
                 }
                 else
@@ -271,8 +282,14 @@ namespace BackEnd.ModelClasses
                 return false;
             }
 
+            _RoomToRemove.StoredItemsChanged -= StoredItemsChangedForwarding;
             __RoomList.Remove(_RoomToRemove);
             RoomListChanged?.Invoke();
+
+            if(_RoomToRemove.StoredItems.Count > 0)
+            {
+                __StoredItemsChanged?.Invoke();
+            }
             return true;
         }
 
@@ -384,6 +401,11 @@ namespace BackEnd.ModelClasses
         public double TotalItemValue()
         {
             return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
+        }
+
+        private void StoredItemsChangedForwarding()
+        {
+            __StoredItemsChanged?.Invoke();
         }
     }
 }
