@@ -50,8 +50,8 @@ namespace FrontEnd.UserControls
             }
         }
 
-        private int InitialDisplayWidth;
-        private int InitialDisplayHeight;
+        private int BaseDisplayWidth;
+        private int BaseDisplayHeight;
 
         private Color SelectedRoomColor = Color.Beige;
         private RoomControl? SelectedRoom;
@@ -62,9 +62,8 @@ namespace FrontEnd.UserControls
 
             CurrentBuilding = _CurrentBuilding;
 
-            //Need To Use Math.Round Because Convert.ToInt32 uses Bankers Rounding and we want Away From Zero Rounding
-            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
-            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+
+            SetBaseDimensions();
 
             this.Name = CurrentBuilding.Name;
             this.Tag = CurrentBuilding;
@@ -82,8 +81,10 @@ namespace FrontEnd.UserControls
         private void Wire()
         {
             CurrentBuilding.RoomListChanged += RegenerateRooms;
+            CurrentBuilding.BuildingDimensionsChanged += CurrentBuilding_BuildingDimensionsChanged; ;
             this.HandleDestroyed += UnWire;
         }
+
         private void UnWire(object? sender, EventArgs e)
         {
             CurrentBuilding.RoomListChanged -= RegenerateRooms;
@@ -94,8 +95,8 @@ namespace FrontEnd.UserControls
         {
             ScalingFactor *= _ScaleModifier;
 
-            this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
-            this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Width = Convert.ToInt32(Math.Round(this.BaseDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Height = Convert.ToInt32(Math.Round(this.BaseDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
             this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
             BuildingViewUpdated?.Invoke();
@@ -201,6 +202,13 @@ namespace FrontEnd.UserControls
             RoomSelectionChanged?.Invoke(SelectedRoom?.Tag as Room);
         }
 
+        private void SetBaseDimensions()
+        {
+            //Need To Use Math.Round Because Convert.ToInt32 uses Bankers Rounding and we want Away From Zero Rounding
+            BaseDisplayWidth = Convert.ToInt32(Math.Round(CurrentBuilding.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            BaseDisplayHeight = Convert.ToInt32(Math.Round(CurrentBuilding.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+        }
+
         private void BuildingControl_Click(object sender, EventArgs e)
         {
             ResetSelectedRoom();
@@ -225,6 +233,12 @@ namespace FrontEnd.UserControls
                 //int index = flpUserList.Controls.IndexOf(ClickedLabel);
                 //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
             }
+        }
+
+        private void CurrentBuilding_BuildingDimensionsChanged()
+        {
+            SetBaseDimensions();
+            ScaleBuilding(1);
         }
 
         private void BuildingControl_Paint(object sender, PaintEventArgs e)

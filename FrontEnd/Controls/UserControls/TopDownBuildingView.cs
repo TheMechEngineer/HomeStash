@@ -60,6 +60,9 @@ namespace FrontEnd.UserControls
             this.tsnudHGridCount.Value = CurrentBufferedBuilding.HGridCount;
             this.tsnudVGridCount.Value = CurrentBufferedBuilding.VGridCount;
 
+            this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
+            this.tstxtHeight.Text = CurrentBuilding.Height.ToString();
+
             this.CameraPanel.Controls.Add(CurrentBufferedBuilding);
 
             tsbtnEditRoom.Enabled = SelectedRoom != null;
@@ -580,6 +583,75 @@ namespace FrontEnd.UserControls
         private void CurrentBuilding_RoomListChanged()
         {
             RefreshTreeListView();
+        }
+
+        private void tstxtWidth_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                string? ErrorMessage;
+                ToolStripTextBox CurrentTextBox = sender as ToolStripTextBox;
+
+                try
+                {
+                    if
+                    (
+                        !this.RootManagerInstance.ActiveUser.TryModifyBuilding
+                        (
+                            this.CurrentBuilding,
+                            this.CurrentBuilding.Name,
+                            Convert.ToSingle(CurrentTextBox.Text),
+                            this.CurrentBuilding.Height,
+                            out ErrorMessage
+                        )
+                    )
+                    {
+                        MessageBox.Show(ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Format Error: Width Must Be A Number", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
+                }
+            }
+        }
+        private void tstxtHeight_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                string? ErrorMessage;
+                ToolStripTextBox CurrentTextBox = sender as ToolStripTextBox;
+
+                try
+                {
+                    if
+                    (
+                        !this.RootManagerInstance.ActiveUser.TryModifyBuilding
+                        (
+                            this.CurrentBuilding,
+                            this.CurrentBuilding.Name,
+                            this.CurrentBuilding.Width,
+                            Convert.ToSingle(CurrentTextBox.Text),
+                            out ErrorMessage
+                        )
+                    )
+                    {
+                        MessageBox.Show(ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Format Error: Height Must Be A Number", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
+                }
+            }
         }
     }
 }

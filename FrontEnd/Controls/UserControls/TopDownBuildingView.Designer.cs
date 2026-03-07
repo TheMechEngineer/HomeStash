@@ -40,12 +40,18 @@ namespace FrontEnd.UserControls
             toolStripSeparator1 = new ToolStripSeparator();
             tsbtnAddRoom = new ToolStripButton();
             tsrTopDown = new ToolStrip();
-            tslblBuilding = new ToolStripLabel();
+            tslblView = new ToolStripLabel();
             tsbtnFitToScreen = new ToolStripButton();
-            toolStripLabel1 = new ToolStripLabel();
+            tslblHGrid = new ToolStripLabel();
             tsnudHGridCount = new ToolStripNumericUpDown();
-            toolStripLabel2 = new ToolStripLabel();
+            tslblVGrid = new ToolStripLabel();
             tsnudVGridCount = new ToolStripNumericUpDown();
+            toolStripSeparator3 = new ToolStripSeparator();
+            tslblBuilding = new ToolStripLabel();
+            tslblWidth = new ToolStripLabel();
+            tstxtWidth = new ToolStripTextBox();
+            tslblHeight = new ToolStripLabel();
+            tstxtHeight = new ToolStripTextBox();
             tslblRoom = new ToolStripLabel();
             tsbtnEditRoom = new ToolStripButton();
             tsbtnDeleteRoom = new ToolStripButton();
@@ -150,18 +156,18 @@ namespace FrontEnd.UserControls
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tslblBuilding, tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount, toolStripSeparator1, tslblRoom, tsbtnAddRoom, tsbtnEditRoom, tsbtnDeleteRoom, toolStripSeparator2, tslblStored, tsbtnAddItem });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tslblView, tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, tslblHGrid, tsnudHGridCount, tslblVGrid, tsnudVGridCount, toolStripSeparator3, tslblBuilding, tslblWidth, tstxtWidth, tslblHeight, tstxtHeight, toolStripSeparator1, tslblRoom, tsbtnAddRoom, tsbtnEditRoom, tsbtnDeleteRoom, toolStripSeparator2, tslblStored, tsbtnAddItem });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 26);
             tsrTopDown.TabIndex = 0;
             tsrTopDown.Text = "toolStrip1";
             // 
-            // tslblBuilding
+            // tslblView
             // 
-            tslblBuilding.Name = "tslblBuilding";
-            tslblBuilding.Size = new Size(102, 23);
-            tslblBuilding.Text = "Building Controls:";
+            tslblView.Name = "tslblView";
+            tslblView.Size = new Size(83, 23);
+            tslblView.Text = "View Controls:";
             // 
             // tsbtnFitToScreen
             // 
@@ -174,12 +180,12 @@ namespace FrontEnd.UserControls
             tsbtnFitToScreen.ToolTipText = "Fit Building To Screen";
             tsbtnFitToScreen.Click += tsbtnFitToScreen_Click;
             // 
-            // toolStripLabel1
+            // tslblHGrid
             // 
-            toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(19, 23);
-            toolStripLabel1.Text = "H:";
-            toolStripLabel1.ToolTipText = "Set Horizontal Grid Count";
+            tslblHGrid.Name = "tslblHGrid";
+            tslblHGrid.Size = new Size(19, 23);
+            tslblHGrid.Text = "H:";
+            tslblHGrid.ToolTipText = "Set Horizontal Grid Count";
             // 
             // tsnudHGridCount
             // 
@@ -192,12 +198,12 @@ namespace FrontEnd.UserControls
             tsnudHGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudHGridCount.ValueChanged += tsnudHGridCount_ValueChanged;
             // 
-            // toolStripLabel2
+            // tslblVGrid
             // 
-            toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new Size(17, 23);
-            toolStripLabel2.Text = "V:";
-            toolStripLabel2.ToolTipText = "Set Vertical Grid Count";
+            tslblVGrid.Name = "tslblVGrid";
+            tslblVGrid.Size = new Size(17, 23);
+            tslblVGrid.Text = "V:";
+            tslblVGrid.ToolTipText = "Set Vertical Grid Count";
             // 
             // tsnudVGridCount
             // 
@@ -209,6 +215,45 @@ namespace FrontEnd.UserControls
             tsnudVGridCount.ToolTipText = "Set Vertical Grid Count";
             tsnudVGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudVGridCount.ValueChanged += tsnudVGridCount_ValueChanged;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 26);
+            // 
+            // tslblBuilding
+            // 
+            tslblBuilding.Name = "tslblBuilding";
+            tslblBuilding.Size = new Size(102, 23);
+            tslblBuilding.Text = "Building Controls:";
+            // 
+            // tslblWidth
+            // 
+            tslblWidth.Name = "tslblWidth";
+            tslblWidth.Size = new Size(21, 23);
+            tslblWidth.Text = "W:";
+            tslblWidth.ToolTipText = "Set Building Width";
+            // 
+            // tstxtWidth
+            // 
+            tstxtWidth.Name = "tstxtWidth";
+            tstxtWidth.Size = new Size(30, 26);
+            tstxtWidth.ToolTipText = "Building Width";
+            tstxtWidth.KeyDown += tstxtWidth_KeyDown;
+            // 
+            // tslblHeight
+            // 
+            tslblHeight.Name = "tslblHeight";
+            tslblHeight.Size = new Size(19, 23);
+            tslblHeight.Text = "H:";
+            tslblHeight.ToolTipText = "Set Building Height";
+            // 
+            // tstxtHeight
+            // 
+            tstxtHeight.Name = "tstxtHeight";
+            tstxtHeight.Size = new Size(30, 26);
+            tstxtHeight.ToolTipText = "Building Height";
+            tstxtHeight.KeyDown += tstxtHeight_KeyDown;
             // 
             // tslblRoom
             // 
@@ -289,15 +334,21 @@ namespace FrontEnd.UserControls
         private ToolStrip tsrTopDown;
         private ToolStripNumericUpDown tsnudHGridCount;
         private ToolStripNumericUpDown tsnudVGridCount;
-        private ToolStripLabel toolStripLabel1;
-        private ToolStripLabel toolStripLabel2;
+        private ToolStripLabel tslblHGrid;
+        private ToolStripLabel tslblVGrid;
         private ToolStripButton tsbtnFitToScreen;
         private ToolStripButton tsbtnEditRoom;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton tsbtnAddItem;
         private ToolStripButton tsbtnDeleteRoom;
-        private ToolStripLabel tslblBuilding;
+        private ToolStripLabel tslblView;
         private ToolStripLabel tslblRoom;
         private ToolStripLabel tslblStored;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripLabel tslblBuilding;
+        private ToolStripTextBox tstxtWidth;
+        private ToolStripTextBox tstxtHeight;
+        private ToolStripLabel tslblWidth;
+        private ToolStripLabel tslblHeight;
     }
 }

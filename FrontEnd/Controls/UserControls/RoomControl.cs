@@ -21,8 +21,8 @@ namespace FrontEnd.UserControls
         private int DefaultPixelsPerUnit;
         private float ScalingFactor;
 
-        private int InitialDisplayWidth;
-        private int InitialDisplayHeight;
+        private int BaseDisplayWidth;
+        private int BaseDisplayHeight;
 
         internal RoomControl(Room _CurrentRoom, int _DefaultPixelsPerUnit, float _ScalingFactor)
         {
@@ -33,8 +33,7 @@ namespace FrontEnd.UserControls
             DefaultPixelsPerUnit = _DefaultPixelsPerUnit;
             ScalingFactor = _ScalingFactor;
 
-            InitialDisplayWidth = Convert.ToInt32(Math.Round(CurrentRoom.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
-            InitialDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            SetBaseDimensions();
 
             this.Name = CurrentRoom.Name;
             this.Tag = CurrentRoom;
@@ -47,7 +46,7 @@ namespace FrontEnd.UserControls
         {
             SetText();
             SetColor();
-            SetDimensions();
+            SetDisplayedDimensions();
         }
 
         private void Wire()
@@ -69,6 +68,11 @@ namespace FrontEnd.UserControls
 
         private void UnWire(object? sender, EventArgs e)
         {
+            CurrentRoom.StoredItemsChanged -= CurrentRoom_StoredItemsChanged;
+            CurrentRoom.RoomNameChanged -= CurrentRoom_RoomNameChanged;
+            CurrentRoom.RoomDimensionsChanged -= CurrentRoom_RoomDimensionsChanged;
+            CurrentRoom.RoomColorChanged -= CurrentRoom_RoomColorChanged;
+
             this.Click -= RoomControl_Click;
 
             foreach (Control CurrentControl in this.Controls)
@@ -89,10 +93,16 @@ namespace FrontEnd.UserControls
             this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
         }
 
-        private void SetDimensions()
+        private void SetBaseDimensions()
         {
-            this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
-            this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
+            BaseDisplayWidth = Convert.ToInt32(Math.Round(CurrentRoom.Width * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+            BaseDisplayHeight = Convert.ToInt32(Math.Round(CurrentRoom.Height * DefaultPixelsPerUnit, MidpointRounding.AwayFromZero));
+        }
+
+        private void SetDisplayedDimensions()
+        {
+            this.Width = Convert.ToInt32(Math.Round(this.BaseDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
+            this.Height = Convert.ToInt32(Math.Round(this.BaseDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
             int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
             int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
@@ -103,7 +113,7 @@ namespace FrontEnd.UserControls
         internal void SetRoomScale(float _NewScalingFactor)
         {
             ScalingFactor = _NewScalingFactor;
-            SetDimensions();
+            SetDisplayedDimensions();
         }
 
         private void RoomControl_Click(object? sender, EventArgs e)
@@ -128,9 +138,8 @@ namespace FrontEnd.UserControls
 
         private void CurrentRoom_RoomDimensionsChanged()
         {
-            SetDimensions();
+            SetBaseDimensions();
+            SetDisplayedDimensions();
         }
-
-
     }
 }
