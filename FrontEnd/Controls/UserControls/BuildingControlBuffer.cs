@@ -20,18 +20,6 @@ namespace FrontEnd.UserControls
             remove { DisplayedBuilding.RoomSelectionChanged -= value; }
         }
 
-        internal event Action? StoredItemsChanged
-        {
-            add { DisplayedBuilding.StoredItemsChanged += value; }
-            remove { DisplayedBuilding.StoredItemsChanged -= value; }
-        }
-
-        internal event Action? RoomListChanged
-        {
-            add { DisplayedBuilding.RoomListChanged += value; }
-            remove { DisplayedBuilding.RoomListChanged -= value; }
-        }
-
         private Building CurrentBuilding;
         private BuildingControl DisplayedBuilding;
 

@@ -16,12 +16,6 @@ namespace FrontEnd.UserControls
     {
         internal event EventHandler? RoomClicked;
 
-        internal event Action? StoredItemsChanged
-        {
-            add { CurrentRoom.StoredItemsChanged += value; }
-            remove { CurrentRoom.StoredItemsChanged -= value; }
-        }
-
         private Room CurrentRoom;
 
         private int DefaultPixelsPerUnit;
@@ -51,14 +45,14 @@ namespace FrontEnd.UserControls
 
         private void InitializeVisuals()
         {
-            this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
-            this.lblRoomInfo.Text = $"{CurrentRoom.Name}\nItem Count: {CurrentRoom.TotalItemCount()}\nItem Value: {CurrentRoom.TotalItemValue():C2}";
-
+            SetRoomTextAndColor();
             ScaleRoom();
         }
 
         private void Wire()
         {
+            CurrentRoom.StoredItemsChanged += CurrentRoom_StoredItemsChanged;
+
             this.Click += RoomControl_Click;
 
             foreach (Control CurrentControl in this.Controls)
@@ -68,8 +62,6 @@ namespace FrontEnd.UserControls
 
             this.HandleDestroyed += UnWire;
         }
-
- 
 
         private void UnWire(object? sender, EventArgs e)
         {
@@ -83,6 +75,12 @@ namespace FrontEnd.UserControls
             this.HandleDestroyed -= UnWire;
         }
 
+        private void SetRoomTextAndColor()
+        {
+            this.BackColor = Color.FromArgb(CurrentRoom.RoomColor);
+            this.lblRoomInfo.Text = $"{CurrentRoom.Name}\nItem Count: {CurrentRoom.TotalItemCount()}\nItem Value: {CurrentRoom.TotalItemValue():C2}";
+        }
+
         private void ScaleRoom()
         {
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
@@ -92,6 +90,11 @@ namespace FrontEnd.UserControls
         private void RoomControl_Click(object? sender, EventArgs e)
         {
             RoomClicked?.Invoke(this, e);
+        }
+
+        private void CurrentRoom_StoredItemsChanged()
+        {
+            SetRoomTextAndColor();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace BackEnd.DataContinuity
 {
     public static class Startup
     {
-        public static List<Item> TempItemStatup()
+        public static List<Item> TempItemStartup()
         {
             List<Item> ReturnList = new List<Item>();
 
@@ -23,7 +23,7 @@ namespace BackEnd.DataContinuity
             return ReturnList;
         }
 
-        public static RootManager TempItemStatup2()
+        public static RootManager TempItemStartup2()
         {
             RootManager ReturnItem = new RootManager();
 
@@ -55,6 +55,7 @@ namespace BackEnd.DataContinuity
             ReturnItem.ActiveUser.ActiveBuilding.RoomList[1].TryAddIStored(StoredItemType.Item, "Item6", "Test Description 6", 1, 50, out _);
 
             ReturnItem.ActiveUser.ActiveBuilding.RoomList[2].TryAddIStored(StoredItemType.Item, "Item7", "Test Description 7", 100, 1, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[2].TryAddIStored(StoredItemType.Container, "New Container", "Item Storage", 0, 1, out _);
 
             ReturnItem.ActiveUser.ActiveBuilding.RoomList[3].TryAddIStored(StoredItemType.Container, "Container 1", "First Container", 1, 2, out _);
 

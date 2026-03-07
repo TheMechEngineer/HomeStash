@@ -72,8 +72,8 @@ namespace FrontEnd.UserControls
         {
             this.Load += TopDownBuildingView_Load;
             CurrentBufferedBuilding.RoomSelectionChanged += CurrentBufferedBuilding_RoomSelectionChanged;
-            CurrentBufferedBuilding.StoredItemsChanged += CurrentBufferedBuilding_StoredItemsChanged;
-            CurrentBufferedBuilding.RoomListChanged += CurrentBufferedBuilding_RoomListChanged;
+            CurrentBuilding.StoredItemsChanged += CurrentBuilding_StoredItemsChanged;
+            CurrentBuilding.RoomListChanged += CurrentBuilding_RoomListChanged;
             this.HandleDestroyed += UnWire;
         }
 
@@ -81,8 +81,8 @@ namespace FrontEnd.UserControls
         {
             this.Load -= TopDownBuildingView_Load;
             CurrentBufferedBuilding.RoomSelectionChanged -= CurrentBufferedBuilding_RoomSelectionChanged;
-            CurrentBufferedBuilding.StoredItemsChanged -= CurrentBufferedBuilding_StoredItemsChanged;
-            CurrentBufferedBuilding.RoomListChanged -= CurrentBufferedBuilding_RoomListChanged;
+            CurrentBuilding.StoredItemsChanged -= CurrentBuilding_StoredItemsChanged;
+            CurrentBuilding.RoomListChanged -= CurrentBuilding_RoomListChanged;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -133,7 +133,7 @@ namespace FrontEnd.UserControls
             float RequiredWidthScale = (WidthLinearIncrease + BuildingControlWidth) / BuildingControlWidth;
             float RequiredHeightScale = (HeightLinearIncrease + BuildingControlHeight) / BuildingControlHeight;
 
-            //We want to fir the entire building on to the screen, so we select the scale that is smaller between vertical or horizontal.
+            //We want to for the entire building to be on the screen, so we select the scale that is smaller between vertical or horizontal.
             //This way it will always scale to have one side be 95% of the screen, and the other to be less than.
             float SelectedScale = Math.Min(RequiredWidthScale, RequiredHeightScale);
 
@@ -575,16 +575,14 @@ namespace FrontEnd.UserControls
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
         }
 
-        private void CurrentBufferedBuilding_StoredItemsChanged()
+        private void CurrentBuilding_StoredItemsChanged()
         {
             RefreshTreeListView();
         }
 
-        private void CurrentBufferedBuilding_RoomListChanged()
+        private void CurrentBuilding_RoomListChanged()
         {
             RefreshTreeListView();
         }
-
-
     }
 }

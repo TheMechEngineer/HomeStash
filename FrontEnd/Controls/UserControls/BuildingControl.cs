@@ -14,22 +14,8 @@ namespace FrontEnd.UserControls
 {
     internal partial class BuildingControl : UserControl
     {
-        internal event Action? StoredItemsChanged
-        {
-            add { CurrentBuilding.StoredItemsChanged += value; }
-            remove { CurrentBuilding.StoredItemsChanged -= value; }
-        }
-
-        internal event Action? RoomListChanged
-        {
-            add { CurrentBuilding.RoomListChanged += value; }
-            remove { CurrentBuilding.RoomListChanged -= value; }
-        }
-
         internal event Action? BuildingViewUpdated;
-        //internal event Action? RoomListChanged;
         internal event Action<Room?>? RoomSelectionChanged;
-        //internal event Action? StoredItemsChanged;
 
         private Building CurrentBuilding;
 
@@ -95,13 +81,11 @@ namespace FrontEnd.UserControls
         private void Wire()
         {
             CurrentBuilding.RoomListChanged += RefreshRooms;
-            CurrentBuilding.StoredItemsChanged += RefreshRooms;
             this.HandleDestroyed += UnWire;
         }
         private void UnWire(object? sender, EventArgs e)
         {
             CurrentBuilding.RoomListChanged -= RefreshRooms;
-            CurrentBuilding.StoredItemsChanged -= RefreshRooms;
             this.HandleDestroyed -= UnWire;
         }
 
@@ -114,23 +98,11 @@ namespace FrontEnd.UserControls
             this.Width = Convert.ToInt32(Math.Round(this.InitialDisplayWidth * ScalingFactor, MidpointRounding.AwayFromZero));
             this.Height = Convert.ToInt32(Math.Round(this.InitialDisplayHeight * ScalingFactor, MidpointRounding.AwayFromZero));
 
-            RefreshRooms();
             this.Invalidate(); //This Causes Draw Grid To Trigger, Because Invalidate Causes The OnPaint Event To Fire, Which Is Tied To The Paint Event Hander Below
 
+            RefreshRooms();
+            
             this.ResumeLayout();
-
-            BuildingViewUpdated?.Invoke();
-        }
-
-        internal void ResetSelectedRoom()
-        {
-            if (SelectedRoom != null)
-            {
-                SelectedRoom.BackColor = Color.FromArgb((SelectedRoom.Tag as Room).RoomColor);
-            }
-
-            SelectedRoom = null;
-            RoomSelectionChanged?.Invoke(SelectedRoom?.Tag as Room);
         }
 
         private void DrawGrid(Graphics _GraphicsTool)
@@ -180,6 +152,7 @@ namespace FrontEnd.UserControls
         {
             ClearExistingRooms();
             GenerateNewRooms();
+            BuildingViewUpdated?.Invoke();
         }
 
         private void ClearExistingRooms()
@@ -194,7 +167,6 @@ namespace FrontEnd.UserControls
             foreach (Control RoomToRemove in RemoveList)
             {
                 (RoomToRemove as RoomControl).RoomClicked -= Room_Click;
-                (RoomToRemove as RoomControl).StoredItemsChanged -= DisplayedRoom_StoredItemsChanged;
                 this.Controls.Remove(RoomToRemove);
                 RoomToRemove.Dispose();
             }
@@ -207,7 +179,6 @@ namespace FrontEnd.UserControls
                 RoomControl DisplayedRoom = new RoomControl(CurrentRoom, DefaultPixelsPerUnit, ScalingFactor);
 
                 DisplayedRoom.RoomClicked += Room_Click;
-                DisplayedRoom.StoredItemsChanged += DisplayedRoom_StoredItemsChanged;
 
                 int DisplayedRoomLeft = Convert.ToInt32(Math.Round((((CurrentRoom.CenterX - CurrentRoom.Width / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
                 int DisplayedRoomTop = Convert.ToInt32(Math.Round((((CurrentRoom.CenterY - CurrentRoom.Height / 2) * DefaultPixelsPerUnit) * ScalingFactor), MidpointRounding.AwayFromZero));
@@ -218,9 +189,15 @@ namespace FrontEnd.UserControls
             }
         }
 
-        private void DisplayedRoom_StoredItemsChanged()
+        internal void ResetSelectedRoom()
         {
-            this.StoredItemsChanged?.Invoke();
+            if (SelectedRoom != null)
+            {
+                SelectedRoom.BackColor = Color.FromArgb((SelectedRoom.Tag as Room).RoomColor);
+            }
+
+            SelectedRoom = null;
+            RoomSelectionChanged?.Invoke(SelectedRoom?.Tag as Room);
         }
 
         private void BuildingControl_Click(object sender, EventArgs e)
