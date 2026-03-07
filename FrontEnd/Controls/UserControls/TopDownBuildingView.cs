@@ -1,4 +1,5 @@
-﻿using BackEnd.ModelClasses;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelClasses;
 using BackEnd.ModelInterfaces;
 using BrightIdeasSoftware;
 using FrontEnd.Controls.Utilities;
@@ -7,9 +8,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,6 +29,7 @@ namespace FrontEnd.UserControls
         private BuildingControlBuffer CurrentBufferedBuilding;
 
         private Room? SelectedRoom;
+        private Item? SelectedItem;
 
         private Panel CameraPanel;
 
@@ -67,6 +71,9 @@ namespace FrontEnd.UserControls
 
             tsbtnEditRoom.Enabled = SelectedRoom != null;
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
+
+            tsbtnEditItem.Enabled = SelectedRoom != null;
+            tsbtnDeleteItem.Enabled = SelectedRoom != null;
         }
 
         private void Wire()
@@ -230,6 +237,8 @@ namespace FrontEnd.UserControls
 
         private void GenerateTreeListView()
         {
+            CurrentTreeListView.SelectionChanged += CurrentTreeListView_SelectionChanged;
+
             //TreeListView TestView = new TreeListView();
             CurrentTreeListView.Dock = DockStyle.Fill;
 
@@ -393,6 +402,20 @@ namespace FrontEnd.UserControls
             tvBuildingInventory.ExpandAll();
         }
 
+        private void SetRoomControls(Room? _SelectedRoom)
+        {
+            SelectedRoom = _SelectedRoom;
+            tsbtnEditRoom.Enabled = SelectedRoom != null;
+            tsbtnDeleteRoom.Enabled = SelectedRoom != null;
+        }
+
+        private void SetItemControls(Item? _SelectedItem)
+        {
+            SelectedItem = _SelectedItem;
+            tsbtnEditItem.Enabled = SelectedItem != null;
+            tsbtnDeleteItem.Enabled = SelectedItem != null;
+        }
+
         private void tsbtnScale_Click(object sender, EventArgs e)
         {
             if (sender == this.tsbtnScaleDown)
@@ -458,6 +481,21 @@ namespace FrontEnd.UserControls
         {
             AddNewItem();
         }
+
+        private void tsbtnEditItem_Click(object sender, EventArgs e)
+        {
+            Type SelectedType = CurrentTreeListView.SelectedObject.GetType();
+            MessageBox.Show(SelectedType.ToString());
+
+
+            //MessageBox.Show(((Item)CurrentTreeListView.SelectedObject).Name);
+        }
+
+        private void tsbtnDeleteItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void RoomInfo_ConfirmClicked(FormType _FormType, Room? _ModifiedRoom, RoomInfo _CurrentControl, (string Name, float Width, float Height, float CenterX, float CenterY, int ColorValue) _RoomValues)
         {
             string? _ErrorMessage;
@@ -570,9 +608,8 @@ namespace FrontEnd.UserControls
 
         private void CurrentBufferedBuilding_RoomSelectionChanged(Room? _SelectedRoom)
         {
-            SelectedRoom = _SelectedRoom;
-            tsbtnEditRoom.Enabled = SelectedRoom != null;
-            tsbtnDeleteRoom.Enabled = SelectedRoom != null;
+            SetRoomControls(_SelectedRoom);
+            SetItemControls(null);
         }
 
         private void CurrentBuilding_StoredItemsChanged()
@@ -651,6 +688,40 @@ namespace FrontEnd.UserControls
                     MessageBox.Show("Format Error: Height Must Be A Number", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.tstxtWidth.Text = CurrentBuilding.Width.ToString();
                 }
+            }
+        }
+
+        private void CurrentTreeListView_SelectionChanged(object? sender, EventArgs e)
+        {
+            object? SelectedTreeListViewObject;
+
+            if (CurrentTreeListView.SelectedObject != null)
+            {
+                SelectedTreeListViewObject = CurrentTreeListView.SelectedObject;
+                Type SelectedType = SelectedTreeListViewObject.GetType();
+
+                switch (SelectedType)
+                {
+                    case Type CurrentType when SelectedType == typeof(Item):
+                        SetRoomControls(null);
+                        SetItemControls(SelectedTreeListViewObject as Item);
+                        break;
+                    case Type CurrentType when SelectedType == typeof(BackEnd.ModelClasses.Container):
+                        SetRoomControls(null);
+                        SetItemControls(SelectedTreeListViewObject as BackEnd.ModelClasses.Container);
+                        break;
+                    case Type CurrentType when SelectedType == typeof(Room):
+                        SetRoomControls(SelectedTreeListViewObject as Room);
+                        SetItemControls(null);
+                        break;
+                    case Type CurrentType when SelectedType == typeof(Building):
+                        SetRoomControls(null);
+                        SetItemControls(null);
+                        break;
+                }
+
+                //CurrentBufferedBuilding.ResetSelectedRoom(); //This Prevents Room Controls From Enabling
+                //MessageBox.Show(SelectedType.ToString());
             }
         }
     }
