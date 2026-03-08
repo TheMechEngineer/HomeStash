@@ -100,6 +100,12 @@ namespace FrontEnd.UserControls
             this.cmbLocationInput.Items.Add(CurrentComboBoxLineItem);
 
             List<ComboBoxLineItem> ValidStorageList = new List<ComboBoxLineItem>();
+
+            foreach (Container CurrentContainer in CurrentBuilding.StoredItems.OfType<Container>())
+            {
+                ValidStorageList.AddRange(GetNestedContainerItems(CurrentContainer));
+            }
+
             foreach (Room CurrentRoom in CurrentBuilding.RoomList)
             {
                 ValidStorageList.Add(new ComboBoxLineItem(CurrentRoom));
