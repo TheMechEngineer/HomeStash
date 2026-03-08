@@ -127,19 +127,29 @@ namespace BackEnd.ModelClasses
  
             if (ImmediateParentChanged)
             {
-                //No System Validation For Adding Stored Items At This Point
-
-                Type SelectionType = _IStoredToMove.GetType();
-
-                switch (SelectionType)
+                if (ImmediateParentChanged)
                 {
-                    case Type CurrentType when SelectionType == typeof(Item):
-                        MoveIStoredSuccess = (_IStoredToMove as Item).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
-                        break;
-                    case Type CurrentType when SelectionType == typeof(Container):
-                        MoveIStoredSuccess = (_IStoredToMove as Container).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
-                        break;
+                    if (!IStoredMoveSystemValidation(_IStoredToMove, _Destination, ref _ErrorMessage))
+                    {
+                        MoveIStoredSuccess = false;
+                    }
                 }
+
+                if (MoveIStoredSuccess)
+                {
+                    Type SelectionType = _IStoredToMove.GetType();
+
+                    switch (SelectionType)
+                    {
+                        case Type CurrentType when SelectionType == typeof(Item):
+                            MoveIStoredSuccess = (_IStoredToMove as Item).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
+                            break;
+                        case Type CurrentType when SelectionType == typeof(Container):
+                            MoveIStoredSuccess = (_IStoredToMove as Container).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
+                            break;
+                    }
+                }
+
             }
             else
             {
@@ -175,37 +185,6 @@ namespace BackEnd.ModelClasses
 
         }
 
-        //public bool TryMoveIStoredold(IStored _IStoredToMove, IStorage _Destination, out string? _ErrorMessage)
-        //{
-        //    _ErrorMessage = null;
-
-        //    if (!this.__StoredItems.Contains(_IStoredToMove))
-        //    {
-        //        _ErrorMessage = "Item To Be Moved Must Exist In The Storage List";
-        //        return false;
-        //    }
-
-        //    Storage StorageDestination = _Destination as Storage;
-
-        //    if (_IStoredToMove is Container MovedContainer)
-        //    {
-        //        MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
-        //        MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
-
-        //        MovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
-        //        MovedContainer.StoredItemModified += StorageDestination.StoredItemModifiedFowarding;
-        //    }
-
-        //    StorageDestination.__StoredItems.Add(_IStoredToMove);
-        //    _IStoredToMove.ImmediateParent = StorageDestination;
-        //    StorageDestination.StoredItemsChanged?.Invoke();
-
-        //    this.__StoredItems.Remove(_IStoredToMove);
-        //    this.StoredItemsChanged?.Invoke();
-
-        //    return true;
-        //}
-
         public bool TryRemoveIStored(IStored _IStoredToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -225,6 +204,44 @@ namespace BackEnd.ModelClasses
             __StoredItems.Remove(_IStoredToRemove);
             StoredItemsChanged?.Invoke();
             return true;
+        }
+
+        private bool IStoredMoveSystemValidation(IStored _IStoredToMove, IStorageHolder _Destination, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (_IStoredToMove.GetType() == typeof(Container))
+            {
+                if (_IStoredToMove == _Destination)
+                {
+                    _ErrorMessage += $"System Validation Error: {(_IStoredToMove as Container).Name} Cannot Be Moved Into Itself.\n";
+                    SystemValid = false;
+                }
+
+                List<Container> InvalidContainers = GetNestedContainerItems(_IStoredToMove as Container);
+                InvalidContainers.Remove(_IStoredToMove as Container);
+
+                if (InvalidContainers.Contains(_Destination))
+                {
+                    _ErrorMessage += $"System Validation Error: {(_IStoredToMove as Container).Name} Cannot Be Moved Into One Of Its Own Children.\n";
+                    SystemValid = false;
+                }
+            }
+            
+            return SystemValid;
+        }
+
+        private List<Container> GetNestedContainerItems(Container _CurrentContainer)
+        {
+            List<Container> ValidContainerList = new List<Container>();
+            ValidContainerList.Add(_CurrentContainer);
+
+            foreach (Container CurrentContainer in _CurrentContainer.StoredItems.OfType<Container>())
+            {
+                ValidContainerList.AddRange(GetNestedContainerItems(CurrentContainer));
+            }
+
+            return ValidContainerList;
         }
 
         public int TotalItemCount()
@@ -248,7 +265,6 @@ namespace BackEnd.ModelClasses
             }
 
             return TotalItemValue;
-            return __StoredItems.Sum(Item => Item.Value * Item.Quantity);
         }
 
         private void StoredItemsChangedFowarding()
