@@ -9,10 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\UserControls\ItemInfo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

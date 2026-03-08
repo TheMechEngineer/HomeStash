@@ -84,7 +84,7 @@ namespace FrontEnd.UserControls
             }
             catch (FormatException Exc)
             {
-                MessageBox.Show("Width, Height, And Coordinates Must Be Numbers", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Format Error: Width, Height, And Coordinates Must Be Numbers", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

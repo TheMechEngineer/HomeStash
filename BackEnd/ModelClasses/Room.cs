@@ -1,4 +1,5 @@
-﻿using BackEnd.ModelInterfaces;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelInterfaces;
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,22 @@ namespace BackEnd.ModelClasses
 {
     public class Room : IStorageHolder
     {
+        public event Action? StoredItemsChanged
+        {
+            add { RoomStorage.StoredItemsChanged += value; }
+            remove { RoomStorage.StoredItemsChanged -= value; }
+        }
+
+        public event Action? StoredItemModified
+        {
+            add { RoomStorage.StoredItemModified += value; }
+            remove { RoomStorage.StoredItemModified -= value; }
+        }
+
+        public event Action? RoomNameChanged;
+        public event Action? RoomDimensionsChanged;
+        public event Action? RoomColorChanged;
+
         public string Name { get; private set; }
         public float Width { get; private set; }
         public float Height { get; private set; }
@@ -17,9 +34,9 @@ namespace BackEnd.ModelClasses
         public float CenterY { get; private set; }
         public int RoomColor { get; private set; }
 
-        private Storage RoomStorage = new Storage();
-        
-        public IStorage Storage
+        private Storage RoomStorage;
+
+        public IStorage CurrentStorage
         {
             get
             { return RoomStorage; }
@@ -38,6 +55,8 @@ namespace BackEnd.ModelClasses
             CenterX = _CenterX;
             CenterY = _CenterY;
             RoomColor = _RoomColor;
+
+            RoomStorage = new Storage(this);
         }
 
         internal static bool TryCreate(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out Room? _CreatedRoom, out string? _ErrorMessage)
@@ -73,9 +92,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewRoomName || this.Width != _NewWidth || this.Height != _NewHeight || this.CenterX != _NewCenterX || this.CenterY != _NewCenterY || this.RoomColor != _NewRoomColor)
+            bool NameChanged = this.Name != _NewRoomName;
+            bool DimensionsChanged = this.Width != _NewWidth || this.Height != _NewHeight || this.CenterX != _NewCenterX || this.CenterY != _NewCenterY;
+            bool ColorChanged = this.RoomColor != _NewRoomColor;
+
+            if (NameChanged || DimensionsChanged || ColorChanged)
             {
-                if (this.Name != _NewRoomName)
+                if (NameChanged)
                 {
                     if (!NameSelfValidation(_NewRoomName, ref _ErrorMessage))
                     {
@@ -83,7 +106,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                if (DimensionsChanged)
                 {
                     if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
                     {
@@ -105,6 +128,21 @@ namespace BackEnd.ModelClasses
                 this.CenterX = _NewCenterX;
                 this.CenterY = _NewCenterY;
                 this.RoomColor = _NewRoomColor;
+
+                if (NameChanged)
+                {
+                    this.RoomNameChanged?.Invoke();
+                }
+
+                if (DimensionsChanged)
+                {
+                    this.RoomDimensionsChanged?.Invoke();
+                }
+
+                if (ColorChanged)
+                {
+                    this.RoomColorChanged?.Invoke();
+                }
             }
             else
             {
@@ -120,7 +158,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_RoomName))
             {
-                _ErrorMessage += "Room Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Room Name Must Contain Characters\n";
                 RoomNameValid = false;
             }
 
@@ -133,7 +171,7 @@ namespace BackEnd.ModelClasses
 
             if (_Width <= 0 || _Height <= 0)
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                _ErrorMessage += "Self Validation Error: Width And Height Dimensions Must Be Positive Numbers\n";
                 RoomSizeValid = false;
             }
 
@@ -148,18 +186,26 @@ namespace BackEnd.ModelClasses
         {
             return RoomStorage.TotalItemValue();
         }
-        public void AddItem(IStored _ItemToAdd)
+
+        public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
-            RoomStorage.AddItem(_ItemToAdd);
+            return RoomStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
         }
 
-        public void RemoveItem(IStored _ItemToRemove)
+        public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
         {
-            RoomStorage.RemoveItem(_ItemToRemove);
+            return RoomStorage.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+
+        public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
         {
-            RoomStorage.MoveItem(_ItemToMove, _Destination);
+            return RoomStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
         }
+
+        public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
+        {
+            return RoomStorage.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
+        }
+
     }
 }

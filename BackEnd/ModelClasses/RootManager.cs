@@ -66,9 +66,11 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyUserSuccess = true;
 
-            if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            bool UsernameChanged = _UserToModify.Username != _NewUsername;
+
+            if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
             {
-                if (_UserToModify.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
                 {
                     if (!UsernameSystemValidation(_NewUsername, ref _ErrorMessage))
                     {
@@ -100,19 +102,6 @@ namespace BackEnd.ModelClasses
             }
 
             return ModifyUserSuccess;
-        }
-
-        private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
-        {
-            bool SystemValid = true;
-
-            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
-            {
-                _ErrorMessage += $"{_Username} Already Exists. No Duplicate Usernames.\n";
-                SystemValid = false;
-            }
-
-            return SystemValid;
         }
 
         public bool TryRemoveUser(User _UserToRemove, out string? _ErrorMessage)
@@ -148,6 +137,19 @@ namespace BackEnd.ModelClasses
             __ActiveUser = _NewActiveUser;
             ActiveUserChanged?.Invoke();
             return true;
+        }
+
+        private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (__UserList.Any(CurrentUser => CurrentUser.Username == _Username))
+            {
+                _ErrorMessage += $"System Validation Error: {_Username} Already Exists. No Duplicate Usernames.\n";
+                SystemValid = false;
+            }
+
+            return SystemValid;
         }
     }
 }

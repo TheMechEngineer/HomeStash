@@ -1,8 +1,10 @@
-﻿using BackEnd.ModelInterfaces;
+﻿using BackEnd.Enumerations;
+using BackEnd.ModelInterfaces;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,18 +13,90 @@ namespace BackEnd.ModelClasses
     public class Building : IStorageHolder
     {
         public event Action? RoomListChanged;
+        public event Action? BuildingNameChanged;
+        public event Action? BuildingDimensionsChanged;
+
+        private event Action? __StoredItemsChanged;
+        public event Action? StoredItemsChanged
+        {
+            add
+            {
+                UnsortedItems.StoredItemsChanged += value;
+                __StoredItemsChanged += value;
+            }
+            remove
+            {
+                UnsortedItems.StoredItemsChanged -= value;
+                __StoredItemsChanged -= value;
+            }
+        }
+
+        private event Action? __StoredItemModified;
+        public event Action? StoredItemModified
+        {
+            add 
+            {
+                UnsortedItems.StoredItemModified += value;
+                __StoredItemModified += value;
+            }
+            remove 
+            {
+                UnsortedItems.StoredItemModified -= value;
+                __StoredItemModified += value;
+            }
+        }
+
+        private event Action? __RoomNameChanged;
+        public event Action? RoomNameChanged
+        {
+            add
+            {
+                __RoomNameChanged += value;
+            }
+            remove
+            {
+                __RoomNameChanged -= value;
+            }
+        }
+
+        private event Action? __RoomDimensionsChanged;
+        public event Action? RoomDimensionsChanged
+        {
+            add
+            {
+                __RoomDimensionsChanged += value;
+            }
+            remove
+            {
+                __RoomDimensionsChanged -= value;
+            }
+        }
+
+        private event Action? __RoomColorChanged;
+        public event Action? RoomColorChanged
+        {
+            add
+            {
+                __RoomColorChanged += value;
+            }
+            remove
+            {
+                __RoomColorChanged -= value;
+            }
+        }
 
         public string Name { get; private set; }
         public float Width { get; private set; }
         public float Height { get; private set; }
 
-        private Storage UnsortedItems = new Storage();
+        private Storage UnsortedItems;
 
-        public IStorage Storage
+        public IStorage CurrentStorage
         {
             get
             { return UnsortedItems; }
         }
+
         public IReadOnlyList<IStored> StoredItems
         {
             get
@@ -41,6 +115,8 @@ namespace BackEnd.ModelClasses
             this.Name = _Name;
             this.Width = _Width;
             this.Height = _Height;
+
+            UnsortedItems = new Storage(this);
         }
 
         internal static bool TryCreate(string _BuildingName, float _Width, float _Height, out Building? _CreatedBuilding, out string? _ErrorMessage)
@@ -76,9 +152,12 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewBuildingName || this.Width != _NewWidth || this.Height != _NewHeight)
+            bool NameChanged = this.Name != _NewBuildingName;
+            bool DimensionsChanged = this.Width != _NewWidth || this.Height != _NewHeight;
+
+            if (NameChanged || DimensionsChanged)
             {
-                if (this.Name != _NewBuildingName)
+                if (NameChanged)
                 {
                     if (!NameSelfValidation(_NewBuildingName, ref _ErrorMessage))
                     {
@@ -86,9 +165,14 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Width != _NewWidth || this.Height != _NewHeight)
+                if (DimensionsChanged)
                 {
                     if (!SizeSelfValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+
+                    if (!SizeSystemValidation(_NewWidth, _NewHeight, ref _ErrorMessage))
                     {
                         ModifySuccess = false;
                     }
@@ -105,6 +189,16 @@ namespace BackEnd.ModelClasses
                 this.Name = _NewBuildingName;
                 this.Width = _NewWidth;
                 this.Height = _NewHeight;
+
+                if (NameChanged)
+                {
+                    this.BuildingNameChanged?.Invoke();
+                }
+
+                if (DimensionsChanged)
+                {
+                    this.BuildingDimensionsChanged?.Invoke();
+                }
             }
             else
             {
@@ -120,7 +214,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_BuildingName))
             {
-                _ErrorMessage += "Building Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Building Name Must Contain Characters\n";
                 BuildingNameValid = false;
             }
 
@@ -133,8 +227,28 @@ namespace BackEnd.ModelClasses
 
             if (_Width <= 0 || _Height <= 0)
             {
-                _ErrorMessage += "Width And Height Dimensions Must Be Positive Numbers\n";
+                _ErrorMessage += "Self Validation Error: Width And Height Dimensions Must Be Positive Numbers\n";
                 BuildingSizeValid = false;
+            }
+
+            return BuildingSizeValid;
+        }
+
+        private bool SizeSystemValidation(float _Width, float _Height, ref string? _ErrorMessage)
+        {
+            bool BuildingSizeValid = true;
+
+            foreach (Room CurrentRoom in this.__RoomList)
+            {
+                float CurrentRoomRightLocation = CurrentRoom.CenterX + CurrentRoom.Width / 2;
+                float CurrentRoomBottomLocation = CurrentRoom.CenterY + CurrentRoom.Height / 2;
+
+                if (_Width < CurrentRoomRightLocation || _Height < CurrentRoomBottomLocation)
+                {
+                    _ErrorMessage += "System Validation Error: Width And Height Dimensions Must Exceed All Room Boundaries\n";
+                    BuildingSizeValid = false;
+                    break;
+                }
             }
 
             return BuildingSizeValid;
@@ -162,6 +276,11 @@ namespace BackEnd.ModelClasses
                 if (Room.TryCreate(_RoomName, _Width, _Height, _CenterX, _CenterY, _RoomColor, out NewRoom, out _ErrorMessage))
                 {
                     __RoomList.Add(NewRoom);
+                    NewRoom.StoredItemsChanged += Room_StoredItemsChanged;
+                    NewRoom.StoredItemModified += Room_StoredItemModified;
+                    NewRoom.RoomNameChanged += Room_RoomNameChanged;
+                    NewRoom.RoomDimensionsChanged += Room_RoomDimensionsChanged;
+                    NewRoom.RoomColorChanged += Room_RoomColorChanged;
                     RoomListChanged?.Invoke();
                 }
                 else
@@ -183,9 +302,13 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyRoomSuccess = true;
 
-            if (_RoomToModify.Name != _NewRoomName || _RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY || _RoomToModify.RoomColor != _NewRoomColor)
+            bool NameChanged = _RoomToModify.Name != _NewRoomName;
+            bool DimensionsChanged = _RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY;
+            bool ColorChanged = _RoomToModify.RoomColor != _NewRoomColor;
+
+            if (NameChanged || DimensionsChanged || ColorChanged)
             {
-                if (_RoomToModify.Name != _NewRoomName)
+                if (NameChanged)
                 {
                     if (!RoomNameSystemValidation(_NewRoomName, ref _ErrorMessage))
                     {
@@ -193,7 +316,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (_RoomToModify.Width != _NewWidth || _RoomToModify.Height != _NewHeight || _RoomToModify.CenterX != _NewCenterX || _RoomToModify.CenterY != _NewCenterY)
+                if (DimensionsChanged)
                 {
                     if (!RoomDimensionValidation(_NewWidth, _NewHeight, _NewCenterX, _NewCenterY, ref _ErrorMessage, _RoomToModify))
                     {
@@ -203,11 +326,7 @@ namespace BackEnd.ModelClasses
 
                 if (ModifyRoomSuccess)
                 {
-                    if (_RoomToModify.TryModify(_NewRoomName, _NewWidth, _NewHeight, _NewCenterX, _NewCenterY, _NewRoomColor, out _ErrorMessage))
-                    {
-                        RoomListChanged?.Invoke();
-                    }
-                    else
+                    if (!_RoomToModify.TryModify(_NewRoomName, _NewWidth, _NewHeight, _NewCenterX, _NewCenterY, _NewRoomColor, out _ErrorMessage))
                     {
                         ModifyRoomSuccess = false;
                     }
@@ -227,13 +346,39 @@ namespace BackEnd.ModelClasses
             return ModifyRoomSuccess;
         }
 
+        public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+
+            if (!__RoomList.Contains(_RoomToRemove))
+            {
+                _ErrorMessage = "Room To Be Removed Must Exist In The Room List";
+                return false;
+            }
+
+            _RoomToRemove.StoredItemsChanged -= Room_StoredItemsChanged;
+            _RoomToRemove.StoredItemModified -= Room_StoredItemModified;
+            _RoomToRemove.RoomNameChanged -= Room_RoomNameChanged;
+            _RoomToRemove.RoomDimensionsChanged -= Room_RoomDimensionsChanged;
+            _RoomToRemove.RoomColorChanged -= Room_RoomColorChanged;
+
+            __RoomList.Remove(_RoomToRemove);
+            RoomListChanged?.Invoke();
+
+            if(_RoomToRemove.StoredItems.Count > 0)
+            {
+                __StoredItemsChanged?.Invoke();
+            }
+            return true;
+        }
+
         private bool RoomNameSystemValidation(string _RoomName, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
 
             if (__RoomList.Any(CurrentRoom => CurrentRoom.Name == _RoomName))
             {
-                _ErrorMessage += $"Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
+                _ErrorMessage += $"System Validation Error: Two Rooms Cannot Have The Same Name. {_RoomName} already exists.\n";
                 SystemValid = false;
             }
 
@@ -252,35 +397,35 @@ namespace BackEnd.ModelClasses
             //Check That Room Center Is In Building
             if (_CenterX < 0 || _CenterY < 0 || _CenterX > this.Width || _CenterY > this.Height)
             {
-                _ErrorMessage += $"Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
+                _ErrorMessage += $"System Validation Error: Room Center ({_CenterX},{_CenterY}) Is Outside Building Limits. Must Be Between (0,0) and ({this.Width},{this.Height})\n";
                 SystemValid = false;
             }
 
             //Check That Room Left Is In Building
             if (NewRoomLeftLocation < 0)
             {
-                _ErrorMessage += $"Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
+                _ErrorMessage += $"System Validation Error: Room Left Boundary ({NewRoomLeftLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
                 SystemValid = false;
             }
 
             //Check That Room Right Is In Building
             if (NewRoomRightLocation > this.Width)
             {
-                _ErrorMessage += $"Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
+                _ErrorMessage += $"System Validation Error: Room Right Boundary ({NewRoomRightLocation}) Is Outside Building Limits. Must Be Less Than {this.Width}.\n";
                 SystemValid = false;
             }
 
             //Check That Room Top Is In Building
             if (NewRoomTopLocation < 0)
             {
-                _ErrorMessage += $"Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
+                _ErrorMessage += $"System Validation Error: Room Top Boundary ({NewRoomTopLocation}) Is Outside Building Limits. Must Be Greater Than 0.\n";
                 SystemValid = false;
             }
 
             //Check That Room Bottom Is In Building
             if (NewRoomBottomLocation > this.Height)
             {
-                _ErrorMessage += $"Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
+                _ErrorMessage += $"System Validation Error: Room Bottom Boundary ({NewRoomBottomLocation}) Is Outside Building Limits. Must Be Less Than {this.Height}.\n";
                 SystemValid = false;
             }
 
@@ -303,7 +448,7 @@ namespace BackEnd.ModelClasses
                             )
                         )
                     {
-                        _ErrorMessage += $"Room Collides With {CurrentRoom.Name}\n";
+                        _ErrorMessage += $"System Validation Error: Room Collides With {CurrentRoom.Name}\n";
                         SystemValid = false;
                     }
                 }
@@ -312,19 +457,24 @@ namespace BackEnd.ModelClasses
             return SystemValid;
         }
 
-        public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
+        public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
-            _ErrorMessage = null;
+           return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
+        }
 
-            if (!__RoomList.Contains(_RoomToRemove))
-            {
-                _ErrorMessage = "Room To Be Removed Must Exist In The Room List";
-                return false;
-            }
+        public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
+        }
 
-            __RoomList.Remove(_RoomToRemove);
-            RoomListChanged?.Invoke();
-            return true;
+        public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
+
+        public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
         }
 
         public int TotalItemCount()
@@ -337,19 +487,29 @@ namespace BackEnd.ModelClasses
             return UnsortedItems.TotalItemValue() + RoomList.Sum(CurrentRoom => CurrentRoom.TotalItemValue());
         }
 
-        public void AddItem(IStored _ItemToAdd)
+        private void Room_StoredItemsChanged()
         {
-            UnsortedItems.AddItem(_ItemToAdd);
+            __StoredItemsChanged?.Invoke();
         }
 
-        public void RemoveItem(IStored _ItemToRemove)
+        private void Room_StoredItemModified()
         {
-            UnsortedItems.RemoveItem(_ItemToRemove);
+            __StoredItemModified?.Invoke();
         }
 
-        public void MoveItem(IStored _ItemToMove, IStorage _Destination)
+        private void Room_RoomNameChanged()
         {
-            UnsortedItems.MoveItem(_ItemToMove, _Destination);
+            __RoomNameChanged?.Invoke();
+        }
+
+        private void Room_RoomDimensionsChanged()
+        {
+            __RoomDimensionsChanged?.Invoke();
+        }
+
+        private void Room_RoomColorChanged()
+        {
+            __RoomColorChanged?.Invoke();
         }
     }
 }

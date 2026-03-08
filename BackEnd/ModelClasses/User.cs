@@ -60,9 +60,11 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+            bool UsernameChanged = this.Username != _NewUsername;
+
+            if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
             {
-                if (this.Username != _NewUsername) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
+                if (UsernameChanged) //This Is Redundant In This Class, But Follows The Structure In The Other Classes Where It Makes Sense
                 {
                     if (!UsernameSelfValidation(_NewUsername, ref _ErrorMessage))
                     {
@@ -94,7 +96,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_Username))
             {
-                _ErrorMessage += "Username Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Username Must Contain Characters\n";
                 UsernameValid = false;
             }
 
@@ -139,9 +141,12 @@ namespace BackEnd.ModelClasses
             _ErrorMessage = null;
             bool ModifyBuildingSuccess = true;
 
-            if (_BuildingToModify.Name != _NewBuildingName || _BuildingToModify.Width != _NewWidth || _BuildingToModify.Height != _NewHeight)
+            bool NameChanged = _BuildingToModify.Name != _NewBuildingName;
+            bool DimensionsChanged = _BuildingToModify.Width != _NewWidth || _BuildingToModify.Height != _NewHeight;
+
+            if (NameChanged || DimensionsChanged)
             {
-                if (_BuildingToModify.Name != _NewBuildingName)
+                if (NameChanged)
                 {
                     if (!BuildingNameSystemValidation(_NewBuildingName, ref _ErrorMessage))
                     {
@@ -173,19 +178,6 @@ namespace BackEnd.ModelClasses
             }
 
             return ModifyBuildingSuccess;
-        }
-
-        private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
-        {
-            bool SystemValid = true;
-
-            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
-            {
-                _ErrorMessage += $"{_BuildingName} Already Exists. No Duplicate Building Names.\n";
-                SystemValid = false;
-            }
-
-            return SystemValid;
         }
 
         public bool TryRemoveBuilding(Building _BuildingToRemove, out string? _ErrorMessage)
@@ -226,6 +218,19 @@ namespace BackEnd.ModelClasses
         public void CopyBuilding(Building _BuildingToCopy)
         {
             //stub
+        }
+
+        private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
+        {
+            bool SystemValid = true;
+
+            if (__BuildingList.Any(CurrentBuilding => CurrentBuilding.Name == _BuildingName))
+            {
+                _ErrorMessage += $"System Validation Error: {_BuildingName} Already Exists. No Duplicate Building Names.\n";
+                SystemValid = false;
+            }
+
+            return SystemValid;
         }
     }
 }

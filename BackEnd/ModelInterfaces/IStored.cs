@@ -19,6 +19,6 @@ namespace BackEnd.ModelInterfaces
         public double Value { get; }
         public int Quantity { get; }
         public IStorageHolder ImmediateParent { get; }
-        public Room? RoomParent { get; }
+        //public Room? RoomParent { get; } //can be null if item is directly in the building
     }
 }

@@ -40,12 +40,27 @@ namespace FrontEnd.UserControls
             toolStripSeparator1 = new ToolStripSeparator();
             tsbtnAddRoom = new ToolStripButton();
             tsrTopDown = new ToolStrip();
+            tslblView = new ToolStripLabel();
             tsbtnFitToScreen = new ToolStripButton();
-            toolStripLabel1 = new ToolStripLabel();
+            tslblHGrid = new ToolStripLabel();
             tsnudHGridCount = new ToolStripNumericUpDown();
-            toolStripLabel2 = new ToolStripLabel();
+            tslblVGrid = new ToolStripLabel();
             tsnudVGridCount = new ToolStripNumericUpDown();
+            toolStripSeparator3 = new ToolStripSeparator();
+            tslblBuilding = new ToolStripLabel();
+            tslblWidth = new ToolStripLabel();
+            tstxtWidth = new ToolStripTextBox();
+            tslblHeight = new ToolStripLabel();
+            tstxtHeight = new ToolStripTextBox();
+            tslblRoom = new ToolStripLabel();
             tsbtnEditRoom = new ToolStripButton();
+            tsbtnDeleteRoom = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            tslblStored = new ToolStripLabel();
+            tsbtnAddItem = new ToolStripButton();
+            tsbtnEditItem = new ToolStripButton();
+            tsbtnMoveItem = new ToolStripButton();
+            tsbtnDeleteItem = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
             splTopView.SuspendLayout();
@@ -67,7 +82,7 @@ namespace FrontEnd.UserControls
             // 
             splTopView.Panel2.BackColor = SystemColors.Window;
             splTopView.Size = new Size(897, 510);
-            splTopView.SplitterDistance = 666;
+            splTopView.SplitterDistance = 500;
             splTopView.SplitterWidth = 5;
             splTopView.TabIndex = 1;
             // 
@@ -78,7 +93,7 @@ namespace FrontEnd.UserControls
             pnlTopViewCamera.Dock = DockStyle.Fill;
             pnlTopViewCamera.Location = new Point(0, 0);
             pnlTopViewCamera.Name = "pnlTopViewCamera";
-            pnlTopViewCamera.Size = new Size(666, 510);
+            pnlTopViewCamera.Size = new Size(500, 510);
             pnlTopViewCamera.TabIndex = 0;
             // 
             // ClickHoldTimer
@@ -144,12 +159,18 @@ namespace FrontEnd.UserControls
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, toolStripLabel1, tsnudHGridCount, toolStripLabel2, tsnudVGridCount, toolStripSeparator1, tsbtnAddRoom, tsbtnEditRoom });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tslblView, tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, tslblHGrid, tsnudHGridCount, tslblVGrid, tsnudVGridCount, toolStripSeparator3, tslblBuilding, tslblWidth, tstxtWidth, tslblHeight, tstxtHeight, toolStripSeparator1, tslblRoom, tsbtnAddRoom, tsbtnEditRoom, tsbtnDeleteRoom, toolStripSeparator2, tslblStored, tsbtnAddItem, tsbtnEditItem, tsbtnMoveItem, tsbtnDeleteItem });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 26);
             tsrTopDown.TabIndex = 0;
             tsrTopDown.Text = "toolStrip1";
+            // 
+            // tslblView
+            // 
+            tslblView.Name = "tslblView";
+            tslblView.Size = new Size(83, 23);
+            tslblView.Text = "View Controls:";
             // 
             // tsbtnFitToScreen
             // 
@@ -162,12 +183,12 @@ namespace FrontEnd.UserControls
             tsbtnFitToScreen.ToolTipText = "Fit Building To Screen";
             tsbtnFitToScreen.Click += tsbtnFitToScreen_Click;
             // 
-            // toolStripLabel1
+            // tslblHGrid
             // 
-            toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(19, 23);
-            toolStripLabel1.Text = "H:";
-            toolStripLabel1.ToolTipText = "Set Horizontal Grid Count";
+            tslblHGrid.Name = "tslblHGrid";
+            tslblHGrid.Size = new Size(19, 23);
+            tslblHGrid.Text = "H:";
+            tslblHGrid.ToolTipText = "Set Horizontal Grid Count";
             // 
             // tsnudHGridCount
             // 
@@ -180,12 +201,12 @@ namespace FrontEnd.UserControls
             tsnudHGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudHGridCount.ValueChanged += tsnudHGridCount_ValueChanged;
             // 
-            // toolStripLabel2
+            // tslblVGrid
             // 
-            toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new Size(17, 23);
-            toolStripLabel2.Text = "V:";
-            toolStripLabel2.ToolTipText = "Set Vertical Grid Count";
+            tslblVGrid.Name = "tslblVGrid";
+            tslblVGrid.Size = new Size(17, 23);
+            tslblVGrid.Text = "V:";
+            tslblVGrid.ToolTipText = "Set Vertical Grid Count";
             // 
             // tsnudVGridCount
             // 
@@ -198,6 +219,51 @@ namespace FrontEnd.UserControls
             tsnudVGridCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
             tsnudVGridCount.ValueChanged += tsnudVGridCount_ValueChanged;
             // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 26);
+            // 
+            // tslblBuilding
+            // 
+            tslblBuilding.Name = "tslblBuilding";
+            tslblBuilding.Size = new Size(102, 23);
+            tslblBuilding.Text = "Building Controls:";
+            // 
+            // tslblWidth
+            // 
+            tslblWidth.Name = "tslblWidth";
+            tslblWidth.Size = new Size(21, 23);
+            tslblWidth.Text = "W:";
+            tslblWidth.ToolTipText = "Set Building Width";
+            // 
+            // tstxtWidth
+            // 
+            tstxtWidth.Name = "tstxtWidth";
+            tstxtWidth.Size = new Size(30, 26);
+            tstxtWidth.ToolTipText = "Building Width";
+            tstxtWidth.KeyDown += tstxtWidth_KeyDown;
+            // 
+            // tslblHeight
+            // 
+            tslblHeight.Name = "tslblHeight";
+            tslblHeight.Size = new Size(19, 23);
+            tslblHeight.Text = "H:";
+            tslblHeight.ToolTipText = "Set Building Height";
+            // 
+            // tstxtHeight
+            // 
+            tstxtHeight.Name = "tstxtHeight";
+            tstxtHeight.Size = new Size(30, 26);
+            tstxtHeight.ToolTipText = "Building Height";
+            tstxtHeight.KeyDown += tstxtHeight_KeyDown;
+            // 
+            // tslblRoom
+            // 
+            tslblRoom.Name = "tslblRoom";
+            tslblRoom.Size = new Size(90, 23);
+            tslblRoom.Text = "Room Controls:";
+            // 
             // tsbtnEditRoom
             // 
             tsbtnEditRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -208,6 +274,72 @@ namespace FrontEnd.UserControls
             tsbtnEditRoom.Text = "toolStripButton1";
             tsbtnEditRoom.ToolTipText = "Edit A Selected Room";
             tsbtnEditRoom.Click += tsbtnEditRoom_Click;
+            // 
+            // tsbtnDeleteRoom
+            // 
+            tsbtnDeleteRoom.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnDeleteRoom.Image = Properties.Resources.bin;
+            tsbtnDeleteRoom.ImageTransparentColor = Color.Magenta;
+            tsbtnDeleteRoom.Name = "tsbtnDeleteRoom";
+            tsbtnDeleteRoom.Size = new Size(23, 23);
+            tsbtnDeleteRoom.Text = "toolStripButton1";
+            tsbtnDeleteRoom.ToolTipText = "Delete A Selected Room";
+            tsbtnDeleteRoom.Click += tsbtnDeleteRoom_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 26);
+            // 
+            // tslblStored
+            // 
+            tslblStored.Name = "tslblStored";
+            tslblStored.Size = new Size(82, 23);
+            tslblStored.Text = "Item Controls:";
+            // 
+            // tsbtnAddItem
+            // 
+            tsbtnAddItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnAddItem.Image = Properties.Resources.add;
+            tsbtnAddItem.ImageTransparentColor = Color.Magenta;
+            tsbtnAddItem.Name = "tsbtnAddItem";
+            tsbtnAddItem.Size = new Size(23, 23);
+            tsbtnAddItem.Text = "toolStripButton1";
+            tsbtnAddItem.ToolTipText = "Add A New Item";
+            tsbtnAddItem.Click += tsbtnAddItem_Click;
+            // 
+            // tsbtnEditItem
+            // 
+            tsbtnEditItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnEditItem.Image = Properties.Resources.editing;
+            tsbtnEditItem.ImageTransparentColor = Color.Magenta;
+            tsbtnEditItem.Name = "tsbtnEditItem";
+            tsbtnEditItem.Size = new Size(23, 23);
+            tsbtnEditItem.Text = "toolStripButton1";
+            tsbtnEditItem.ToolTipText = "Edit A Selected Item";
+            tsbtnEditItem.Click += tsbtnEditItem_Click;
+            // 
+            // tsbtnMoveItem
+            // 
+            tsbtnMoveItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnMoveItem.Image = Properties.Resources.box;
+            tsbtnMoveItem.ImageTransparentColor = Color.Magenta;
+            tsbtnMoveItem.Name = "tsbtnMoveItem";
+            tsbtnMoveItem.Size = new Size(23, 23);
+            tsbtnMoveItem.Text = "toolStripButton1";
+            tsbtnMoveItem.ToolTipText = "Move A Selected Item";
+            tsbtnMoveItem.Click += tsbtnMoveItem_Click;
+            // 
+            // tsbtnDeleteItem
+            // 
+            tsbtnDeleteItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnDeleteItem.Image = Properties.Resources.bin;
+            tsbtnDeleteItem.ImageTransparentColor = Color.Magenta;
+            tsbtnDeleteItem.Name = "tsbtnDeleteItem";
+            tsbtnDeleteItem.Size = new Size(23, 23);
+            tsbtnDeleteItem.Text = "toolStripButton1";
+            tsbtnDeleteItem.ToolTipText = "Delete A Selected Item";
+            tsbtnDeleteItem.Click += tsbtnDeleteItem_Click;
             // 
             // TopDownBuildingView
             // 
@@ -239,9 +371,24 @@ namespace FrontEnd.UserControls
         private ToolStrip tsrTopDown;
         private ToolStripNumericUpDown tsnudHGridCount;
         private ToolStripNumericUpDown tsnudVGridCount;
-        private ToolStripLabel toolStripLabel1;
-        private ToolStripLabel toolStripLabel2;
+        private ToolStripLabel tslblHGrid;
+        private ToolStripLabel tslblVGrid;
         private ToolStripButton tsbtnFitToScreen;
         private ToolStripButton tsbtnEditRoom;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton tsbtnAddItem;
+        private ToolStripButton tsbtnDeleteRoom;
+        private ToolStripLabel tslblView;
+        private ToolStripLabel tslblRoom;
+        private ToolStripLabel tslblStored;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripLabel tslblBuilding;
+        private ToolStripTextBox tstxtWidth;
+        private ToolStripTextBox tstxtHeight;
+        private ToolStripLabel tslblWidth;
+        private ToolStripLabel tslblHeight;
+        private ToolStripButton tsbtnEditItem;
+        private ToolStripButton tsbtnDeleteItem;
+        private ToolStripButton tsbtnMoveItem;
     }
 }

@@ -9,25 +9,28 @@ namespace BackEnd.ModelClasses
 {
     public class Item : IStored
     {
+        public event Action? TextChanged;
+        public event Action? ValueChanged;
+        public event Action? QuantityChanged;
+        public event Action? ImmediateParentChanged;
+
         //public int ID { get; set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
-        public IStorageHolder ImmediateParent { get; private set; }
-        public Room? RoomParent { get; private set; }
+        public IStorageHolder ImmediateParent { get; internal set; }
 
-        protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent)
+        protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
         {
             Name = _ItemName;
             Description = _Description;
             Value = _Value;
             Quantity = _Quantity;
             ImmediateParent = _ImmediateParent;
-            RoomParent = _RoomParent;
         }
 
-        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, IStorage _ImmediateParent, Room? _RoomParent, out Item? _CreatedItem, out string? _ErrorMessage)
+        internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent, out Item? _CreatedItem, out string? _ErrorMessage)
         {
             _CreatedItem = null;
             _ErrorMessage = null;
@@ -48,9 +51,14 @@ namespace BackEnd.ModelClasses
                 CreationSuccess = false;
             }
 
+            if (!ImmediateParentSelfValidation(_ImmediateParent, ref _ErrorMessage))
+            {
+                CreationSuccess = false;
+            }
+
             if (CreationSuccess)
             {
-                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity, _ImmediateParent, _RoomParent);
+                _CreatedItem = new Item(_ItemName, _Description, _Value, _Quantity, _ImmediateParent);
             }
             else
             {
@@ -60,14 +68,19 @@ namespace BackEnd.ModelClasses
             return CreationSuccess;
         }
 
-        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, IStorage _NewImmediateParent, Room? _NewRoomParent, out string? _ErrorMessage)
+        internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, IStorageHolder _NewImmediateParent, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
             bool ModifySuccess = true;
 
-            if (this.Name != _NewItemName || this.Description != _NewDescription || this.Value != _NewValue || this.Quantity != _NewQuantity || this.ImmediateParent != _NewImmediateParent || this.RoomParent != _NewRoomParent)
+            bool TextChanged = this.Name != _NewItemName || this.Description != _NewDescription;
+            bool ValueChanged = this.Value != _NewValue;
+            bool QuantityChanged = this.Quantity != _NewQuantity;
+            bool ImmediateParentChanged = this.ImmediateParent != _NewImmediateParent;
+
+            if (TextChanged || ValueChanged || QuantityChanged || ImmediateParentChanged)
             {
-                if (this.Name != _NewItemName)
+                if (TextChanged)
                 {
                     if (!NameSelfValidation(_NewItemName, ref _ErrorMessage))
                     {
@@ -75,7 +88,7 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Value != _NewValue)
+                if (ValueChanged)
                 {
                     if (!ValueSelfValidation(_NewValue, ref _ErrorMessage))
                     {
@@ -83,9 +96,17 @@ namespace BackEnd.ModelClasses
                     }
                 }
 
-                if (this.Quantity != _NewQuantity)
+                if (QuantityChanged)
                 {
                     if (!QuantitySelfValidation(_NewQuantity, ref _ErrorMessage))
+                    {
+                        ModifySuccess = false;
+                    }
+                }
+
+                if (ImmediateParentChanged)
+                {
+                    if (!ImmediateParentSelfValidation(_NewImmediateParent, ref _ErrorMessage))
                     {
                         ModifySuccess = false;
                     }
@@ -104,7 +125,25 @@ namespace BackEnd.ModelClasses
                 this.Value = _NewValue;
                 this.Quantity = _NewQuantity;
                 this.ImmediateParent = _NewImmediateParent;
-                this.RoomParent = _NewRoomParent;
+                if (TextChanged)
+                {
+                    this.TextChanged?.Invoke();
+                }
+
+                if (ValueChanged)
+                {
+                    this.ValueChanged?.Invoke();
+                }
+
+                if (QuantityChanged)
+                {
+                    this.QuantityChanged?.Invoke();
+                }
+
+                if (ImmediateParentChanged)
+                {
+                    this.ImmediateParentChanged?.Invoke();
+                }
             }
             else
             {
@@ -120,7 +159,7 @@ namespace BackEnd.ModelClasses
 
             if (string.IsNullOrEmpty(_ItemName))
             {
-                _ErrorMessage += "Item Name Must Contain Characters\n";
+                _ErrorMessage += "Self Validation Error: Item Name Must Contain Characters\n";
                 ItemNameValid = false;
             }
 
@@ -133,7 +172,7 @@ namespace BackEnd.ModelClasses
 
             if (_Value < 0)
             {
-                _ErrorMessage += "Value Cannot Be Negative\n";
+                _ErrorMessage += "Self Validation Error: Value Cannot Be Negative\n";
                 ValueValid = false;
             }
 
@@ -146,12 +185,24 @@ namespace BackEnd.ModelClasses
 
             if (_Quantity <= 0)
             {
-                _ErrorMessage += "Quantity Must Be At Least 1\n";
+                _ErrorMessage += "Self Validation Error: Quantity Must Be At Least 1\n";
                 QuantityValid = false;
             }
 
             return QuantityValid;
         }
 
+        protected static bool ImmediateParentSelfValidation(IStorageHolder _ImmediateParent, ref string? _ErrorMessage)
+        {
+            bool ImmediateParentValid = true;
+
+            if (_ImmediateParent == null)
+            {
+                _ErrorMessage += "Self Validation Error: Must Select A Valid Parent\n";
+                ImmediateParentValid = false;
+            }
+
+            return ImmediateParentValid;
+        }
     }
 }
