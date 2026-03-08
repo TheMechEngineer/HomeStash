@@ -467,14 +467,14 @@ namespace BackEnd.ModelClasses
             return UnsortedItems.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
 
+        public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
+        {
+            return UnsortedItems.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
+
         public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
         {
             return UnsortedItems.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
-        }
-
-        public bool TryMoveIStored(IStored _ItemToMove, IStorage _Destination, out string? _ErrorMessage)
-        {
-            return UnsortedItems.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
         }
 
         public int TotalItemCount()

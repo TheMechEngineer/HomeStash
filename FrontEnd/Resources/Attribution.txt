@@ -5,3 +5,4 @@ plus-sign: <a href="https://www.flaticon.com/free-icons/plus" title="plus icons"
 fit-to-screen: <a href="https://www.flaticon.com/free-icons/to" title="to icons">To icons created by kawalanicon - Flaticon</a>
 edit: <a href="https://www.flaticon.com/free-icons/editing" title="editing icons">Editing icons created by Freepik - Flaticon</a>
 trashcan: <a href="https://www.flaticon.com/free-icons/trash" title="trash icons">Trash icons created by Freepik - Flaticon</a>
+move: <a href="https://www.flaticon.com/free-icons/moving" title="moving icons">Moving icons created by Valeria - Flaticon</a>

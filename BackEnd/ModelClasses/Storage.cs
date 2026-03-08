@@ -23,7 +23,7 @@ namespace BackEnd.ModelClasses
             { return __StoredItems.AsReadOnly(); }
         }
 
-        IStorageHolder ImmediateParent;
+        internal IStorageHolder ImmediateParent { get; set; }
 
         internal Storage(IStorageHolder _ImmediateParent)
         {
@@ -91,10 +91,10 @@ namespace BackEnd.ModelClasses
                 switch (SelectionType)
                 {
                     case Type CurrentType when SelectionType == typeof(Item):
-                        ModifyIStoredSuccess = (_IStoredToModify as Item).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, this.ImmediateParent, out _ErrorMessage);
+                        ModifyIStoredSuccess = (_IStoredToModify as Item).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, _IStoredToModify.ImmediateParent, out _ErrorMessage);
                         break;
                     case Type CurrentType when SelectionType == typeof(Container):
-                        ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, this.ImmediateParent, out _ErrorMessage);
+                        ModifyIStoredSuccess = (_IStoredToModify as Container).TryModify(_NewStoredName, _NewDescription, _NewValue, _NewQuantity, _IStoredToModify.ImmediateParent, out _ErrorMessage);
                         break;
                 }
             }
@@ -118,6 +118,94 @@ namespace BackEnd.ModelClasses
 
         }
 
+        public bool TryMoveIStored(IStored _IStoredToMove, IStorageHolder _Destination, out string? _ErrorMessage)
+        {
+            _ErrorMessage = null;
+            bool MoveIStoredSuccess = true;
+
+            bool ImmediateParentChanged = _IStoredToMove.ImmediateParent != _Destination;
+ 
+            if (ImmediateParentChanged)
+            {
+                //No System Validation For Adding Stored Items At This Point
+
+                Type SelectionType = _IStoredToMove.GetType();
+
+                switch (SelectionType)
+                {
+                    case Type CurrentType when SelectionType == typeof(Item):
+                        MoveIStoredSuccess = (_IStoredToMove as Item).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
+                        break;
+                    case Type CurrentType when SelectionType == typeof(Container):
+                        MoveIStoredSuccess = (_IStoredToMove as Container).TryModify(_IStoredToMove.Name, _IStoredToMove.Description, _IStoredToMove.Value, _IStoredToMove.Quantity, _Destination, out _ErrorMessage);
+                        break;
+                }
+            }
+            else
+            {
+                MoveIStoredSuccess = false;
+                _ErrorMessage += $"No Item Fields Have Been Modified\n";
+            }
+
+            if (MoveIStoredSuccess)
+            {
+                Storage StorageDestination = _Destination.CurrentStorage as Storage;
+
+                if (_IStoredToMove is Container MovedContainer)
+                {
+                    MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
+                    MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
+
+                    MovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
+                    MovedContainer.StoredItemModified += StorageDestination.StoredItemModifiedFowarding;
+                }
+
+                StorageDestination.__StoredItems.Add(_IStoredToMove);
+                StorageDestination.StoredItemsChanged?.Invoke();
+
+                this.__StoredItems.Remove(_IStoredToMove);
+                this.StoredItemsChanged?.Invoke();
+            }
+            else
+            {
+                _ErrorMessage = _ErrorMessage?.TrimEnd();
+            }
+
+            return MoveIStoredSuccess;
+
+        }
+
+        //public bool TryMoveIStoredold(IStored _IStoredToMove, IStorage _Destination, out string? _ErrorMessage)
+        //{
+        //    _ErrorMessage = null;
+
+        //    if (!this.__StoredItems.Contains(_IStoredToMove))
+        //    {
+        //        _ErrorMessage = "Item To Be Moved Must Exist In The Storage List";
+        //        return false;
+        //    }
+
+        //    Storage StorageDestination = _Destination as Storage;
+
+        //    if (_IStoredToMove is Container MovedContainer)
+        //    {
+        //        MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
+        //        MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
+
+        //        MovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
+        //        MovedContainer.StoredItemModified += StorageDestination.StoredItemModifiedFowarding;
+        //    }
+
+        //    StorageDestination.__StoredItems.Add(_IStoredToMove);
+        //    _IStoredToMove.ImmediateParent = StorageDestination;
+        //    StorageDestination.StoredItemsChanged?.Invoke();
+
+        //    this.__StoredItems.Remove(_IStoredToMove);
+        //    this.StoredItemsChanged?.Invoke();
+
+        //    return true;
+        //}
+
         public bool TryRemoveIStored(IStored _IStoredToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -136,36 +224,6 @@ namespace BackEnd.ModelClasses
 
             __StoredItems.Remove(_IStoredToRemove);
             StoredItemsChanged?.Invoke();
-            return true;
-        }
-
-        public bool TryMoveIStored(IStored _IStoredToMove, IStorage _Destination, out string? _ErrorMessage)
-        {
-            _ErrorMessage = null;
-
-            if (!this.__StoredItems.Contains(_IStoredToMove))
-            {
-                _ErrorMessage = "Item To Be Moved Must Exist In The Storage List";
-                return false;
-            }
-
-            Storage StorageDestination = _Destination as Storage;
-
-            if (_IStoredToMove is Container MovedContainer)
-            {
-                MovedContainer.StoredItemsChanged -= StoredItemsChangedFowarding;
-                MovedContainer.StoredItemsChanged += StorageDestination.StoredItemsChangedFowarding;
-
-                MovedContainer.StoredItemModified -= StoredItemModifiedFowarding;
-                MovedContainer.StoredItemModified += StorageDestination.StoredItemModifiedFowarding;
-            }
-
-            StorageDestination.__StoredItems.Add(_IStoredToMove);
-            StorageDestination.StoredItemsChanged?.Invoke();
-
-            this.__StoredItems.Remove(_IStoredToMove);
-            this.StoredItemsChanged?.Invoke();
-
             return true;
         }
 

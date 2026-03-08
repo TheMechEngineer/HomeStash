@@ -20,7 +20,7 @@ namespace FrontEnd.UserControls
 {
     internal partial class ItemInfo : UserControl
     {
-        internal event Action<FormType, Item?, ItemInfo, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, StoredItemType CreationType)>? ConfirmClicked;
+        internal event Action<FormType, bool, Item?, ItemInfo, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, StoredItemType CreationType)>? ConfirmClicked;
         internal event Action<ItemInfo>? CancelClicked;
 
         private Building CurrentBuilding;
@@ -173,7 +173,8 @@ namespace FrontEnd.UserControls
 
             try
             {
-                ConfirmClicked?.Invoke(CurrentFormType, CurrentItem, this,
+                //Need To Add A Return For the Modify Or Move Type
+                ConfirmClicked?.Invoke(CurrentFormType, ModifyOrMove, CurrentItem, this,
                     (
                         txtNameInput.Text,
                         txtDescriptionInput.Text,

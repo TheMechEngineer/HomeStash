@@ -59,6 +59,7 @@ namespace FrontEnd.UserControls
             tslblStored = new ToolStripLabel();
             tsbtnAddItem = new ToolStripButton();
             tsbtnEditItem = new ToolStripButton();
+            tsbtnMoveItem = new ToolStripButton();
             tsbtnDeleteItem = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)splTopView).BeginInit();
             splTopView.Panel1.SuspendLayout();
@@ -158,7 +159,7 @@ namespace FrontEnd.UserControls
             // 
             tsrTopDown.BackColor = SystemColors.ControlDark;
             tsrTopDown.GripStyle = ToolStripGripStyle.Hidden;
-            tsrTopDown.Items.AddRange(new ToolStripItem[] { tslblView, tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, tslblHGrid, tsnudHGridCount, tslblVGrid, tsnudVGridCount, toolStripSeparator3, tslblBuilding, tslblWidth, tstxtWidth, tslblHeight, tstxtHeight, toolStripSeparator1, tslblRoom, tsbtnAddRoom, tsbtnEditRoom, tsbtnDeleteRoom, toolStripSeparator2, tslblStored, tsbtnAddItem, tsbtnEditItem, tsbtnDeleteItem });
+            tsrTopDown.Items.AddRange(new ToolStripItem[] { tslblView, tsbtnScaleDown, tsbtnScaleUp, tsbtnCenter, tsbtnFitToScreen, tslblHGrid, tsnudHGridCount, tslblVGrid, tsnudVGridCount, toolStripSeparator3, tslblBuilding, tslblWidth, tstxtWidth, tslblHeight, tstxtHeight, toolStripSeparator1, tslblRoom, tsbtnAddRoom, tsbtnEditRoom, tsbtnDeleteRoom, toolStripSeparator2, tslblStored, tsbtnAddItem, tsbtnEditItem, tsbtnMoveItem, tsbtnDeleteItem });
             tsrTopDown.Location = new Point(0, 0);
             tsrTopDown.Name = "tsrTopDown";
             tsrTopDown.Size = new Size(897, 26);
@@ -318,6 +319,17 @@ namespace FrontEnd.UserControls
             tsbtnEditItem.ToolTipText = "Edit A Selected Item";
             tsbtnEditItem.Click += tsbtnEditItem_Click;
             // 
+            // tsbtnMoveItem
+            // 
+            tsbtnMoveItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbtnMoveItem.Image = Properties.Resources.box;
+            tsbtnMoveItem.ImageTransparentColor = Color.Magenta;
+            tsbtnMoveItem.Name = "tsbtnMoveItem";
+            tsbtnMoveItem.Size = new Size(23, 23);
+            tsbtnMoveItem.Text = "toolStripButton1";
+            tsbtnMoveItem.ToolTipText = "Move A Selected Item";
+            tsbtnMoveItem.Click += tsbtnMoveItem_Click;
+            // 
             // tsbtnDeleteItem
             // 
             tsbtnDeleteItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -377,5 +389,6 @@ namespace FrontEnd.UserControls
         private ToolStripLabel tslblHeight;
         private ToolStripButton tsbtnEditItem;
         private ToolStripButton tsbtnDeleteItem;
+        private ToolStripButton tsbtnMoveItem;
     }
 }

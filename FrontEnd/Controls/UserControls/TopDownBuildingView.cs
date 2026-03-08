@@ -73,6 +73,7 @@ namespace FrontEnd.UserControls
             tsbtnDeleteRoom.Enabled = SelectedRoom != null;
 
             tsbtnEditItem.Enabled = SelectedRoom != null;
+            tsbtnMoveItem.Enabled = SelectedRoom != null;
             tsbtnDeleteItem.Enabled = SelectedRoom != null;
         }
 
@@ -449,6 +450,7 @@ namespace FrontEnd.UserControls
         {
             SelectedItem = _SelectedItem;
             tsbtnEditItem.Enabled = SelectedItem != null;
+            tsbtnMoveItem.Enabled = SelectedItem != null;
             tsbtnDeleteItem.Enabled = SelectedItem != null;
         }
 
@@ -522,6 +524,10 @@ namespace FrontEnd.UserControls
         {
             ModifyItem(true);
         }
+        private void tsbtnMoveItem_Click(object sender, EventArgs e)
+        {
+            ModifyItem(false);
+        }
 
         private void tsbtnDeleteItem_Click(object sender, EventArgs e)
         {
@@ -575,7 +581,7 @@ namespace FrontEnd.UserControls
             _CurrentControl.Dispose();
         }
 
-        private void ItemInfo_ConfirmClicked(FormType _FormType, Item? _ModifiedItem, ItemInfo _CurrentControl, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, BackEnd.Enumerations.StoredItemType CreationType) _ItemValues)
+        private void ItemInfo_ConfirmClicked(FormType _FormType, bool _ModifyOrMove, Item? _ModifiedItem, ItemInfo _CurrentControl, (string Name, string Description, double Value, int Quantity, IStorageHolder Location, BackEnd.Enumerations.StoredItemType CreationType) _ItemValues)
         {
             string? _ErrorMessage;
 
@@ -592,15 +598,29 @@ namespace FrontEnd.UserControls
             }
             else if (_FormType == FormType.Modify)
 
-                //new to add a nested if here to account for move or modify
+            //new to add a nested if here to account for move or modify
             {
-                if (_ItemValues.Location.TryModifyIStored(_ModifiedItem, _ItemValues.Name, _ItemValues.Description, _ItemValues.Value, _ItemValues.Quantity, out _ErrorMessage))
+                if (_ModifyOrMove)
                 {
-                    ItemInfo_CancelClicked(_CurrentControl);
+                    if (_ItemValues.Location.TryModifyIStored(_ModifiedItem, _ItemValues.Name, _ItemValues.Description, _ItemValues.Value, _ItemValues.Quantity, out _ErrorMessage))
+                    {
+                        ItemInfo_CancelClicked(_CurrentControl);
+                    }
+                    else
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (_ModifiedItem.ImmediateParent.TryMoveIStored(_ModifiedItem, _ItemValues.Location, out _ErrorMessage))
+                    {
+                        ItemInfo_CancelClicked(_CurrentControl);
+                    }
+                    else
+                    {
+                        MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

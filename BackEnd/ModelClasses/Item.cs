@@ -19,7 +19,7 @@ namespace BackEnd.ModelClasses
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
-        public IStorageHolder ImmediateParent { get; private set; }
+        public IStorageHolder ImmediateParent { get; internal set; }
 
         protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
         {
@@ -124,7 +124,7 @@ namespace BackEnd.ModelClasses
                 this.Description = _NewDescription;
                 this.Value = _NewValue;
                 this.Quantity = _NewQuantity;
-
+                this.ImmediateParent = _NewImmediateParent;
                 if (TextChanged)
                 {
                     this.TextChanged?.Invoke();

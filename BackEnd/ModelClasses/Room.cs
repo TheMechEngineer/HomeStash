@@ -197,14 +197,15 @@ namespace BackEnd.ModelClasses
             return RoomStorage.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
         }
 
+        public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
+        {
+            return RoomStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
+        }
+
         public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
         {
             return RoomStorage.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);
         }
 
-        public bool TryMoveIStored(IStored _ItemToMove, IStorage _Destination, out string? _ErrorMessage)
-        {
-            return RoomStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
-        }
     }
 }
