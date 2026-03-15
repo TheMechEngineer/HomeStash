@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
@@ -14,6 +15,7 @@ namespace BackEnd.ModelClasses
         public string Username { get; private set; }
 
         private Building? __ActiveBuilding;
+        [JsonIgnore]
         public Building? ActiveBuilding
         {
             get

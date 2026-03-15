@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Net.PeerToPeer;
 using System.Windows.Forms;
+using System.Text.Json;
 
 namespace FrontEnd.Forms
 {
@@ -15,7 +16,7 @@ namespace FrontEnd.Forms
     {
         private List<Item> _items;
 
-        private RootManager RootManagerInstance = Startup.TempItemStartup2();
+        private RootManager RootManagerInstance = Startup.TempItemStartup3();
         private Panel ViewPortPanel;
 
         internal Dashboard()
@@ -244,7 +245,7 @@ namespace FrontEnd.Forms
             switch (_SelectedType)
             {
                 case Type CurrentType when _SelectedType == typeof(User):
-                    if(!RootManagerInstance.TryRemoveUser(_SelectedObject as User, out _ErrorMessage))
+                    if (!RootManagerInstance.TryRemoveUser(_SelectedObject as User, out _ErrorMessage))
                     {
                         MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -296,7 +297,7 @@ namespace FrontEnd.Forms
             _CurrentControl.Dispose();
         }
 
-        private void BuildingInfo_ConfirmClicked(FormType _FormType, Building? _CurrentBuilding , BuildingInfo _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
+        private void BuildingInfo_ConfirmClicked(FormType _FormType, Building? _CurrentBuilding, BuildingInfo _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
         {
             string? _ErrorMessage = null;
 
@@ -335,5 +336,9 @@ namespace FrontEnd.Forms
             _CurrentControl.Dispose();
         }
 
+        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string JSONString = JsonSerializer.Serialize(RootManagerInstance);
+        }
     }
 }

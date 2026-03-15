@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
@@ -97,6 +98,7 @@ namespace BackEnd.ModelClasses
             { return UnsortedItems; }
         }
 
+        [JsonIgnore]
         public IReadOnlyList<IStored> StoredItems
         {
             get

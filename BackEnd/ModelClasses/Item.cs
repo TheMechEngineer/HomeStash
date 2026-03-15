@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
@@ -19,6 +20,7 @@ namespace BackEnd.ModelClasses
         public string Description { get; private set; }
         public double Value { get; private set; }
         public int Quantity { get; private set; }
+        [JsonIgnore]
         public IStorageHolder ImmediateParent { get; internal set; }
 
         protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)

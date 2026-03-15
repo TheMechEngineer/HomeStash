@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
@@ -35,12 +36,12 @@ namespace BackEnd.ModelClasses
         public int RoomColor { get; private set; }
 
         private Storage RoomStorage;
-
         public IStorage CurrentStorage
         {
             get
             { return RoomStorage; }
         }
+        [JsonIgnore]
         public IReadOnlyList<IStored> StoredItems
         {
             get
