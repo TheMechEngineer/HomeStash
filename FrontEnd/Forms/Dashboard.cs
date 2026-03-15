@@ -338,7 +338,10 @@ namespace FrontEnd.Forms
 
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string fileName = "HomeStashData.json";
             string JSONString = JsonSerializer.Serialize(RootManagerInstance);
+            File.WriteAllText(fileName, JSONString);
+
         }
     }
 }
