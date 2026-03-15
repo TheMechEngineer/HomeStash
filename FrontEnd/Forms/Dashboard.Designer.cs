@@ -73,6 +73,7 @@
             test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
             test2ToolStripMenuItem.Size = new Size(46, 20);
             test2ToolStripMenuItem.Text = "Test2";
+            test2ToolStripMenuItem.Click += test2ToolStripMenuItem_Click;
             // 
             // pnlDashboard
             // 

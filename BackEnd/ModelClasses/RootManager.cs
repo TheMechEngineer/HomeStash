@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
@@ -10,8 +11,9 @@ namespace BackEnd.ModelClasses
     {
         public event Action? ActiveUserChanged;
         public event Action? UserListChanged;
-        
+
         private User? __ActiveUser;
+        [JsonIgnore]
         public User? ActiveUser {
             get
             { return __ActiveUser; }

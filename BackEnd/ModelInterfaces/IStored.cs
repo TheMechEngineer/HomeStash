@@ -1,13 +1,16 @@
-﻿using System;
+﻿using BackEnd.ModelClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-
-using BackEnd.ModelClasses;
 
 namespace BackEnd.ModelInterfaces
 {
+    [JsonPolymorphic]
+    [JsonDerivedType(typeof(Item))]
+    [JsonDerivedType(typeof(Container))]
     public interface IStored
     {
         /// <summary>
@@ -18,6 +21,8 @@ namespace BackEnd.ModelInterfaces
         public string Description { get; }
         public double Value { get; }
         public int Quantity { get; }
+
+        [JsonIgnore]
         public IStorageHolder ImmediateParent { get; }
         //public Room? RoomParent { get; } //can be null if item is directly in the building
     }
