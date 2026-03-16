@@ -7,11 +7,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BackEnd.DataContinuity
 {
-    public static class Startup
+    public static class Controller
     {
         public static List<Item> TempItemStartup()
         {
@@ -103,6 +104,16 @@ namespace BackEnd.DataContinuity
             ((ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Sub Container Item 1", "Second Container", 15, 4, out _);
 
             return ReturnItem;
+        }
+
+        public static RootManager TempItemStartup4()
+        {
+            RootManagerDTO Test = JsonSerializer.Deserialize<RootManagerDTO>(File.ReadAllText("HomeStashData.json"));
+
+            RootManager ReturnItem = new RootManager();
+
+            return ReturnItem;
+
         }
 
     }

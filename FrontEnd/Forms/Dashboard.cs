@@ -16,7 +16,7 @@ namespace FrontEnd.Forms
     {
         private List<Item> _items;
 
-        private RootManager RootManagerInstance = Startup.TempItemStartup3();
+        private RootManager RootManagerInstance = Controller.TempItemStartup4();
         private Panel ViewPortPanel;
 
         internal Dashboard()
