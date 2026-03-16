@@ -110,7 +110,7 @@ namespace BackEnd.DataContinuity
         {
             RootManagerDTO Test = JsonSerializer.Deserialize<RootManagerDTO>(File.ReadAllText("HomeStashData.json"));
 
-            RootManager ReturnItem = new RootManager();
+            RootManager ReturnItem = Converter.ToRootManager(Test);
 
             return ReturnItem;
 
