@@ -5,6 +5,7 @@ using BackEnd.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Formats.Tar;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -12,19 +13,42 @@ using System.Threading.Tasks;
 
 namespace BackEnd.DataContinuity
 {
-    public static class Controller
+    public static class DataContinuityController
     {
-        public static List<Item> TempItemStartup()
+        public static RootManager StartupSmallPopulate()
         {
-            List<Item> ReturnList = new List<Item>();
+            RootManager ReturnItem = new RootManager();
 
-            //ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "TV", Value = 1200 });
-            //ReturnList.Add(new Item { ID = IDManager.GetNextID(), Name = "Laptop", Value = 1800 });
 
-            return ReturnList;
+            ReturnItem.TryAddUser("Caleb", out _); // _ Is a special placeholder meant to discard unwanted output
+
+            ReturnItem.TryChangeActiveUser(ReturnItem.UserList[0], out _);
+
+            ReturnItem.ActiveUser.TryAddBuilding("Home", 15, 10, out _);
+
+            ReturnItem.ActiveUser.TryChangeActiveBuilding(ReturnItem.ActiveUser.BuildingList[0], out _);
+
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room1", 3, 1, 4.5f, 2, Color.Red.ToArgb(), out _);
+
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item1", "Test Description 1", 1, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item2", "Test Description 2", 1, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Container, "Container1", "Container1 Description", 0, 1, out _);
+
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item3", "Test Description 3", 1, 2, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item4", "Test Description 4", 1, 2, out _);
+
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Container, "Container2", "Item Storage", 0, 1, out _);
+            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Container, "Container3", "First Container", 1, 2, out _);
+
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Item, "Container Item 1", "First Container Item", 3, 18, out _);
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Item, "Container Item 2", "Second Container Item", 1, 117, out _);
+            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Container 4", "4 Container", 3, 5, out _);
+            ((ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Sub Container Item 1", "Second Container", 15, 4, out _);
+
+            return ReturnItem;
         }
 
-        public static RootManager TempItemStartup2()
+        public static RootManager StartupLargePopulate()
         {
             RootManager ReturnItem = new RootManager();
 
@@ -73,47 +97,30 @@ namespace BackEnd.DataContinuity
             return ReturnItem;
         }
 
-        public static RootManager TempItemStartup3()
+        public static RootManager StartupDataContinuity()
         {
-            RootManager ReturnItem = new RootManager();
+            string StorageFile = "HomeStashData.json";
+            RootManager LiveRootManager;
 
+            if (File.Exists(StorageFile))
+            {
+                RootManagerDTO StoredRootManager = JsonSerializer.Deserialize<RootManagerDTO>(File.ReadAllText(StorageFile));
 
-            ReturnItem.TryAddUser("Caleb", out _); // _ Is a special placeholder meant to discard unwanted output
+                LiveRootManager = Converter.ToRootManager(StoredRootManager);
+            }
+            else
+            {
+                LiveRootManager = new RootManager();
+            }
 
-            ReturnItem.TryChangeActiveUser(ReturnItem.UserList[0], out _);
-
-            ReturnItem.ActiveUser.TryAddBuilding("Home", 15, 10, out _);
-
-            ReturnItem.ActiveUser.TryChangeActiveBuilding(ReturnItem.ActiveUser.BuildingList[0], out _);
-
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room1", 3, 1, 4.5f, 2, Color.Red.ToArgb(), out _);
-
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item1", "Test Description 1", 1, 2, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item2", "Test Description 2", 1, 2, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Container, "Container1", "Container1 Description", 0, 1, out _);
-
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item3", "Test Description 3", 1, 2, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, "Item4", "Test Description 4", 1, 2, out _);
-
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Container, "Container2", "Item Storage", 0, 1, out _);
-            ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Container, "Container3", "First Container", 1, 2, out _);
-
-            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Item, "Container Item 1", "First Container Item", 3, 18, out _);
-            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Item, "Container Item 2", "Second Container Item", 1, 117, out _);
-            (ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Container 4", "4 Container", 3, 5, out _);
-            ((ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].StoredItems[2] as Container).StoredItems[2] as Container).TryAddIStored(StoredItemType.Container, "Sub Container Item 1", "Second Container", 15, 4, out _);
-
-            return ReturnItem;
+            return LiveRootManager;
         }
 
-        public static RootManager TempItemStartup4()
+        public static void ShutdownDataContinuity(RootManager _ProgramInstance)
         {
-            RootManagerDTO Test = JsonSerializer.Deserialize<RootManagerDTO>(File.ReadAllText("HomeStashData.json"));
-
-            RootManager ReturnItem = Converter.ToRootManager(Test);
-
-            return ReturnItem;
-
+            string StorageFile = "HomeStashData.json";
+            string JSONString = JsonSerializer.Serialize(_ProgramInstance);
+            File.WriteAllText(StorageFile, JSONString);
         }
 
     }
