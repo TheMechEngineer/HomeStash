@@ -14,10 +14,10 @@ namespace FrontEnd.Forms
 {
     internal partial class Dashboard : Form
     {
-        private List<Item> _items;
-
         private RootManager RootManagerInstance = DataContinuityController.StartupDataContinuity();
         private Panel ViewPortPanel;
+
+        private User? CurrentActiveUser;
 
         internal Dashboard()
         {
@@ -38,6 +38,7 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Clear();
 
             tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
+            tsmiTopDown.Enabled = (RootManagerInstance.ActiveUser?.ActiveBuilding != null);
         }
 
         private void Wire()
@@ -164,9 +165,38 @@ namespace FrontEnd.Forms
             BuildingSelection();
         }
 
+        private void tsmiTopDown_Click(object sender, EventArgs e)
+        {
+            ViewPortPanel.Controls.Clear();
+            OpenTopDownBuildingView();
+        }
+
+        private void tsmiSave_Click(object sender, EventArgs e)
+        {
+            DataContinuityController.ShutdownDataContinuity(RootManagerInstance);
+        }
+
         private void RootManagerInstance_ActiveUserChanged()
         {
-            tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
+            if (CurrentActiveUser != null)
+            {
+                CurrentActiveUser.ActiveBuildingChanged -= ActiveUser_ActiveBuildingChanged;
+            }
+
+            CurrentActiveUser = RootManagerInstance.ActiveUser;
+
+            if (CurrentActiveUser != null)
+            {
+                CurrentActiveUser.ActiveBuildingChanged += ActiveUser_ActiveBuildingChanged;
+            }
+
+            tsmiBuildingSelect.Enabled = CurrentActiveUser != null;
+            ActiveUser_ActiveBuildingChanged();
+        }
+
+        private void ActiveUser_ActiveBuildingChanged()
+        {
+            tsmiTopDown.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
         }
 
         private void SelectionControl_SelectClicked(Selection _CurrentControl, Type _SelectedType, object _SelectedObject)
@@ -334,11 +364,6 @@ namespace FrontEnd.Forms
 
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
-        }
-
-        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DataContinuityController.ShutdownDataContinuity(RootManagerInstance);
         }
     }
 }

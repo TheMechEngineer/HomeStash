@@ -30,50 +30,66 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Dashboard));
             mnsDashboard = new MenuStrip();
-            testToolStripMenuItem = new ToolStripMenuItem();
+            tsddbFile = new ToolStripMenuItem();
+            tsmiSave = new ToolStripMenuItem();
+            tsddbMenus = new ToolStripMenuItem();
             tsmiUserSelect = new ToolStripMenuItem();
             tsmiBuildingSelect = new ToolStripMenuItem();
-            test2ToolStripMenuItem = new ToolStripMenuItem();
+            tsmiTopDown = new ToolStripMenuItem();
             pnlDashboard = new Panel();
             mnsDashboard.SuspendLayout();
             SuspendLayout();
             // 
             // mnsDashboard
             // 
-            mnsDashboard.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem, test2ToolStripMenuItem });
+            mnsDashboard.Items.AddRange(new ToolStripItem[] { tsddbFile, tsddbMenus });
             mnsDashboard.Location = new Point(0, 0);
             mnsDashboard.Name = "mnsDashboard";
             mnsDashboard.Size = new Size(800, 24);
             mnsDashboard.TabIndex = 0;
             mnsDashboard.Text = "menuStrip1";
             // 
-            // testToolStripMenuItem
+            // tsddbFile
             // 
-            testToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tsmiUserSelect, tsmiBuildingSelect });
-            testToolStripMenuItem.Name = "testToolStripMenuItem";
-            testToolStripMenuItem.Size = new Size(40, 20);
-            testToolStripMenuItem.Text = "Test";
+            tsddbFile.DropDownItems.AddRange(new ToolStripItem[] { tsmiSave });
+            tsddbFile.Name = "tsddbFile";
+            tsddbFile.Size = new Size(37, 20);
+            tsddbFile.Text = "File";
+            // 
+            // tsmiSave
+            // 
+            tsmiSave.Name = "tsmiSave";
+            tsmiSave.Size = new Size(98, 22);
+            tsmiSave.Text = "Save";
+            tsmiSave.Click += tsmiSave_Click;
+            // 
+            // tsddbMenus
+            // 
+            tsddbMenus.DropDownItems.AddRange(new ToolStripItem[] { tsmiUserSelect, tsmiBuildingSelect, tsmiTopDown });
+            tsddbMenus.Name = "tsddbMenus";
+            tsddbMenus.Size = new Size(55, 20);
+            tsddbMenus.Text = "Menus";
             // 
             // tsmiUserSelect
             // 
             tsmiUserSelect.Name = "tsmiUserSelect";
-            tsmiUserSelect.Size = new Size(152, 22);
-            tsmiUserSelect.Text = "User Select";
+            tsmiUserSelect.Size = new Size(180, 22);
+            tsmiUserSelect.Text = "User Selection";
             tsmiUserSelect.Click += tsmiUserSelect_Click;
             // 
             // tsmiBuildingSelect
             // 
             tsmiBuildingSelect.Name = "tsmiBuildingSelect";
-            tsmiBuildingSelect.Size = new Size(152, 22);
-            tsmiBuildingSelect.Text = "Building Select";
+            tsmiBuildingSelect.Size = new Size(180, 22);
+            tsmiBuildingSelect.Text = "Building Selection";
             tsmiBuildingSelect.Click += tsmiBuildingSelect_Click;
             // 
-            // test2ToolStripMenuItem
+            // tsmiTopDown
             // 
-            test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
-            test2ToolStripMenuItem.Size = new Size(46, 20);
-            test2ToolStripMenuItem.Text = "Test2";
-            test2ToolStripMenuItem.Click += test2ToolStripMenuItem_Click;
+            tsmiTopDown.Name = "tsmiTopDown";
+            tsmiTopDown.Size = new Size(180, 22);
+            tsmiTopDown.Text = "Top-Down View";
+            tsmiTopDown.Click += tsmiTopDown_Click;
             // 
             // pnlDashboard
             // 
@@ -103,10 +119,12 @@
         #endregion
 
         private MenuStrip mnsDashboard;
-        private ToolStripMenuItem testToolStripMenuItem;
-        private ToolStripMenuItem test2ToolStripMenuItem;
+        private ToolStripMenuItem tsddbMenus;
+        private ToolStripMenuItem tsddbFile;
         private Panel pnlDashboard;
         private ToolStripMenuItem tsmiUserSelect;
         private ToolStripMenuItem tsmiBuildingSelect;
+        private ToolStripMenuItem tsmiSave;
+        private ToolStripMenuItem tsmiTopDown;
     }
 }
