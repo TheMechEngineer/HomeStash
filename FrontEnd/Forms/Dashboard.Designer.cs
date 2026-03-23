@@ -32,11 +32,13 @@
             mnsDashboard = new MenuStrip();
             tsddbFile = new ToolStripMenuItem();
             tsmiSave = new ToolStripMenuItem();
+            tsmiBuildingReport = new ToolStripMenuItem();
             tsddbMenus = new ToolStripMenuItem();
             tsmiUserSelect = new ToolStripMenuItem();
             tsmiBuildingSelect = new ToolStripMenuItem();
             tsmiTopDown = new ToolStripMenuItem();
             pnlDashboard = new Panel();
+            sfdBuildingReport = new SaveFileDialog();
             mnsDashboard.SuspendLayout();
             SuspendLayout();
             // 
@@ -51,7 +53,7 @@
             // 
             // tsddbFile
             // 
-            tsddbFile.DropDownItems.AddRange(new ToolStripItem[] { tsmiSave });
+            tsddbFile.DropDownItems.AddRange(new ToolStripItem[] { tsmiSave, tsmiBuildingReport });
             tsddbFile.Name = "tsddbFile";
             tsddbFile.Size = new Size(37, 20);
             tsddbFile.Text = "File";
@@ -59,9 +61,16 @@
             // tsmiSave
             // 
             tsmiSave.Name = "tsmiSave";
-            tsmiSave.Size = new Size(98, 22);
+            tsmiSave.Size = new Size(206, 22);
             tsmiSave.Text = "Save";
             tsmiSave.Click += tsmiSave_Click;
+            // 
+            // tsmiBuildingReport
+            // 
+            tsmiBuildingReport.Name = "tsmiBuildingReport";
+            tsmiBuildingReport.Size = new Size(206, 22);
+            tsmiBuildingReport.Text = "Generate Building Report";
+            tsmiBuildingReport.Click += tsmiBuildingReport_Click;
             // 
             // tsddbMenus
             // 
@@ -73,21 +82,21 @@
             // tsmiUserSelect
             // 
             tsmiUserSelect.Name = "tsmiUserSelect";
-            tsmiUserSelect.Size = new Size(180, 22);
+            tsmiUserSelect.Size = new Size(169, 22);
             tsmiUserSelect.Text = "User Selection";
             tsmiUserSelect.Click += tsmiUserSelect_Click;
             // 
             // tsmiBuildingSelect
             // 
             tsmiBuildingSelect.Name = "tsmiBuildingSelect";
-            tsmiBuildingSelect.Size = new Size(180, 22);
+            tsmiBuildingSelect.Size = new Size(169, 22);
             tsmiBuildingSelect.Text = "Building Selection";
             tsmiBuildingSelect.Click += tsmiBuildingSelect_Click;
             // 
             // tsmiTopDown
             // 
             tsmiTopDown.Name = "tsmiTopDown";
-            tsmiTopDown.Size = new Size(180, 22);
+            tsmiTopDown.Size = new Size(169, 22);
             tsmiTopDown.Text = "Top-Down View";
             tsmiTopDown.Click += tsmiTopDown_Click;
             // 
@@ -98,6 +107,11 @@
             pnlDashboard.Name = "pnlDashboard";
             pnlDashboard.Size = new Size(800, 426);
             pnlDashboard.TabIndex = 1;
+            // 
+            // sfdBuildingReport
+            // 
+            sfdBuildingReport.DefaultExt = "pdf";
+            sfdBuildingReport.Filter = "PDF files (*.pdf)|*.pdf";
             // 
             // Dashboard
             // 
@@ -126,5 +140,7 @@
         private ToolStripMenuItem tsmiBuildingSelect;
         private ToolStripMenuItem tsmiSave;
         private ToolStripMenuItem tsmiTopDown;
+        private ToolStripMenuItem tsmiBuildingReport;
+        private SaveFileDialog sfdBuildingReport;
     }
 }

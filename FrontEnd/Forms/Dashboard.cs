@@ -9,6 +9,8 @@ using System.ComponentModel.Design;
 using System.Net.PeerToPeer;
 using System.Windows.Forms;
 using System.Text.Json;
+using BackEnd.Reports;
+using System.Drawing.Imaging;
 
 namespace FrontEnd.Forms
 {
@@ -174,6 +176,22 @@ namespace FrontEnd.Forms
         private void tsmiSave_Click(object sender, EventArgs e)
         {
             DataContinuityController.ShutdownDataContinuity(RootManagerInstance);
+        }
+
+        private void tsmiBuildingReport_Click(object sender, EventArgs e)
+        {
+            if (sfdBuildingReport.ShowDialog() == DialogResult.OK)
+            {
+                byte[] ImageData;
+
+                using (MemoryStream CurrentMemoryStream = new MemoryStream())
+                {
+                    Properties.Resources.HomeCheckerFull.Save(CurrentMemoryStream, ImageFormat.Png);
+                    ImageData = CurrentMemoryStream.ToArray();
+                }
+
+                ReportGenerator.GenerateListReport(RootManagerInstance, sfdBuildingReport.FileName, ImageData);
+            }            
         }
 
         private void RootManagerInstance_ActiveUserChanged()

@@ -143,6 +143,16 @@ namespace FrontEnd.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap HomeCheckerFull {
+            get {
+                object obj = ResourceManager.GetObject("HomeCheckerFull", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap shrink {
             get {
                 object obj = ResourceManager.GetObject("shrink", resourceCulture);
