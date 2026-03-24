@@ -1,4 +1,7 @@
-﻿using BackEnd.ModelClasses;
+﻿using BackEnd.DataContinuity;
+using BackEnd.Enumerations;
+using BackEnd.ModelClasses;
+using BackEnd.ModelInterfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -50,10 +53,10 @@ namespace BackEnd.Reports
                         {
                             InformationRow.RelativeItem().Column(InformationColumn =>
                             {
-                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text("Building : Home");
-                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text("Report Date : 03/22/2026");
-                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text("Building Item Count : 100");
-                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text("Building Value : $150.00");
+                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text($"Building : {_ReportDataSource.ActiveUser.ActiveBuilding.Name}");
+                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text($"Report Date : {DateTime.Today.ToString("dd/MM/yyyy")}");
+                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text($"Building Item Count : {_ReportDataSource.ActiveUser.ActiveBuilding.TotalItemCount()}");
+                                InformationColumn.Item().Height(ImageHeight / 4).AlignMiddle().Text($"Building Value : {_ReportDataSource.ActiveUser.ActiveBuilding.TotalItemValue():C2}");
                             });
 
                             InformationRow.AutoItem().Width(200).Height(ImageHeight).AlignCenter().AlignMiddle().Image(_ImageData).FitArea();
@@ -66,24 +69,34 @@ namespace BackEnd.Reports
                     _Container
                         .PaddingTop(15)
                         .AlignCenter()
-                        .Table(CurrenTable => 
+                        .Table(CurrentTable => 
                         {
-                            CurrenTable.ColumnsDefinition(CurrentColumns => 
+                             CurrentTable.ColumnsDefinition(CurrentColumns => 
                             {
-                                CurrentColumns.ConstantColumn(100);
-                                CurrentColumns.ConstantColumn(100);
                                 CurrentColumns.RelativeColumn();
-                                CurrentColumns.ConstantColumn(100);
-                                CurrentColumns.ConstantColumn(100);
+                                CurrentColumns.RelativeColumn();
+                                CurrentColumns.RelativeColumn();
+                                CurrentColumns.RelativeColumn(0.5f);
+                                CurrentColumns.RelativeColumn(0.5f);
                             });
 
-                            CurrenTable.Header( TableHeader =>
+                            CurrentTable.Header( TableHeader =>
                             {
                                 TableHeader.Cell().Element(HeaderStyle).Text("Name").SemiBold();
                                 TableHeader.Cell().Element(HeaderStyle).Text("Location").SemiBold();
                                 TableHeader.Cell().Element(HeaderStyle).Text("Description").SemiBold();
-                                TableHeader.Cell().Element(HeaderStyle).Text("Value").SemiBold();
-                                TableHeader.Cell().Element(HeaderStyle).Text("Qty").SemiBold();
+                                TableHeader.Cell().Element(HeaderStyle).Text(text =>
+                                {
+                                    text.Span("Value\n").SemiBold();
+                                    text.Span("(Unit)").FontSize(10);
+                                });
+                                
+                                
+                                TableHeader.Cell().Element(HeaderStyle).Text(text =>
+                                {
+                                    text.Span("Qty").SemiBold();
+                                    text.Span("\n(Per Location)").FontSize(9);
+                                });
 
                                 IContainer HeaderStyle(IContainer _Container)
                                 {
@@ -96,17 +109,23 @@ namespace BackEnd.Reports
                                 }
                             });
 
-                            for (uint CurrentDataRow = 1; CurrentDataRow < 50; CurrentDataRow++)
+                            List <ReportObject> ReportList = GetReportList(_ReportDataSource);
+
+                            uint i = 0;
+
+                            foreach (ReportObject CurrentReportObject in ReportList)
                             {
-                                CurrenTable.Cell().Row(CurrentDataRow).Column(1).Element(CellStyle).Text(CurrentDataRow.ToString());
-                                CurrenTable.Cell().Row(CurrentDataRow).Column(2).Element(CellStyle).Text((CurrentDataRow + 1).ToString());
-                                CurrenTable.Cell().Row(CurrentDataRow).Column(3).Element(CellStyle).Text((CurrentDataRow + 2).ToString());
-                                CurrenTable.Cell().Row(CurrentDataRow).Column(4).Element(CellStyle).Text((CurrentDataRow + 3).ToString());
-                                CurrenTable.Cell().Row(CurrentDataRow).Column(5).Element(CellStyle).Text((CurrentDataRow + 4).ToString());
+                                CurrentTable.Cell().Element(CellStyle).Text(CurrentReportObject.Name);
+                                CurrentTable.Cell().Element(CellStyle).Text(CurrentReportObject.Location);
+                                CurrentTable.Cell().Element(CellStyle).Text(CurrentReportObject.Description);
+                                CurrentTable.Cell().Element(CellStyle).Text(CurrentReportObject.Value.ToString("C2"));
+                                CurrentTable.Cell().Element(CellStyle).Text(CurrentReportObject.Quantity.ToString());
+
+                                i++;
 
                                 IContainer CellStyle(IContainer _Container)
                                 {
-                                    Color BackgroundColor = CurrentDataRow % 2 == 0
+                                    Color BackgroundColor = i % 2 == 0
                                         ? Colors.Blue.Lighten5
                                         : Colors.Blue.Lighten4;
 
@@ -120,11 +139,48 @@ namespace BackEnd.Reports
 
                                 }
                             }
-
                         });
                 }
             })
             .GeneratePdf(_FilePath);
+        }
+
+        private static List<ReportObject> GetReportList(RootManager _ReportDataSource)
+        {
+            List<ReportObject> ReturnList = new List<ReportObject>();
+
+            Building CurrentBuilding = _ReportDataSource.ActiveUser.ActiveBuilding;
+
+            PopulateStorageReportObjects(CurrentBuilding.CurrentStorage as Storage, ref ReturnList);
+
+            foreach (Room CurrentRoom in CurrentBuilding.RoomList)
+            {
+                PopulateStorageReportObjects(CurrentRoom.CurrentStorage as Storage, ref ReturnList);
+            }
+
+
+            return ReturnList;
+        }
+        private static void PopulateStorageReportObjects(Storage _SourceStorage, ref List<ReportObject> _ReportObjectList)
+        {
+            foreach (IStored CurrentItem in _SourceStorage.StoredItems)
+            {
+                ReportObject NewReportObject = new ReportObject
+                {
+                    Name = CurrentItem.Name,
+                    Description = CurrentItem.Description,
+                    Quantity = CurrentItem.Quantity,
+                    Value = CurrentItem.Value,
+                    Location = CurrentItem.ImmediateParent.Name
+                };
+
+                _ReportObjectList.Add(NewReportObject);
+
+                if (CurrentItem.GetType() == typeof(Container))
+                {
+                    PopulateStorageReportObjects((CurrentItem as Container).CurrentStorage as Storage, ref _ReportObjectList);
+                }
+            }
         }
     }
 }

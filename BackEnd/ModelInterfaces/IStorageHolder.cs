@@ -10,6 +10,7 @@ namespace BackEnd.ModelInterfaces
 {
     public interface IStorageHolder
     {
+        internal string Name { get; }
         internal IStorage CurrentStorage { get; }
         public IReadOnlyList<IStored> StoredItems { get; }
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage);

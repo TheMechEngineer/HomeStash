@@ -39,8 +39,9 @@ namespace FrontEnd.Forms
 
             ViewPortPanel.Controls.Clear();
 
-            tsmiBuildingSelect.Enabled = (RootManagerInstance.ActiveUser != null);
-            tsmiTopDown.Enabled = (RootManagerInstance.ActiveUser?.ActiveBuilding != null);
+            tsmiBuildingSelect.Enabled = (CurrentActiveUser != null);
+            tsmiTopDown.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
+            tsmiBuildingReport.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
         }
 
         private void Wire()
@@ -67,7 +68,7 @@ namespace FrontEnd.Forms
 
         private void BuildingSelection()
         {
-            AdapterSelection SelectionAdapter = new AdapterSelection(ref RootManagerInstance, RootManagerInstance.ActiveUser.BuildingList, "Building");
+            AdapterSelection SelectionAdapter = new AdapterSelection(ref RootManagerInstance, CurrentActiveUser.BuildingList, "Building");
 
             Selection NewControl = new Selection(SelectionAdapter);
 
@@ -215,6 +216,7 @@ namespace FrontEnd.Forms
         private void ActiveUser_ActiveBuildingChanged()
         {
             tsmiTopDown.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
+            tsmiBuildingReport.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
         }
 
         private void SelectionControl_SelectClicked(Selection _CurrentControl, Type _SelectedType, object _SelectedObject)
@@ -235,7 +237,7 @@ namespace FrontEnd.Forms
                     }
                     break;
                 case Type CurrentType when _SelectedType == typeof(Building):
-                    if (RootManagerInstance.ActiveUser.TryChangeActiveBuilding(_SelectedObject as Building, out _ErrorMessage))
+                    if (CurrentActiveUser.TryChangeActiveBuilding(_SelectedObject as Building, out _ErrorMessage))
                     {
                         OpenTopDownBuildingView();
                     }
@@ -299,7 +301,7 @@ namespace FrontEnd.Forms
                     }
                     break;
                 case Type CurrentType when _SelectedType == typeof(Building):
-                    if (!RootManagerInstance.ActiveUser.TryRemoveBuilding(_SelectedObject as Building, out _ErrorMessage))
+                    if (!CurrentActiveUser.TryRemoveBuilding(_SelectedObject as Building, out _ErrorMessage))
                     {
                         MessageBox.Show(_ErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -351,7 +353,7 @@ namespace FrontEnd.Forms
 
             if (_FormType == FormType.Add)
             {
-                if (RootManagerInstance.ActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
+                if (CurrentActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
                 {
                     BuildingInfo_CancelClicked(_CurrentControl);
                 }
@@ -362,7 +364,7 @@ namespace FrontEnd.Forms
             }
             else if (_FormType == FormType.Modify)
             {
-                if (RootManagerInstance.ActiveUser.TryModifyBuilding(_CurrentBuilding, _BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
+                if (CurrentActiveUser.TryModifyBuilding(_CurrentBuilding, _BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
                 {
                     BuildingInfo_CancelClicked(_CurrentControl);
                 }
