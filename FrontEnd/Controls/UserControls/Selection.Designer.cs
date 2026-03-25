@@ -44,10 +44,10 @@
             flpSelectionList.BackgroundImageLayout = ImageLayout.None;
             flpSelectionList.BorderStyle = BorderStyle.FixedSingle;
             flpSelectionList.FlowDirection = FlowDirection.TopDown;
-            flpSelectionList.Location = new Point(62, 47);
+            flpSelectionList.Location = new Point(25, 47);
             flpSelectionList.Margin = new Padding(6);
             flpSelectionList.Name = "flpSelectionList";
-            flpSelectionList.Size = new Size(350, 455);
+            flpSelectionList.Size = new Size(450, 450);
             flpSelectionList.TabIndex = 0;
             flpSelectionList.WrapContents = false;
             // 
@@ -56,7 +56,7 @@
             btnAdd.Location = new Point(25, 575);
             btnAdd.Margin = new Padding(6);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(220, 49);
+            btnAdd.Size = new Size(220, 50);
             btnAdd.TabIndex = 3;
             btnAdd.Text = "Add Button";
             btnAdd.UseVisualStyleBackColor = true;
@@ -64,10 +64,10 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(257, 575);
+            btnDelete.Location = new Point(255, 575);
             btnDelete.Margin = new Padding(6);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(224, 49);
+            btnDelete.Size = new Size(220, 50);
             btnDelete.TabIndex = 4;
             btnDelete.Text = "Delete Button";
             btnDelete.UseVisualStyleBackColor = true;
@@ -75,10 +75,10 @@
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(31, 514);
+            btnSelect.Location = new Point(25, 514);
             btnSelect.Margin = new Padding(6);
             btnSelect.Name = "btnSelect";
-            btnSelect.Size = new Size(214, 49);
+            btnSelect.Size = new Size(220, 50);
             btnSelect.TabIndex = 1;
             btnSelect.Text = "Select Button";
             btnSelect.UseVisualStyleBackColor = true;
@@ -95,10 +95,10 @@
             // 
             // btnModify
             // 
-            btnModify.Location = new Point(257, 514);
+            btnModify.Location = new Point(255, 514);
             btnModify.Margin = new Padding(6);
             btnModify.Name = "btnModify";
-            btnModify.Size = new Size(224, 49);
+            btnModify.Size = new Size(220, 50);
             btnModify.TabIndex = 2;
             btnModify.Text = "Modify Button";
             btnModify.UseVisualStyleBackColor = true;
@@ -109,6 +109,7 @@
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
+            BorderStyle = BorderStyle.FixedSingle;
             Controls.Add(btnModify);
             Controls.Add(lblSelectionTitle);
             Controls.Add(btnDelete);
@@ -118,7 +119,8 @@
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
             Name = "Selection";
-            Size = new Size(500, 635);
+            Size = new Size(502, 652);
+            Load += Selection_Load;
             ResumeLayout(false);
             PerformLayout();
         }

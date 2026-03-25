@@ -67,9 +67,9 @@
             lblBuildingName.AutoSize = true;
             lblBuildingName.Location = new Point(22, 72);
             lblBuildingName.Name = "lblBuildingName";
-            lblBuildingName.Size = new Size(178, 32);
+            lblBuildingName.Size = new Size(192, 32);
             lblBuildingName.TabIndex = 3;
-            lblBuildingName.Text = "Building Name:";
+            lblBuildingName.Text = "Building Name : ";
             // 
             // txtNameInput
             // 
@@ -90,9 +90,9 @@
             lblBuildingWidth.AutoSize = true;
             lblBuildingWidth.Location = new Point(22, 142);
             lblBuildingWidth.Name = "lblBuildingWidth";
-            lblBuildingWidth.Size = new Size(178, 32);
+            lblBuildingWidth.Size = new Size(192, 32);
             lblBuildingWidth.TabIndex = 5;
-            lblBuildingWidth.Text = "Building Width:";
+            lblBuildingWidth.Text = "Building Width : ";
             // 
             // txtHeightInput
             // 
@@ -106,14 +106,14 @@
             lblBuildingHeight.AutoSize = true;
             lblBuildingHeight.Location = new Point(22, 216);
             lblBuildingHeight.Name = "lblBuildingHeight";
-            lblBuildingHeight.Size = new Size(186, 32);
+            lblBuildingHeight.Size = new Size(200, 32);
             lblBuildingHeight.TabIndex = 7;
-            lblBuildingHeight.Text = "Building Height:";
+            lblBuildingHeight.Text = "Building Height : ";
             // 
             // lblTitle
             // 
             lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(169, 18);
+            lblTitle.Location = new Point(181, 10);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(122, 32);
             lblTitle.TabIndex = 9;
@@ -137,8 +137,8 @@
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
             Name = "BuildingInfo";
-            Size = new Size(475, 349);
-            Load += AddNewBuilding_Load;
+            Size = new Size(475, 350);
+            Load += BuildingInfo_Load;
             ResumeLayout(false);
             PerformLayout();
         }

@@ -34,7 +34,7 @@ namespace FrontEnd.UserControls
 
             CurrentBuilding = _CurrentBuilding;
             CurrentFormType = FormType.Add;
-            
+
             InitializeVisuals();
         }
 
@@ -65,7 +65,6 @@ namespace FrontEnd.UserControls
                 {
                     cmbLocationInput.SelectedIndex = 0;
                 }
-
             }
             else if (CurrentFormType == FormType.Modify)
             {
@@ -92,6 +91,85 @@ namespace FrontEnd.UserControls
                     txtQuantityInput.Enabled = false;
                 }
             }
+        }
+
+        private void ItemInfo_Load(object sender, EventArgs e)
+        {
+            SizeForm();
+
+            txtNameInput.Focus();
+        }
+
+        private void SizeForm()
+        {
+            int Gap = 25;
+            int SmallGap = 10;
+            int ButtonHeight = 50;
+
+            int LabelTextSizeDiff = txtNameInput.Height - lblItemName.Height;
+            int MaxLabelSize = new int[] { lblItemName.Width, lblItemDescription.Width, lblItemValue.Width, lblItemQuantity.Width, lblItemLocation.Width }.Max();
+            int TextBoxWidth = this.ClientSize.Width - 2 * Gap - MaxLabelSize;
+
+            foreach (Label CurrentLabel in this.Controls.OfType<Label>())
+            {
+                if (CurrentLabel == lblTitle)
+                {
+                    continue;
+                }
+                else
+                {
+                    CurrentLabel.Left = Gap + (MaxLabelSize - CurrentLabel.Width);
+                }
+            }
+
+            lblTitle.Left = this.ClientSize.Width / 2 - lblTitle.Width / 2;
+            lblTitle.Top = SmallGap;
+
+            lblItemName.Top = lblTitle.Bottom + SmallGap + LabelTextSizeDiff / 2;
+
+            txtNameInput.Width = TextBoxWidth;
+            txtNameInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            txtNameInput.Top = lblTitle.Bottom + SmallGap;
+
+            lblItemDescription.Top = lblItemName.Bottom + SmallGap + LabelTextSizeDiff;
+
+            txtDescriptionInput.Width = TextBoxWidth;
+            txtDescriptionInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            txtDescriptionInput.Top = txtNameInput.Bottom + SmallGap;
+
+            grpItemType.Top = lblItemDescription.Bottom + LabelTextSizeDiff;
+            grpItemType.Left = lblItemDescription.Left;
+            grpItemType.Height = txtDescriptionInput.Bottom - grpItemType.Top;
+            grpItemType.Width = txtDescriptionInput.Left - SmallGap - grpItemType.Left;
+
+            lblItemValue.Top = grpItemType.Bottom + SmallGap + LabelTextSizeDiff / 2;
+
+            txtValueInput.Width = TextBoxWidth;
+            txtValueInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            txtValueInput.Top = txtDescriptionInput.Bottom + SmallGap;
+
+            lblItemQuantity.Top = lblItemValue.Bottom + SmallGap + LabelTextSizeDiff;
+
+            txtQuantityInput.Width = TextBoxWidth;
+            txtQuantityInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            txtQuantityInput.Top = txtValueInput.Bottom + SmallGap;
+
+            lblItemLocation.Top = lblItemQuantity.Bottom + SmallGap + LabelTextSizeDiff;
+
+            cmbLocationInput.Width = TextBoxWidth;
+            cmbLocationInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            cmbLocationInput.Top = txtQuantityInput.Bottom + SmallGap;
+
+            btnConfirm.Width = (this.ClientSize.Width - 2 * Gap - SmallGap) / 2;
+            btnConfirm.Left = Gap;
+            btnConfirm.Top = cmbLocationInput.Bottom + Gap;
+
+            btnCancel.Width = (this.ClientSize.Width - 2 * Gap - SmallGap) / 2;
+            btnCancel.Left = this.ClientSize.Width - Gap - btnCancel.Width;
+            btnCancel.Top = cmbLocationInput.Bottom + Gap;
+
+            this.ClientSize = new Size(this.ClientSize.Width, btnConfirm.Bottom + Gap);
+
         }
 
         private void PopulateComboBox()
@@ -200,11 +278,6 @@ namespace FrontEnd.UserControls
         private void btnCancel_Click(object sender, EventArgs e)
         {
             CancelClicked?.Invoke(this);
-        }
-
-        private void AddNewItem_Load(object sender, EventArgs e)
-        {
-            txtNameInput.Focus();
         }
     }
 }

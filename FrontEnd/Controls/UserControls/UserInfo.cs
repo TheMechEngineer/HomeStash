@@ -53,6 +53,57 @@ namespace FrontEnd.UserControls
             }
         }
 
+        private void UserInfo_Load(object sender, EventArgs e)
+        {
+            SizeForm();
+
+            txtUserNameInput.Focus();
+        }
+
+        private void SizeForm()
+        {
+            
+            int Gap = 25;
+            int SmallGap = 10;
+            int ButtonHeight = 50;
+
+            int LabelTextSizeDiff = txtUserNameInput.Height - lblUserName.Height;
+            int MaxLabelSize = new int[] { lblUserName.Width}.Max();
+            int TextBoxWidth = this.ClientSize.Width - 2 * Gap - MaxLabelSize;
+
+            foreach (Label CurrentLabel in this.Controls.OfType<Label>())
+            {
+                if (CurrentLabel == lblTitle)
+                {
+                    continue;
+                }
+                else
+                {
+                    CurrentLabel.Left = Gap + (MaxLabelSize - CurrentLabel.Width);
+                }
+            }
+
+            lblTitle.Left = this.ClientSize.Width / 2 - lblTitle.Width / 2;
+            lblTitle.Top = SmallGap;
+
+            lblUserName.Top = lblTitle.Bottom + SmallGap + LabelTextSizeDiff / 2;
+
+            txtUserNameInput.Width = TextBoxWidth;
+            txtUserNameInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
+            txtUserNameInput.Top = lblTitle.Bottom + SmallGap;
+
+            btnConfirm.Width = (this.ClientSize.Width - 2 * Gap - SmallGap) / 2;
+            btnConfirm.Left = Gap;
+            btnConfirm.Top = txtUserNameInput.Bottom + Gap;
+
+            btnCancel.Width = (this.ClientSize.Width - 2 * Gap - SmallGap) / 2;
+            btnCancel.Left = this.ClientSize.Width - Gap - btnCancel.Width;
+            btnCancel.Top = txtUserNameInput.Bottom + Gap;
+
+            this.ClientSize = new Size(this.ClientSize.Width, btnConfirm.Bottom + Gap);
+            
+        }
+
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             ConfirmClicked?.Invoke(CurrentFormType, CurrentUser, this, txtUserNameInput.Text);
@@ -62,12 +113,5 @@ namespace FrontEnd.UserControls
         {
             CancelClicked?.Invoke(this);
         }
-
-        private void AddNewUser_Load(object sender, EventArgs e)
-        {
-            txtUserNameInput.Focus();
-        }
-
-
     }
 }

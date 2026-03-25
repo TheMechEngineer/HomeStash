@@ -57,17 +57,54 @@ namespace FrontEnd.UserControls
             SelectionAdapter.SourceUpdated -= PopulateSelectionList;
             this.HandleDestroyed -= UnWire;
         }
+
+        private void Selection_Load(object sender, EventArgs e)
+        {
+            this.BeginInvoke(() =>
+            {
+                SizeForm();
+            });
+        }
+
         private void SetDisplayText()
         {
             string ControlText = SelectionAdapter.ButtonText;
 
-            lblSelectionTitle.Text = ControlText + " Selection Menu";
+            lblSelectionTitle.Text = ControlText + " Selection";
             btnSelect.Text = "Select " + ControlText;
             btnModify.Text = "Modify " + ControlText;
             btnAdd.Text = "Add " + ControlText;
             btnDelete.Text = "Delete " + ControlText;
 
         }
+        private void SizeForm()
+        {
+            int Gap = 25;
+            int SmallGap = 10;
+            int ButtonHeight = 50;
+            
+
+            lblSelectionTitle.Left = this.ClientSize.Width/2 - lblSelectionTitle.Width/2;
+            lblSelectionTitle.Top = SmallGap;
+
+            flpSelectionList.Left = Gap;
+            flpSelectionList.Width = this.ClientSize.Width - 2 * Gap;
+            flpSelectionList.Top = lblSelectionTitle.Bottom + SmallGap;
+            flpSelectionList.Height = this.ClientSize.Height - flpSelectionList.Top - (2 * ButtonHeight) - (2 * Gap) - SmallGap;
+
+            btnSelect.Left = flpSelectionList.Left;
+            btnSelect.Top = flpSelectionList.Bottom + Gap;
+
+            btnAdd.Left = flpSelectionList.Left;
+            btnAdd.Top = btnSelect.Bottom + SmallGap;
+
+            btnModify.Left = flpSelectionList.Right - btnModify.Width;
+            btnModify.Top = flpSelectionList.Bottom + Gap;
+
+            btnDelete.Left = flpSelectionList.Right - btnDelete.Width;
+            btnDelete.Top = btnModify.Bottom + SmallGap;
+        }
+
         private void PopulateSelectionList()
         {
             string DisplayName;
@@ -160,7 +197,6 @@ namespace FrontEnd.UserControls
                 //MessageBox.Show($"Clicked label at index {index}: {ClickedLabel.Text}");
             }
         }
-
 
     }
 }

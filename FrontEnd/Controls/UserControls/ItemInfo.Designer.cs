@@ -75,9 +75,9 @@
             lblItemName.AutoSize = true;
             lblItemName.Location = new Point(22, 72);
             lblItemName.Name = "lblItemName";
-            lblItemName.Size = new Size(138, 32);
+            lblItemName.Size = new Size(145, 32);
             lblItemName.TabIndex = 3;
-            lblItemName.Text = "Item Name:";
+            lblItemName.Text = "Item Name :";
             // 
             // txtNameInput
             // 
@@ -101,9 +101,9 @@
             lblItemDescription.AutoSize = true;
             lblItemDescription.Location = new Point(22, 139);
             lblItemDescription.Name = "lblItemDescription";
-            lblItemDescription.Size = new Size(195, 32);
+            lblItemDescription.Size = new Size(202, 32);
             lblItemDescription.TabIndex = 5;
-            lblItemDescription.Text = "Item Description:";
+            lblItemDescription.Text = "Item Description :";
             // 
             // txtValueInput
             // 
@@ -117,18 +117,18 @@
             lblItemValue.AutoSize = true;
             lblItemValue.Location = new Point(22, 337);
             lblItemValue.Name = "lblItemValue";
-            lblItemValue.Size = new Size(132, 32);
+            lblItemValue.Size = new Size(139, 32);
             lblItemValue.TabIndex = 7;
-            lblItemValue.Text = "Item Value:";
+            lblItemValue.Text = "Item Value :";
             // 
             // lblItemLocation
             // 
             lblItemLocation.AutoSize = true;
             lblItemLocation.Location = new Point(22, 487);
             lblItemLocation.Name = "lblItemLocation";
-            lblItemLocation.Size = new Size(164, 32);
+            lblItemLocation.Size = new Size(171, 32);
             lblItemLocation.TabIndex = 11;
-            lblItemLocation.Text = "Item Location:";
+            lblItemLocation.Text = "Item Location :";
             // 
             // txtQuantityInput
             // 
@@ -142,9 +142,9 @@
             lblItemQuantity.AutoSize = true;
             lblItemQuantity.Location = new Point(22, 413);
             lblItemQuantity.Name = "lblItemQuantity";
-            lblItemQuantity.Size = new Size(166, 32);
+            lblItemQuantity.Size = new Size(173, 32);
             lblItemQuantity.TabIndex = 9;
-            lblItemQuantity.Text = "Item Quantity:";
+            lblItemQuantity.Text = "Item Quantity :";
             // 
             // lblTitle
             // 
@@ -226,8 +226,8 @@
             Margin = new Padding(6);
             MinimumSize = new Size(475, 0);
             Name = "ItemInfo";
-            Size = new Size(511, 636);
-            Load += AddNewItem_Load;
+            Size = new Size(500, 650);
+            Load += ItemInfo_Load;
             grpItemType.ResumeLayout(false);
             grpItemType.PerformLayout();
             ResumeLayout(false);

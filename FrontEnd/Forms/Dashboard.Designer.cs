@@ -124,6 +124,7 @@
             MainMenuStrip = mnsDashboard;
             Name = "Dashboard";
             Text = "HomeStash";
+            Load += Dashboard_Load;
             mnsDashboard.ResumeLayout(false);
             mnsDashboard.PerformLayout();
             ResumeLayout(false);

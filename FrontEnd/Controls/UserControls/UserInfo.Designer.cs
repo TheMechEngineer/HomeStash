@@ -63,9 +63,9 @@
             lblUserName.AutoSize = true;
             lblUserName.Location = new Point(27, 58);
             lblUserName.Name = "lblUserName";
-            lblUserName.Size = new Size(137, 32);
+            lblUserName.Size = new Size(144, 32);
             lblUserName.TabIndex = 3;
-            lblUserName.Text = "User Name:";
+            lblUserName.Text = "User Name :";
             // 
             // txtUserNameInput
             // 
@@ -97,8 +97,8 @@
             Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(6);
             Name = "UserInfo";
-            Size = new Size(435, 175);
-            Load += AddNewUser_Load;
+            Size = new Size(475, 200);
+            Load += UserInfo_Load;
             ResumeLayout(false);
             PerformLayout();
         }

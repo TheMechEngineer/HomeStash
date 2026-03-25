@@ -30,7 +30,7 @@ namespace FrontEnd.Forms
             InitializeVisuals();
             Wire();
 
-            UserSelection();
+           
         }
 
         private void InitializeVisuals()
@@ -49,6 +49,14 @@ namespace FrontEnd.Forms
             RootManagerInstance.ActiveUserChanged += RootManagerInstance_ActiveUserChanged;
         }
 
+        private void Dashboard_Load(object sender, EventArgs e)
+        {
+            this.BeginInvoke(() =>
+            {
+                UserSelection();
+            });
+        }
+
         private void UserSelection()
         {
             AdapterSelection SelectionAdapter = new AdapterSelection(ref RootManagerInstance, RootManagerInstance.UserList, "User");
@@ -62,6 +70,9 @@ namespace FrontEnd.Forms
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "UserSelection";
+
+            NewControl.Left = ViewPortPanel.ClientSize.Width/2 - NewControl.Width/2;
+            NewControl.Top = ViewPortPanel.ClientSize.Height / 2 - NewControl.Height / 2;
 
             ViewPortPanel.Controls.Add(NewControl);
         }
@@ -79,6 +90,9 @@ namespace FrontEnd.Forms
 
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "BuildingSelection";
+
+            NewControl.Left = ViewPortPanel.ClientSize.Width / 2 - NewControl.Width / 2;
+            NewControl.Top = ViewPortPanel.ClientSize.Height / 2 - NewControl.Height / 2;
 
             ViewPortPanel.Controls.Add(NewControl);
         }
@@ -192,7 +206,7 @@ namespace FrontEnd.Forms
                 }
 
                 ReportGenerator.GenerateListReport(RootManagerInstance, sfdBuildingReport.FileName, ImageData);
-            }            
+            }
         }
 
         private void RootManagerInstance_ActiveUserChanged()
@@ -385,5 +399,6 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
+
     }
 }
