@@ -1,15 +1,9 @@
 using BackEnd.DataContinuity;
 using BackEnd.ModelClasses;
-using BackEnd.Utilities;
+using BackEnd.Reports;
 using FrontEnd.Adapters;
 using FrontEnd.UserControls;
 using FrontEnd.Utilities;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Net.PeerToPeer;
-using System.Windows.Forms;
-using System.Text.Json;
-using BackEnd.Reports;
 using System.Drawing.Imaging;
 
 namespace FrontEnd.Forms
@@ -30,7 +24,7 @@ namespace FrontEnd.Forms
             InitializeVisuals();
             Wire();
 
-           
+
         }
 
         private void InitializeVisuals()
@@ -71,7 +65,7 @@ namespace FrontEnd.Forms
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "UserSelection";
 
-            NewControl.Left = ViewPortPanel.ClientSize.Width/2 - NewControl.Width/2;
+            NewControl.Left = ViewPortPanel.ClientSize.Width / 2 - NewControl.Width / 2;
             NewControl.Top = ViewPortPanel.ClientSize.Height / 2 - NewControl.Height / 2;
 
             ViewPortPanel.Controls.Add(NewControl);

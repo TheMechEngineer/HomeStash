@@ -1,13 +1,4 @@
 ﻿using BackEnd.ModelClasses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
@@ -27,9 +18,9 @@ namespace FrontEnd.UserControls
         private Color BufferTextColor = Color.DarkGray;
 
         private const int _BuildingOffsetBuffer = 50;
-        internal int BuildingOffsetBuffer 
+        internal int BuildingOffsetBuffer
         {
-            get {  return _BuildingOffsetBuffer; }
+            get { return _BuildingOffsetBuffer; }
         }
 
         internal int HGridCount

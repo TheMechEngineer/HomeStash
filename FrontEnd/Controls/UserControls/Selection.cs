@@ -1,18 +1,4 @@
-﻿using BackEnd.DataContinuity;
-using BackEnd.ModelClasses;
-using FrontEnd.Adapters;
-using FrontEnd.Forms;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FrontEnd.Adapters;
 
 namespace FrontEnd.UserControls
 {
@@ -82,9 +68,9 @@ namespace FrontEnd.UserControls
             int Gap = 25;
             int SmallGap = 10;
             int ButtonHeight = 50;
-            
 
-            lblSelectionTitle.Left = this.ClientSize.Width/2 - lblSelectionTitle.Width/2;
+
+            lblSelectionTitle.Left = this.ClientSize.Width / 2 - lblSelectionTitle.Width / 2;
             lblSelectionTitle.Top = SmallGap;
 
             flpSelectionList.Left = Gap;

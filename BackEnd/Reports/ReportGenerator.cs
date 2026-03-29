@@ -1,18 +1,8 @@
-﻿using BackEnd.DataContinuity;
-using BackEnd.Enumerations;
-using BackEnd.ModelClasses;
+﻿using BackEnd.ModelClasses;
 using BackEnd.ModelInterfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BackEnd.Reports
 {
@@ -24,7 +14,7 @@ namespace BackEnd.Reports
 
             Document.Create(container =>
             {
-                container.Page( page =>
+                container.Page(page =>
                 {
                     page.Margin(25);
                     page.MarginTop(10);
@@ -45,7 +35,7 @@ namespace BackEnd.Reports
                 {
                     int ImageHeight = 110;
 
-                    _Container.Column(TitleColumn => 
+                    _Container.Column(TitleColumn =>
                     {
                         TitleColumn.Item().Height(50).BorderBottom(3).BorderAlignmentInside().AlignCenter().AlignTop().Text("HomeStash Inventory Report").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
 
@@ -69,18 +59,18 @@ namespace BackEnd.Reports
                     _Container
                         .PaddingTop(15)
                         .AlignCenter()
-                        .Table(CurrentTable => 
+                        .Table(CurrentTable =>
                         {
-                             CurrentTable.ColumnsDefinition(CurrentColumns => 
-                            {
-                                CurrentColumns.RelativeColumn();
-                                CurrentColumns.RelativeColumn();
-                                CurrentColumns.RelativeColumn();
-                                CurrentColumns.RelativeColumn(0.5f);
-                                CurrentColumns.RelativeColumn(0.5f);
-                            });
+                            CurrentTable.ColumnsDefinition(CurrentColumns =>
+                           {
+                               CurrentColumns.RelativeColumn();
+                               CurrentColumns.RelativeColumn();
+                               CurrentColumns.RelativeColumn();
+                               CurrentColumns.RelativeColumn(0.5f);
+                               CurrentColumns.RelativeColumn(0.5f);
+                           });
 
-                            CurrentTable.Header( TableHeader =>
+                            CurrentTable.Header(TableHeader =>
                             {
                                 TableHeader.Cell().Element(HeaderStyle).Text("Name").SemiBold();
                                 TableHeader.Cell().Element(HeaderStyle).Text("Location").SemiBold();
@@ -90,8 +80,8 @@ namespace BackEnd.Reports
                                     text.Span("Value\n").SemiBold();
                                     text.Span("(Unit)").FontSize(10);
                                 });
-                                
-                                
+
+
                                 TableHeader.Cell().Element(HeaderStyle).Text(text =>
                                 {
                                     text.Span("Qty").SemiBold();
@@ -109,7 +99,7 @@ namespace BackEnd.Reports
                                 }
                             });
 
-                            List <ReportObject> ReportList = GetReportList(_ReportDataSource);
+                            List<ReportObject> ReportList = GetReportList(_ReportDataSource);
 
                             uint i = 0;
 

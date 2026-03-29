@@ -1,6 +1,4 @@
-﻿using BackEnd.ModelClasses;
-
-namespace BackEnd.DataContinuity
+﻿namespace BackEnd.DataContinuity
 {
     internal class BuildingDTO
     {
@@ -8,6 +6,6 @@ namespace BackEnd.DataContinuity
         public required float Width { get; set; }
         public required float Height { get; set; }
         public required StorageDTO CurrentStorage { get; set; }
-        public List<RoomDTO>? RoomList {  get; set; }
+        public List<RoomDTO>? RoomList { get; set; }
     }
 }

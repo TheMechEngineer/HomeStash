@@ -1,13 +1,6 @@
 ﻿using BackEnd.Enumerations;
 using BackEnd.ModelInterfaces;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace BackEnd.ModelClasses
 {
@@ -35,12 +28,12 @@ namespace BackEnd.ModelClasses
         private event Action? __StoredItemModified;
         public event Action? StoredItemModified
         {
-            add 
+            add
             {
                 UnsortedItems.StoredItemModified += value;
                 __StoredItemModified += value;
             }
-            remove 
+            remove
             {
                 UnsortedItems.StoredItemModified -= value;
                 __StoredItemModified += value;
@@ -367,7 +360,7 @@ namespace BackEnd.ModelClasses
             __RoomList.Remove(_RoomToRemove);
             RoomListChanged?.Invoke();
 
-            if(_RoomToRemove.StoredItems.Count > 0)
+            if (_RoomToRemove.StoredItems.Count > 0)
             {
                 __StoredItemsChanged?.Invoke();
             }
@@ -461,7 +454,7 @@ namespace BackEnd.ModelClasses
 
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
-           return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
+            return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
         }
 
         public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)

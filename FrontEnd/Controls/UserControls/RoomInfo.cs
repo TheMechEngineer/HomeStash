@@ -1,16 +1,5 @@
-﻿using BackEnd.DataContinuity;
-using BackEnd.ModelClasses;
-using FrontEnd.Forms;
+﻿using BackEnd.ModelClasses;
 using FrontEnd.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
@@ -121,7 +110,7 @@ namespace FrontEnd.UserControls
             lblX.Top = lblRoomLocation.Top;
             lblX.Left = lblRoomLocation.Right;
 
-            txtXCoordInput.Width = (TextBoxWidth - lblX.Width - lblY.Width)/2;
+            txtXCoordInput.Width = (TextBoxWidth - lblX.Width - lblY.Width) / 2;
             txtXCoordInput.Left = lblX.Right;
             txtXCoordInput.Top = txtHeightInput.Bottom + SmallGap;
 

@@ -2,14 +2,6 @@
 using BackEnd.Enumerations;
 using BackEnd.ModelInterfaces;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-
 namespace BackEnd.ModelClasses
 {
     internal class Storage : IStorage
@@ -25,7 +17,7 @@ namespace BackEnd.ModelClasses
         }
 
         internal IStorageHolder ImmediateParent { get; set; }
-        
+
         internal Storage(IStorageHolder _ImmediateParent)
         {
             ImmediateParent = _ImmediateParent;
@@ -83,7 +75,7 @@ namespace BackEnd.ModelClasses
             bool TextChanged = _IStoredToModify.Name != _NewStoredName || _IStoredToModify.Description != _NewDescription;
             bool NumericsChanged = _IStoredToModify.Value != _NewValue || _IStoredToModify.Quantity != _NewQuantity;
 
-            if ( TextChanged  || NumericsChanged)
+            if (TextChanged || NumericsChanged)
             {
                 //No System Validation For Adding Stored Items At This Point
 
@@ -125,7 +117,7 @@ namespace BackEnd.ModelClasses
             bool MoveIStoredSuccess = true;
 
             bool ImmediateParentChanged = _IStoredToMove.ImmediateParent != _Destination;
- 
+
             if (ImmediateParentChanged)
             {
                 if (ImmediateParentChanged)
@@ -228,7 +220,7 @@ namespace BackEnd.ModelClasses
                     SystemValid = false;
                 }
             }
-            
+
             return SystemValid;
         }
 

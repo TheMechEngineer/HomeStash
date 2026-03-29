@@ -1,23 +1,8 @@
-﻿using BackEnd.Enumerations;
-using BackEnd.ModelClasses;
+﻿using BackEnd.ModelClasses;
 using BackEnd.ModelInterfaces;
 using BrightIdeasSoftware;
 using FrontEnd.Controls.Utilities;
 using FrontEnd.Utilities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static BrightIdeasSoftware.TreeListView;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace FrontEnd.UserControls

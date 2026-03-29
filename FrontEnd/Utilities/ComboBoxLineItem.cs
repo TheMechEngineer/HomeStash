@@ -1,12 +1,5 @@
 ﻿using BackEnd.ModelClasses;
 using BackEnd.ModelInterfaces;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FrontEnd.Utilities
 {
@@ -15,7 +8,7 @@ namespace FrontEnd.Utilities
         private IStorageHolder StorageHolder;
 
         private IStorageHolder __Tag;
-        internal IStorageHolder Tag 
+        internal IStorageHolder Tag
         {
             get { return __Tag; }
         }

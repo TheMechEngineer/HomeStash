@@ -1,10 +1,4 @@
 ﻿using BackEnd.ModelClasses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrontEnd.Adapters
 {
@@ -50,7 +44,7 @@ namespace FrontEnd.Adapters
                     break;
             }
         }
-        
+
         private void UpdateDependents()
         {
             SourceUpdated?.Invoke();
@@ -60,7 +54,8 @@ namespace FrontEnd.Adapters
         {
             ConvertedList.Clear();
 
-            foreach (object CurrentObject in SourceList) {
+            foreach (object CurrentObject in SourceList)
+            {
                 switch (SelectionType)
                 {
                     case Type CurrentType when SelectionType == typeof(User):

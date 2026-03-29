@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace BackEnd.ModelClasses
 {
@@ -14,7 +9,8 @@ namespace BackEnd.ModelClasses
 
         private User? __ActiveUser;
         [JsonIgnore]
-        public User? ActiveUser {
+        public User? ActiveUser
+        {
             get
             { return __ActiveUser; }
         }
@@ -27,7 +23,7 @@ namespace BackEnd.ModelClasses
         }
 
         public RootManager()
-        {}
+        { }
 
         public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {
@@ -46,7 +42,7 @@ namespace BackEnd.ModelClasses
                 if (User.TryCreate(_Username, out _NewUser, out _ErrorMessage))
                 {
                     __UserList.Add(_NewUser);
-                    UserListChanged?.Invoke(); 
+                    UserListChanged?.Invoke();
                 }
                 else
                 {
@@ -116,7 +112,8 @@ namespace BackEnd.ModelClasses
                 return false;
             }
 
-            if (_UserToRemove == __ActiveUser) { 
+            if (_UserToRemove == __ActiveUser)
+            {
                 __ActiveUser = null;
                 ActiveUserChanged?.Invoke();
             }

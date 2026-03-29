@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.Design;
+﻿using System.Windows.Forms.Design;
 
 namespace FrontEnd.Controls.Utilities
 {
@@ -12,7 +7,7 @@ namespace FrontEnd.Controls.Utilities
     {
         public event EventHandler ValueChanged;
 
-        public ToolStripNumericUpDown() : base(new NumericUpDown()) {}
+        public ToolStripNumericUpDown() : base(new NumericUpDown()) { }
 
         public NumericUpDown NumericUpDownControl
         {

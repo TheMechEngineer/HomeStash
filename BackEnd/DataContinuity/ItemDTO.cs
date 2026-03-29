@@ -1,6 +1,4 @@
-﻿using BackEnd.ModelClasses;
-
-namespace BackEnd.DataContinuity
+﻿namespace BackEnd.DataContinuity
 {
     internal class ItemDTO
     {

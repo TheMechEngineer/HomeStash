@@ -1,15 +1,7 @@
 ﻿using BackEnd.Enumerations;
 using BackEnd.ModelClasses;
-using BackEnd.Utilities;
-
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Formats.Tar;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace BackEnd.DataContinuity
 {
@@ -60,15 +52,15 @@ namespace BackEnd.DataContinuity
 
             ReturnItem.TryChangeActiveUser(ReturnItem.UserList[3], out _);
 
-            ReturnItem.ActiveUser.TryAddBuilding("Home", 15, 10, out _ );
-            ReturnItem.ActiveUser.TryAddBuilding("1000", 1000, 1000, out _ );
+            ReturnItem.ActiveUser.TryAddBuilding("Home", 15, 10, out _);
+            ReturnItem.ActiveUser.TryAddBuilding("1000", 1000, 1000, out _);
 
             ReturnItem.ActiveUser.TryChangeActiveBuilding(ReturnItem.ActiveUser.BuildingList[0], out _);
 
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room1",3,1,4.5f,2,Color.Red.ToArgb(), out _);
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room2",2,3,4.5f,4,Color.Green.ToArgb(), out _);
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room3",5,5,12,7,Color.Teal.ToArgb(), out _);
-            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room4",12,1,7.5f,1,Color.GreenYellow.ToArgb(), out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room1", 3, 1, 4.5f, 2, Color.Red.ToArgb(), out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room2", 2, 3, 4.5f, 4, Color.Green.ToArgb(), out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room3", 5, 5, 12, 7, Color.Teal.ToArgb(), out _);
+            ReturnItem.ActiveUser.ActiveBuilding.TryAddRoom("Room4", 12, 1, 7.5f, 1, Color.GreenYellow.ToArgb(), out _);
 
             ReturnItem.ActiveUser.ActiveBuilding.TryAddIStored(StoredItemType.Item, "Item1", "Test Description 1", 1, 2, out _);
 
@@ -91,7 +83,7 @@ namespace BackEnd.DataContinuity
 
             for (int i = 0; i < 50; i++)
             {
-                ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, $"Item{i+50}", $"Test Description {i + 50}", 1, i, out _);
+                ReturnItem.ActiveUser.ActiveBuilding.RoomList[0].TryAddIStored(StoredItemType.Item, $"Item{i + 50}", $"Test Description {i + 50}", 1, i, out _);
             }
 
             return ReturnItem;

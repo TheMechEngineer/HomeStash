@@ -1,16 +1,5 @@
-﻿using BackEnd.DataContinuity;
-using BackEnd.ModelClasses;
-using FrontEnd.Forms;
+﻿using BackEnd.ModelClasses;
 using FrontEnd.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
@@ -62,13 +51,13 @@ namespace FrontEnd.UserControls
 
         private void SizeForm()
         {
-            
+
             int Gap = 25;
             int SmallGap = 10;
             int ButtonHeight = 50;
 
             int LabelTextSizeDiff = txtUserNameInput.Height - lblUserName.Height;
-            int MaxLabelSize = new int[] { lblUserName.Width}.Max();
+            int MaxLabelSize = new int[] { lblUserName.Width }.Max();
             int TextBoxWidth = this.ClientSize.Width - 2 * Gap - MaxLabelSize;
 
             foreach (Label CurrentLabel in this.Controls.OfType<Label>())
@@ -101,7 +90,7 @@ namespace FrontEnd.UserControls
             btnCancel.Top = txtUserNameInput.Bottom + Gap;
 
             this.ClientSize = new Size(this.ClientSize.Width, btnConfirm.Bottom + Gap);
-            
+
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)

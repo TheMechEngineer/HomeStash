@@ -1,16 +1,5 @@
-﻿using BackEnd.DataContinuity;
-using BackEnd.ModelClasses;
-using FrontEnd.Forms;
+﻿using BackEnd.ModelClasses;
 using FrontEnd.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FrontEnd.UserControls
 {
@@ -70,7 +59,7 @@ namespace FrontEnd.UserControls
             int ButtonHeight = 50;
 
             int LabelTextSizeDiff = txtNameInput.Height - lblBuildingName.Height;
-            int MaxLabelSize = new int [] { lblBuildingName.Width, lblBuildingHeight.Width, lblBuildingWidth.Width }.Max();
+            int MaxLabelSize = new int[] { lblBuildingName.Width, lblBuildingHeight.Width, lblBuildingWidth.Width }.Max();
             int TextBoxWidth = this.ClientSize.Width - 2 * Gap - MaxLabelSize;
 
             foreach (Label CurrentLabel in this.Controls.OfType<Label>())
@@ -87,8 +76,8 @@ namespace FrontEnd.UserControls
 
             lblTitle.Left = this.ClientSize.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = SmallGap;
-            
-            lblBuildingName.Top = lblTitle.Bottom + SmallGap + LabelTextSizeDiff/2;
+
+            lblBuildingName.Top = lblTitle.Bottom + SmallGap + LabelTextSizeDiff / 2;
 
             txtNameInput.Width = TextBoxWidth;
             txtNameInput.Left = this.ClientSize.Width - Gap - TextBoxWidth;
