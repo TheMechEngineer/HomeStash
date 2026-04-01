@@ -8,13 +8,29 @@ using System.Drawing.Imaging;
 
 namespace FrontEnd.Forms
 {
+    /// <summary>
+    /// The Main Program Dashboard That All Other Controls And Screens Are Housed In
+    /// </summary>
     internal partial class Dashboard : Form
     {
+        /// <summary>
+        /// Creates The Top-Level Root Manager Object, And Pulls From Long-Term Storage If It Exists
+        /// </summary>
         private RootManager RootManagerInstance = DataContinuityController.StartupDataContinuity();
+
+        /// <summary>
+        /// The Panel That Serves As The Viewport For Displaying Controls
+        /// </summary>
         private Panel ViewPortPanel;
 
+        /// <summary>
+        /// The Current Active User Of The Program
+        /// </summary>
         private User? CurrentActiveUser;
 
+        /// <summary>
+        /// Initializes The Dashboard Form
+        /// </summary>
         internal Dashboard()
         {
             InitializeComponent();
@@ -23,40 +39,56 @@ namespace FrontEnd.Forms
 
             InitializeVisuals();
             Wire();
-
-
         }
 
+        /// <summary>
+        /// Initializes Visual State Of The Dashboard
+        /// </summary>
         private void InitializeVisuals()
         {
             this.WindowState = FormWindowState.Maximized;
 
+            // Clears Any Existing Controls In The Viewport
             ViewPortPanel.Controls.Clear();
 
+            // Enables Or Disables Menu Options Based On Current State
             tsmiBuildingSelect.Enabled = (CurrentActiveUser != null);
             tsmiTopDown.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
             tsmiBuildingReport.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
         }
 
+        /// <summary>
+        /// Wires Backend Events To UI Handlers
+        /// </summary>
         private void Wire()
         {
             RootManagerInstance.ActiveUserChanged += RootManagerInstance_ActiveUserChanged;
         }
 
+        /// <summary>
+        /// Handles Dashboard Load Event For Visualization That Requires Load First To Be Accurate
+        /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void Dashboard_Load(object sender, EventArgs e)
         {
+            // Defers Execution Until UI Is Fully Loaded
             this.BeginInvoke(() =>
             {
                 UserSelection();
             });
         }
 
+        /// <summary>
+        /// Displays User Selection Control
+        /// </summary>
         private void UserSelection()
         {
             AdapterSelection SelectionAdapter = new AdapterSelection(ref RootManagerInstance, RootManagerInstance.UserList, "User");
 
             Selection NewControl = new Selection(SelectionAdapter);
 
+            // Wires Selection Control Events
             NewControl.SelectClicked += SelectionControl_SelectClicked;
             NewControl.ModifyClicked += SelectionControl_ModifyClicked;
             NewControl.AddClicked += SelectionControl_AddClicked;
@@ -65,18 +97,24 @@ namespace FrontEnd.Forms
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "UserSelection";
 
+            // Centers Control In Viewport
             NewControl.Left = ViewPortPanel.ClientSize.Width / 2 - NewControl.Width / 2;
             NewControl.Top = ViewPortPanel.ClientSize.Height / 2 - NewControl.Height / 2;
 
+            // Displays Control
             ViewPortPanel.Controls.Add(NewControl);
         }
 
+        /// <summary>
+        /// Displays Building Selection Control
+        /// </summary>
         private void BuildingSelection()
         {
             AdapterSelection SelectionAdapter = new AdapterSelection(ref RootManagerInstance, CurrentActiveUser.BuildingList, "Building");
 
             Selection NewControl = new Selection(SelectionAdapter);
 
+            // Wires Selection Control Events
             NewControl.SelectClicked += SelectionControl_SelectClicked;
             NewControl.ModifyClicked += SelectionControl_ModifyClicked;
             NewControl.AddClicked += SelectionControl_AddClicked;
@@ -85,75 +123,110 @@ namespace FrontEnd.Forms
             NewControl.Dock = DockStyle.None;
             NewControl.Name = "BuildingSelection";
 
+            // Centers Control In Viewport
             NewControl.Left = ViewPortPanel.ClientSize.Width / 2 - NewControl.Width / 2;
             NewControl.Top = ViewPortPanel.ClientSize.Height / 2 - NewControl.Height / 2;
 
+            // Displays Control
             ViewPortPanel.Controls.Add(NewControl);
         }
 
+        /// <summary>
+        /// Displays Add User Control
+        /// </summary>
         private void AddNewUser()
         {
             UserInfo NewControl = new UserInfo();
 
+            // Wires Control Events
             NewControl.ConfirmClicked += UserInfo_ConfirmClicked;
             NewControl.CancelClicked += UserInfo_CancelClicked;
 
             NewControl.Dock = DockStyle.None;
-            NewControl.Left = ViewPortPanel.Controls["UserSelection"].Left + (ViewPortPanel.Controls["UserSelection"].Width - NewControl.Width) / 2;
-            NewControl.Top = ViewPortPanel.Controls["UserSelection"].Top + (ViewPortPanel.Controls["UserSelection"].Height - NewControl.Height) / 2;
             NewControl.Name = "AddNewUser";
 
+            // Positions Control Over Selection Control
+            NewControl.Left = ViewPortPanel.Controls["UserSelection"].Left + (ViewPortPanel.Controls["UserSelection"].Width - NewControl.Width) / 2;
+            NewControl.Top = ViewPortPanel.Controls["UserSelection"].Top + (ViewPortPanel.Controls["UserSelection"].Height - NewControl.Height) / 2;
+
+            // Displays Control, And Ensures It Is At The Front Of Other Controls
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
+
+        /// <summary>
+        /// Displays Add Building Control
+        /// </summary>
         private void AddNewBuilding()
         {
             BuildingInfo NewControl = new BuildingInfo();
 
+            // Wires Control Events
             NewControl.ConfirmClicked += BuildingInfo_ConfirmClicked;
             NewControl.CancelClicked += BuildingInfo_CancelClicked;
 
             NewControl.Dock = DockStyle.None;
-            NewControl.Left = ViewPortPanel.Controls["BuildingSelection"].Left + (ViewPortPanel.Controls["BuildingSelection"].Width - NewControl.Width) / 2;
-            NewControl.Top = ViewPortPanel.Controls["BuildingSelection"].Top + (ViewPortPanel.Controls["BuildingSelection"].Height - NewControl.Height) / 2;
             NewControl.Name = "AddNewBuilding";
 
+            // Positions Control Over Selection Control
+            NewControl.Left = ViewPortPanel.Controls["BuildingSelection"].Left + (ViewPortPanel.Controls["BuildingSelection"].Width - NewControl.Width) / 2;
+            NewControl.Top = ViewPortPanel.Controls["BuildingSelection"].Top + (ViewPortPanel.Controls["BuildingSelection"].Height - NewControl.Height) / 2;
+
+            // Displays Control, And Ensures It Is At The Front Of Other Controls
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
 
+        /// <summary>
+        /// Displays Modify User Control
+        /// </summary>
+        /// <param name="_UsertoModify">The User Object To Modify</param>
         private void ModifyUser(User _UsertoModify)
         {
             UserInfo NewControl = new UserInfo(_UsertoModify);
 
+            // Wires Control Events
             NewControl.ConfirmClicked += UserInfo_ConfirmClicked;
             NewControl.CancelClicked += UserInfo_CancelClicked;
 
             NewControl.Dock = DockStyle.None;
-            NewControl.Left = ViewPortPanel.Controls["UserSelection"].Left + (ViewPortPanel.Controls["UserSelection"].Width - NewControl.Width) / 2;
-            NewControl.Top = ViewPortPanel.Controls["UserSelection"].Top + (ViewPortPanel.Controls["UserSelection"].Height - NewControl.Height) / 2;
             NewControl.Name = "ModifyUser";
 
+            // Positions Control Over Selection Control
+            NewControl.Left = ViewPortPanel.Controls["UserSelection"].Left + (ViewPortPanel.Controls["UserSelection"].Width - NewControl.Width) / 2;
+            NewControl.Top = ViewPortPanel.Controls["UserSelection"].Top + (ViewPortPanel.Controls["UserSelection"].Height - NewControl.Height) / 2;
+
+            // Displays Control, And Ensures It Is At The Front Of Other Controls
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
 
+        /// <summary>
+        /// Displays Modify Building Control
+        /// </summary>
         private void ModifyBuilding(Building _BuildingtoModify)
         {
             BuildingInfo NewControl = new BuildingInfo(_BuildingtoModify);
 
+            // Wires Control Events
             NewControl.ConfirmClicked += BuildingInfo_ConfirmClicked;
             NewControl.CancelClicked += BuildingInfo_CancelClicked;
 
             NewControl.Dock = DockStyle.None;
-            NewControl.Left = ViewPortPanel.Controls["BuildingSelection"].Left + (ViewPortPanel.Controls["BuildingSelection"].Width - NewControl.Width) / 2;
-            NewControl.Top = ViewPortPanel.Controls["BuildingSelection"].Top + (ViewPortPanel.Controls["BuildingSelection"].Height - NewControl.Height) / 2;
             NewControl.Name = "ModifyBuilding";
 
+            // Positions Control Over Selection Control
+            NewControl.Left = ViewPortPanel.Controls["BuildingSelection"].Left + (ViewPortPanel.Controls["BuildingSelection"].Width - NewControl.Width) / 2;
+            NewControl.Top = ViewPortPanel.Controls["BuildingSelection"].Top + (ViewPortPanel.Controls["BuildingSelection"].Height - NewControl.Height) / 2;
+            
+            // Displays Control, And Ensures It Is At The Front Of Other Controls
             ViewPortPanel.Controls.Add(NewControl);
             NewControl.BringToFront();
         }
 
+        /// <summary>
+        /// Opens Top-Down Building View Control
+        /// </summary>
         private void OpenTopDownBuildingView()
         {
             TopDownBuildingView NewControl = new TopDownBuildingView(ref RootManagerInstance);
@@ -161,36 +234,54 @@ namespace FrontEnd.Forms
             NewControl.Dock = DockStyle.Fill;
             NewControl.Name = "TopDownBuildingView";
 
+            // Displays Control
             ViewPortPanel.Controls.Add(NewControl);
         }
 
+        /// <summary>
+        /// Handles User Selection Tool Strip Menu Click
+        /// </summary>
         private void tsmiUserSelect_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
             UserSelection();
         }
 
+        /// <summary>
+        /// Handles Building Selection Tool Strip Menu Click
+        /// </summary>
         private void tsmiBuildingSelect_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
             BuildingSelection();
         }
 
+        /// <summary>
+        /// Handles Top-Down View Tool Strip Menu Click
+        /// </summary>
         private void tsmiTopDown_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
             OpenTopDownBuildingView();
         }
 
+        /// <summary>
+        /// Handles Save Tool Strip Menu Click
+        /// </summary>
         private void tsmiSave_Click(object sender, EventArgs e)
         {
+            // Serializes And Stores Live Session Data In JSON
             DataContinuityController.ShutdownDataContinuity(RootManagerInstance);
         }
 
+        /// <summary>
+        /// Handles Generate Building Report Tool Strip Menu Click
+        /// </summary>
         private void tsmiBuildingReport_Click(object sender, EventArgs e)
         {
             if (sfdBuildingReport.ShowDialog() == DialogResult.OK)
             {
+                // Converts The Program Logo To Byte Array To Be Used In The Report
                 byte[] ImageData;
 
                 using (MemoryStream CurrentMemoryStream = new MemoryStream())
@@ -203,15 +294,21 @@ namespace FrontEnd.Forms
             }
         }
 
+        /// <summary>
+        /// Handles Active User Change Event
+        /// </summary>
         private void RootManagerInstance_ActiveUserChanged()
         {
+            // Unwires Current Active User Event, If There Is A Current Active User
             if (CurrentActiveUser != null)
             {
                 CurrentActiveUser.ActiveBuildingChanged -= ActiveUser_ActiveBuildingChanged;
             }
 
+            // Sets The New Active User
             CurrentActiveUser = RootManagerInstance.ActiveUser;
 
+            // Wires Current Active User Event, If There Is A Current Active User
             if (CurrentActiveUser != null)
             {
                 CurrentActiveUser.ActiveBuildingChanged += ActiveUser_ActiveBuildingChanged;
@@ -221,6 +318,9 @@ namespace FrontEnd.Forms
             ActiveUser_ActiveBuildingChanged();
         }
 
+        /// <summary>
+        /// Handles Active Building Change Event
+        /// </summary>
         private void ActiveUser_ActiveBuildingChanged()
         {
             tsmiTopDown.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
@@ -393,6 +493,5 @@ namespace FrontEnd.Forms
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
-
     }
 }

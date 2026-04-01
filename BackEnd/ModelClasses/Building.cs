@@ -181,9 +181,13 @@ namespace BackEnd.ModelClasses
             { return __RoomList.AsReadOnly(); }
         }
 
+
         /// <summary>
         /// Private Constructor Used For Controlled Creation Of Building Objects
         /// </summary>
+        /// <param name="_Name">The Name Of The Building</param>
+        /// <param name="_Width">The Width Of The Building</param>
+        /// <param name="_Height">The Height Of The Building</param>
         private Building(string _Name, float _Width, float _Height)
         {
             this.Name = _Name;
@@ -197,6 +201,12 @@ namespace BackEnd.ModelClasses
         /// Attempts To Create A New Building With Validation.
         /// Only Available Source To Create A Building Instance
         /// </summary>
+        /// <param name="_BuildingName">The Proposed Name Of The Building</param>
+        /// <param name="_Width">The Proposed Width Of The Building</param>
+        /// <param name="_Height">The Proposed Height Of The Building</param>
+        /// <param name="_CreatedBuilding">The Building Instance Created If Successful</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal static bool TryCreate(string _BuildingName, float _Width, float _Height, out Building? _CreatedBuilding, out string? _ErrorMessage)
         {
             _CreatedBuilding = null;
@@ -231,6 +241,11 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify Building Properties With Validation
         /// </summary>
+        /// <param name="_NewBuildingName">The Proposed Name Of The Building</param>
+        /// <param name="_NewWidth">The Proposed Width Of The Building</param>
+        /// <param name="_NewHeight">The Proposed Height Of The Building</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal bool TryModify(string _NewBuildingName, float _NewWidth, float _NewHeight, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -299,6 +314,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Building Name Self Requirements
         /// </summary>
+        /// <param name="_BuildingName">The Proposed Name To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private static bool NameSelfValidation(string _BuildingName, ref string? _ErrorMessage)
         {
             bool BuildingNameValid = true;
@@ -316,6 +334,10 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Building Dimension Self Requirements
         /// </summary>
+        /// <param name="_Width">The Proposed Width To Validate</param>
+        /// <param name="_Height">The Proposed Height To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private static bool SizeSelfValidation(float _Width, float _Height, ref string? _ErrorMessage)
         {
             bool BuildingSizeValid = true;
@@ -333,6 +355,10 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Building Dimension System Requirements
         /// </summary>
+        /// <param name="_Width">The Proposed Width To Validate</param>
+        /// <param name="_Height">The Proposed Height To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private bool SizeSystemValidation(float _Width, float _Height, ref string? _ErrorMessage)
         {
             bool BuildingSizeValid = true;
@@ -357,6 +383,14 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Add A Room To The Building With Validation
         /// </summary>
+        /// <param name="_RoomName">The Proposed Name Of The Room</param>
+        /// <param name="_Width">The Proposed Width Of The Room</param>
+        /// <param name="_Height">The Proposed Height Of The Room</param>
+        /// <param name="_CenterX">The Proposed Center X Coordinate Of The Room</param>
+        /// <param name="_CenterY">The Proposed Center Y Coordinate Of The Room</param>
+        /// <param name="_RoomColor">The Proposed Color Of The Room</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryAddRoom(string _RoomName, float _Width, float _Height, float _CenterX, float _CenterY, int _RoomColor, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -406,6 +440,15 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify A Room With Validation
         /// </summary>
+        /// <param name="_RoomToModify">The Room Instance To Attempt To Modify</param>
+        /// <param name="_NewRoomName">The Proposed Name Of The Room</param>
+        /// <param name="_NewWidth">The Proposed Width Of The Room</param>
+        /// <param name="_NewHeight">The Proposed Height Of The Room</param>
+        /// <param name="_NewCenterX">The Proposed Center X Coordinate Of The Room</param>
+        /// <param name="_NewCenterY">The Proposed Center Y Coordinate Of The Room</param>
+        /// <param name="_NewRoomColor">The Proposed Color Of The Room</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryModifyRoom(Room _RoomToModify, string _NewRoomName, float _NewWidth, float _NewHeight, float _NewCenterX, float _NewCenterY, int _NewRoomColor, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -462,6 +505,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Remove A Room From The Building
         /// </summary>
+        /// <param name="_RoomToRemove">The Room Instance To Attempt To Remove</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryRemoveRoom(Room _RoomToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -493,6 +539,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Room Name System Requirements
         /// </summary>
+        /// <param name="_RoomName">The Proposed Name To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private bool RoomNameSystemValidation(string _RoomName, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
@@ -510,6 +559,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Room Dimension System Requirements
         /// </summary>
+        /// <param name="_Width">The Proposed Width To Validate</param>
+        /// <param name="_Height">The Proposed Height To Validate</param>
+        /// <param name="_CenterX">The Proposed Center X Coordinate To Validate</param>
+        /// <param name="_CenterY">The Proposed Center Y Coordinate To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <param name="_RoomToExclude">The Room To Exclude From The System Validation, Use The Current Room When Modifying A Room</param>
+        /// <returns></returns>
         private bool RoomDimensionValidation(float _Width, float _Height, float _CenterX, float _CenterY, ref string? _ErrorMessage, Room? _RoomToExclude = null)
         {
             bool SystemValid = true;
@@ -586,6 +642,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Add A Stored Item To The Building Storage
         /// </summary>
+        /// <param name="_StoredType">The Type Of The Proposed IStored</param>
+        /// <param name="_StoredName">The Proposed Name Of The IStored</param>
+        /// <param name="_Description">The Proposed Description Of The IStored</param>
+        /// <param name="_Value">The Proposed Monetary Value Of The IStored</param>
+        /// <param name="_Quantity">The Proposed Quantity Of The IStored</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
             return UnsortedItems.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
@@ -594,6 +657,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify A Stored Item In The Building Storage
         /// </summary>
+        /// <param name="_IStoredToModify">The IStored Instance To Attempt To Modify</param>
+        /// <param name="_NewStoredName">The Proposed Name Of The IStored</param>
+        /// <param name="_NewDescription">The Proposed Description Of The IStored</param>
+        /// <param name="_NewValue">The Proposed Monetary Value Of The IStored</param>
+        /// <param name="_NewQuantity">The Proposed Quantity Of The IStored</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
         {
             return UnsortedItems.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
@@ -602,14 +672,21 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Move A Stored Item From The Current Storage To Another Storage
         /// </summary>
+        /// <param name="_ItemToMove">The IStored Instance To Attempt To Move</param>
+        /// <param name="_Destination">The Proposed Destination Storage Holder</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
         {
             return UnsortedItems.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
         }
 
         /// <summary>
-        /// Attempts To Remove A Stored Item From The Building Storage
+        ///Attempts To Remove A Stored Item From The Building Storage
         /// </summary>
+        /// <param name="_StoredToRemove">The IStored Instance To Attempt To Remove</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
         {
             return UnsortedItems.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);

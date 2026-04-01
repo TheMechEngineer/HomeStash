@@ -56,6 +56,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Add A User To The Root Manager With Validation
         /// </summary>
+        /// <param name="_Username">The Proposed Name Of The User</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryAddUser(string _Username, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -95,6 +98,10 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify A User With Validation
         /// </summary>
+        /// <param name="_UserToModify">The User Instance To Attempt To Modify</param>
+        /// <param name="_NewUsername">The Proposed Name Of The User</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryModifyUser(User _UserToModify, string _NewUsername, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -144,6 +151,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Remove A User From The Root Manager
         /// </summary>
+        /// <param name="_UserToRemove">The User Instance To Attempt To Remove</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryRemoveUser(User _UserToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -171,6 +181,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Change The Active User
         /// </summary>
+        /// <param name="_NewActiveUser">The Proposed New Active User</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryChangeActiveUser(User _NewActiveUser, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -190,6 +203,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Username System Requirements
         /// </summary>
+        /// <param name="_Username">The Proposed UserName To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private bool UsernameSystemValidation(string _Username, ref string? _ErrorMessage)
         {
             bool SystemValid = true;

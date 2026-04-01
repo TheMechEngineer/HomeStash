@@ -63,6 +63,11 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Protected Constructor Used For Controlled Creation Of Item Objects
         /// </summary>
+        /// <param name="_ItemName">The Name Of The Item</param>
+        /// <param name="_Description">The Description Of The Item</param>
+        /// <param name="_Value">The Monetary Value Of The Item</param>
+        /// <param name="_Quantity">The Quantity Of The Item</param>
+        /// <param name="_ImmediateParent">The Immediate Parent Of The Item</param>
         protected Item(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
         {
             Name = _ItemName;
@@ -76,6 +81,14 @@ namespace BackEnd.ModelClasses
         /// Attempts To Create A New Item With Validation.
         /// Only Available Source To Create An Item Instance
         /// </summary>
+        /// <param name="_ItemName">The Proposed Name Of The Item</param>
+        /// <param name="_Description">The Proposed Description Of The Item</param>
+        /// <param name="_Value">The Proposed Monetary Value Of The Item</param>
+        /// <param name="_Quantity">The Proposed Quantity Of The Item</param>
+        /// <param name="_ImmediateParent">The Proposed Immediate Parent Of The Item</param>
+        /// <param name="_CreatedItem">The Item Instance Created If Successful</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal static bool TryCreate(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent, out Item? _CreatedItem, out string? _ErrorMessage)
         {
             _CreatedItem = null;
@@ -122,6 +135,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify Item Properties With Validation
         /// </summary>
+        /// <param name="_NewItemName">The Proposed Name Of The Item</param>
+        /// <param name="_NewDescription">The Proposed Description Of The Item</param>
+        /// <param name="_NewValue">The Proposed Monetary Value Of The Item</param>
+        /// <param name="_NewQuantity">The Proposed Quantity Of The Item</param>
+        /// <param name="_NewImmediateParent">The Proposed Immediate Parent Of The Item</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal bool TryModify(string _NewItemName, string _NewDescription, double _NewValue, int _NewQuantity, IStorageHolder _NewImmediateParent, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -216,6 +236,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Item Name Self Requirements
         /// </summary>
+        /// <param name="_ItemName">The Proposed Name To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         protected static bool NameSelfValidation(string _ItemName, ref string? _ErrorMessage)
         {
             bool ItemNameValid = true;
@@ -233,6 +256,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Item Value Self Requirements
         /// </summary>
+        /// <param name="_Value">The Proposed Monetary Value To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         protected static bool ValueSelfValidation(double _Value, ref string? _ErrorMessage)
         {
             bool ValueValid = true;
@@ -250,6 +276,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Item Quantity Self Requirements
         /// </summary>
+        /// <param name="_Quantity">The Proposed Quantity To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         protected static bool QuantitySelfValidation(int _Quantity, ref string? _ErrorMessage)
         {
             bool QuantityValid = true;
@@ -267,6 +296,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Immediate Parent Self Requirements
         /// </summary>
+        /// <param name="_ImmediateParent">The Proposed Immediate Parent To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         protected static bool ImmediateParentSelfValidation(IStorageHolder _ImmediateParent, ref string? _ErrorMessage)
         {
             bool ImmediateParentValid = true;

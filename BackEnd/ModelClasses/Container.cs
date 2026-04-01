@@ -55,6 +55,11 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Private Constructor Used For Controlled Creation Of Container Objects
         /// </summary>
+        /// <param name="_ItemName">The Name Of The Container</param>
+        /// <param name="_Description">The Description Of The Container</param>
+        /// <param name="_Value">The Monetary Value Of The Container</param>
+        /// <param name="_Quantity">The Quantity Of The Container</param>
+        /// <param name="_ImmediateParent">The Immediate Parent Of The Container</param>
         private Container(string _ItemName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent)
             : base(_ItemName, _Description, _Value, _Quantity, _ImmediateParent)
         {
@@ -65,6 +70,14 @@ namespace BackEnd.ModelClasses
         /// Attempts To Create A New Container With Validation.
         /// Only Available Source To Create A Container Instance
         /// </summary>
+        /// <param name="_ContainerName">The Proposed Name Of The Container</param>
+        /// <param name="_Description">The Proposed Description Of The Container</param>
+        /// <param name="_Value">The Proposed Monetary Value Of The Container</param>
+        /// <param name="_Quantity">The Proposed Quantity Of The Container</param>
+        /// <param name="_ImmediateParent">The Proposed Immediate Parent Of The Container</param>
+        /// <param name="_CreatedContainer">The Container Instance Created If Successful</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal static bool TryCreate(string _ContainerName, string _Description, double _Value, int _Quantity, IStorageHolder _ImmediateParent, out Container? _CreatedContainer, out string? _ErrorMessage)
         {
             _CreatedContainer = null;
@@ -111,6 +124,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify Container Properties With Validation
         /// </summary>
+        /// <param name="_NewContainerName">The Proposed Name Of The Container</param>
+        /// <param name="_NewDescription">The Proposed Description Of The Container</param>
+        /// <param name="_NewValue">The Proposed Monetary Value Of The Container</param>
+        /// <param name="_NewQuantity">The Proposed Quantity Of The Container</param>
+        /// <param name="_NewImmediateParent">The Proposed Immediate Parent Of The Container</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal new bool TryModify(string _NewContainerName, string _NewDescription, double _NewValue, int _NewQuantity, IStorageHolder _NewImmediateParent, out string? _ErrorMessage) //new is needed to suppress the warning that we are overwriting the base method
         {
             return base.TryModify(_NewContainerName, _NewDescription, _NewValue, _NewQuantity, _NewImmediateParent, out _ErrorMessage);
@@ -119,6 +139,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Add A Stored Item To The Container Storage
         /// </summary>
+        /// <param name="_StoredType">The Type Of The Proposed IStored</param>
+        /// <param name="_StoredName">The Proposed Name Of The IStored</param>
+        /// <param name="_Description">The Proposed Description Of The IStored</param>
+        /// <param name="_Value">The Proposed Monetary Value Of The IStored</param>
+        /// <param name="_Quantity">The Proposed Quantity Of The IStored</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryAddIStored(StoredItemType _StoredType, string _StoredName, string _Description, double _Value, int _Quantity, out string? _ErrorMessage)
         {
             return ContainerStorage.TryAddIStored(_StoredType, _StoredName, _Description, _Value, _Quantity, out _ErrorMessage);
@@ -127,6 +154,13 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify A Stored Item In The Container Storage
         /// </summary>
+        /// <param name="_IStoredToModify">The IStored Instance To Attempt To Modify</param>
+        /// <param name="_NewStoredName">The Proposed Name Of The IStored</param>
+        /// <param name="_NewDescription">The Proposed Description Of The IStored</param>
+        /// <param name="_NewValue">The Proposed Monetary Value Of The IStored</param>
+        /// <param name="_NewQuantity">The Proposed Quantity Of The IStored</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryModifyIStored(IStored _IStoredToModify, string _NewStoredName, string _NewDescription, double _NewValue, int _NewQuantity, out string? _ErrorMessage)
         {
             return ContainerStorage.TryModifyIStored(_IStoredToModify, _NewStoredName, _NewDescription, _NewValue, _NewQuantity, out _ErrorMessage);
@@ -135,6 +169,10 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Move A Stored Item From The Current Storage To Another Storage
         /// </summary>
+        /// <param name="_ItemToMove">The IStored Instance To Attempt To Move</param>
+        /// <param name="_Destination">The Proposed Destination Storage Holder</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryMoveIStored(IStored _ItemToMove, IStorageHolder _Destination, out string? _ErrorMessage)
         {
             return ContainerStorage.TryMoveIStored(_ItemToMove, _Destination, out _ErrorMessage);
@@ -143,6 +181,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Remove A Stored Item From The Container Storage
         /// </summary>
+        /// <param name="_StoredToRemove">The IStored Instance To Attempt To Remove</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryRemoveIStored(IStored _StoredToRemove, out string? _ErrorMessage)
         {
             return ContainerStorage.TryRemoveIStored(_StoredToRemove, out _ErrorMessage);

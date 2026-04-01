@@ -55,6 +55,7 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Private Constructor Used For Controlled Creation Of User Objects
         /// </summary>
+        /// <param name="_Username">The Username Of The User</param>
         private User(string _Username)
         {
             this.Username = _Username;
@@ -64,6 +65,10 @@ namespace BackEnd.ModelClasses
         /// Attempts To Create A New User With Validation.
         /// Only Available Source To Create A User Instance
         /// </summary>
+        /// <param name="_Username">The Proposed Username Of The User</param>
+        /// <param name="_CreatedUser">The User Instance Created If Successful</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal static bool TryCreate(string _Username, out User? _CreatedUser, out string? _ErrorMessage)
         {
             _CreatedUser = null;
@@ -92,6 +97,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify User Properties With Validation
         /// </summary>
+        /// <param name="_NewUsername">The Proposed Username Of The User</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         internal bool TryModify(string _NewUsername, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -133,6 +141,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Username Self Requirements
         /// </summary>
+        /// <param name="_Username">The Proposed Username To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private static bool UsernameSelfValidation(string _Username, ref string? _ErrorMessage)
         {
             bool UsernameValid = true;
@@ -150,6 +161,11 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Add A Building To The User With Validation
         /// </summary>
+        /// <param name="_BuildingName">The Proposed Name Of The Building</param>
+        /// <param name="_Width">The Proposed Width Of The Building</param>
+        /// <param name="_Height">The Proposed Height Of The Building</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryAddBuilding(string _BuildingName, float _Width, float _Height, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -188,6 +204,12 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Modify A Building With Validation
         /// </summary>
+        /// <param name="_BuildingToModify">The Building Instance To Attempt To Modify</param>
+        /// <param name="_NewBuildingName">The Proposed Name Of The Building</param>
+        /// <param name="_NewWidth">The Proposed Width Of The Building</param>
+        /// <param name="_NewHeight">The Proposed Height Of The Building</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryModifyBuilding(Building _BuildingToModify, string _NewBuildingName, float _NewWidth, float _NewHeight, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -238,6 +260,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Remove A Building From The User
         /// </summary>
+        /// <param name="_BuildingToRemove">The Building Instance To Attempt To Remove</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryRemoveBuilding(Building _BuildingToRemove, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -265,6 +290,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Attempts To Change The Active Building For The User
         /// </summary>
+        /// <param name="_NewActiveBuilding">The Proposed New Active Building</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         public bool TryChangeActiveBuilding(Building _NewActiveBuilding, out string? _ErrorMessage)
         {
             _ErrorMessage = null;
@@ -284,6 +312,7 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Placeholder For Future Building Copy Functionality
         /// </summary>
+        /// <param name="_BuildingToCopy">The Building Instance To Attempt To Copy</param>
         public void CopyBuilding(Building _BuildingToCopy)
         {
             //stub
@@ -292,6 +321,9 @@ namespace BackEnd.ModelClasses
         /// <summary>
         /// Validates Building Name System Requirements
         /// </summary>
+        /// <param name="_BuildingName">The Proposed Name To Validate</param>
+        /// <param name="_ErrorMessage">The Error Message If Unsuccessful</param>
+        /// <returns></returns>
         private bool BuildingNameSystemValidation(string _BuildingName, ref string? _ErrorMessage)
         {
             bool SystemValid = true;
