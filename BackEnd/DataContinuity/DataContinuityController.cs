@@ -5,8 +5,17 @@ using System.Text.Json;
 
 namespace BackEnd.DataContinuity
 {
+    /// <summary>
+    /// Provides Methods For Initializing And Persisting Application Data,
+    /// Including Test Population And Data Continuity Operations
+    /// </summary>
     public static class DataContinuityController
     {
+        /// <summary>
+        /// Creates A Small Sample Data Set For Testing Purposes
+        /// Initializes A Single User, Building, Room, And Nested Storage Structure
+        /// </summary>
+        /// <returns>A RootManager Instance Populated With A Small Data Set.</returns>
         public static RootManager StartupSmallPopulate()
         {
             RootManager ReturnItem = new RootManager();
@@ -40,6 +49,11 @@ namespace BackEnd.DataContinuity
             return ReturnItem;
         }
 
+        /// <summary>
+        /// Creates A Large Sample Data Set For  Testing Purposes
+        /// Includes Multiple Users, Buildings, Rooms, And Extensive Nested Storage
+        /// </summary>
+        /// <returns>A RootManager Instance Populated With A Large Data Set.</returns>
         public static RootManager StartupLargePopulate()
         {
             RootManager ReturnItem = new RootManager();
@@ -89,28 +103,43 @@ namespace BackEnd.DataContinuity
             return ReturnItem;
         }
 
+        /// <summary>
+        /// Loads Stored Data From JSON Storage If Available
+        /// Falls Back To A New Instance If No JSON Data File Exists
+        /// </summary>
+        /// <returns>A RootManager Instance Loaded From Storage Or Newly Created.</returns>
         public static RootManager StartupDataContinuity()
         {
             string StorageFile = "HomeStashData.json";
             RootManager LiveRootManager;
 
+            //Determines If Existing Data For Application Exists
             if (File.Exists(StorageFile))
             {
+                //Populate RootManager DTO With JSON Data
                 RootManagerDTO StoredRootManager = JsonSerializer.Deserialize<RootManagerDTO>(File.ReadAllText(StorageFile));
 
+                //Convert DTO To A Live Root Manager Instance
                 LiveRootManager = Converter.ToRootManager(StoredRootManager);
             }
             else
             {
+                //Create An Empty Root Manager Instance
                 LiveRootManager = new RootManager();
             }
 
             return LiveRootManager;
         }
 
+        /// <summary>
+        /// Saves The Current Application State To Persistent Storage
+        /// Serializes The RootManager Instance Into JSON Format
+        /// </summary>
+        /// <param name="_ProgramInstance">The Active RootManager Instance To Convert To JSON</param>
         public static void ShutdownDataContinuity(RootManager _ProgramInstance)
         {
             string StorageFile = "HomeStashData.json";
+            //Create A JSON String Based On The Live Root Manager Instance
             string JSONString = JsonSerializer.Serialize(_ProgramInstance);
             File.WriteAllText(StorageFile, JSONString);
         }
