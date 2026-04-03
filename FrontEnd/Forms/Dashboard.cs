@@ -58,7 +58,7 @@ namespace FrontEnd.Forms
         }
 
         /// <summary>
-        /// Wires Backend Events To UI Handlers
+        /// Wires Backend Events To Form Handlers
         /// </summary>
         private void Wire()
         {
@@ -204,6 +204,7 @@ namespace FrontEnd.Forms
         /// <summary>
         /// Displays Modify Building Control
         /// </summary>
+        /// <param name="_BuildingtoModify">The Building Object To Modify</param>
         private void ModifyBuilding(Building _BuildingtoModify)
         {
             BuildingInfo NewControl = new BuildingInfo(_BuildingtoModify);
@@ -241,6 +242,8 @@ namespace FrontEnd.Forms
         /// <summary>
         /// Handles User Selection Tool Strip Menu Click
         /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void tsmiUserSelect_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
@@ -250,6 +253,8 @@ namespace FrontEnd.Forms
         /// <summary>
         /// Handles Building Selection Tool Strip Menu Click
         /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void tsmiBuildingSelect_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
@@ -259,6 +264,8 @@ namespace FrontEnd.Forms
         /// <summary>
         /// Handles Top-Down View Tool Strip Menu Click
         /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void tsmiTopDown_Click(object sender, EventArgs e)
         {
             ViewPortPanel.Controls.Clear();
@@ -268,15 +275,19 @@ namespace FrontEnd.Forms
         /// <summary>
         /// Handles Save Tool Strip Menu Click
         /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void tsmiSave_Click(object sender, EventArgs e)
         {
-            // Serializes And Stores Live Session Data In JSON
+            // Serializes And Stores Entire Live Session Data In JSON
             DataContinuityController.ShutdownDataContinuity(RootManagerInstance);
         }
 
         /// <summary>
         /// Handles Generate Building Report Tool Strip Menu Click
         /// </summary>
+        /// <param name="sender">The Event Source</param>
+        /// <param name="e">Event Arguments</param>
         private void tsmiBuildingReport_Click(object sender, EventArgs e)
         {
             if (sfdBuildingReport.ShowDialog() == DialogResult.OK)
@@ -327,10 +338,17 @@ namespace FrontEnd.Forms
             tsmiBuildingReport.Enabled = (CurrentActiveUser?.ActiveBuilding != null);
         }
 
+        /// <summary>
+        /// Handles Selection Control Select Clicked Event
+        /// </summary>
+        /// <param name="_CurrentControl">The Current Selection Control That Sent The Event</param>
+        /// <param name="_SelectedType">The Type Of Object The Selection Menu Is Displaying</param>
+        /// <param name="_SelectedObject">The Object That Was Selected In The Selection Menu</param>
         private void SelectionControl_SelectClicked(Selection _CurrentControl, Type _SelectedType, object _SelectedObject)
         {
             string? _ErrorMessage;
 
+            // Program Navigation Based On Which Selection Menu The Selection Was Made From
             switch (_SelectedType)
             {
                 case Type CurrentType when _SelectedType == typeof(User):
@@ -357,17 +375,26 @@ namespace FrontEnd.Forms
                     break;
             }
 
+            // Unwire Selection Control Events
             _CurrentControl.SelectClicked -= SelectionControl_SelectClicked;
             _CurrentControl.ModifyClicked -= SelectionControl_ModifyClicked;
             _CurrentControl.AddClicked -= SelectionControl_AddClicked;
             _CurrentControl.DeleteClicked -= SelectionControl_DeleteClicked;
 
+            // Remove And Clean Up Selection Control
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
 
+        /// <summary>
+        /// Handles Selection Control Modify Clicked Event
+        /// </summary>
+        /// <param name="_CurrentControl">The Current Selection Control That Sent The Event</param>
+        /// <param name="_SelectedType">The Type Of Object The Selection Menu Is Displaying</param>
+        /// <param name="_SelectedObject">The Object That Was Selected In The Selection Menu</param>
         private void SelectionControl_ModifyClicked(Selection _CurrentControl, Type _SelectedType, object _SelectedObject)
         {
+            // Program Navigation Based On Which Selection Menu The Selection Was Made From
             switch (_SelectedType)
             {
                 case Type CurrentType when _SelectedType == typeof(User):
@@ -378,11 +405,18 @@ namespace FrontEnd.Forms
                     break;
             }
 
+            //Prevent Selection Control From Being Interacted With
             _CurrentControl.Enabled = false;
         }
 
+        /// <summary>
+        /// Handles Selection Control Add Clicked Event
+        /// </summary>
+        /// <param name="_CurrentControl">The Current Selection Control That Sent The Event</param>
+        /// <param name="_SelectedType">The Type Of Object The Selection Menu Is Displaying</param>
         private void SelectionControl_AddClicked(Selection _CurrentControl, Type _SelectedType)
         {
+            // Program Navigation Based On Which Selection Menu The Selection Was Made From
             switch (_SelectedType)
             {
                 case Type CurrentType when _SelectedType == typeof(User):
@@ -393,13 +427,20 @@ namespace FrontEnd.Forms
                     break;
             }
 
+            //Prevent Selection Control From Being Interacted With
             _CurrentControl.Enabled = false;
         }
 
+        /// <summary>
+        /// Handles Selection Control Delete Clicked Event
+        /// </summary>
+        /// <param name="_SelectedType">The Type Of Object The Selection Menu Is Displaying</param>
+        /// <param name="_SelectedObject">The Object That Was Selected In The Selection Menu</param>
         private void SelectionControl_DeleteClicked(Type _SelectedType, object _SelectedObject)
         {
             string? _ErrorMessage;
 
+            // BackEnd Call Based On Which Selection Menu The Selection Was Made From
             switch (_SelectedType)
             {
                 case Type CurrentType when _SelectedType == typeof(User):
@@ -417,10 +458,18 @@ namespace FrontEnd.Forms
             }
         }
 
+        /// <summary>
+        /// Handles UserInfo Confirm Clicked Event
+        /// </summary>
+        /// <param name="_FormType">Form Operation Type (Add Or Modify)</param>
+        /// <param name="_CurrentUser">Current User (When Being Modified)</param>
+        /// <param name="_CurrentControl">The Current Control That Sent The Event</param>
+        /// <param name="_AddedUsername">New Proposed Username</param>
         private void UserInfo_ConfirmClicked(FormType _FormType, User? _CurrentUser, UserInfo _CurrentControl, string _AddedUsername)
         {
             string? _ErrorMessage;
 
+            // BackEnd Call Based On The Form Operation Type
             if (_FormType == FormType.Add)
             {
                 if (RootManagerInstance.TryAddUser(_AddedUsername, out _ErrorMessage))
@@ -445,20 +494,35 @@ namespace FrontEnd.Forms
             }
         }
 
+        /// <summary>
+        /// Handles UserInfo Cancel Clicked Event
+        /// </summary>
+        /// <param name="_CurrentControl">The Current Control That Sent The Event</param>
         private void UserInfo_CancelClicked(UserInfo _CurrentControl)
         {
+            // Unwire UserInfo Control Events 
             _CurrentControl.ConfirmClicked -= UserInfo_ConfirmClicked;
             _CurrentControl.CancelClicked -= UserInfo_CancelClicked;
 
+            // Reenable Selection Control And Remove And Clean Up UserInfo Control
             ViewPortPanel.Controls["UserSelection"].Enabled = true;
+
             ViewPortPanel.Controls.Remove(_CurrentControl);
             _CurrentControl.Dispose();
         }
 
+        /// <summary>
+        /// Handles BuildingInfo Confirm Clicked Event
+        /// </summary>
+        /// <param name="_FormType">Form Operation Type (Add Or Modify)</param>
+        /// <param name="_CurrentBuilding">Current Building (When Being Modified)</param>
+        /// <param name="_CurrentControl">The Current Control That Sent The Event</param>
+        /// <param name="_BuildingValues">New Proposed Building Values</param>
         private void BuildingInfo_ConfirmClicked(FormType _FormType, Building? _CurrentBuilding, BuildingInfo _CurrentControl, (string _Name, float _Width, float _Height) _BuildingValues)
         {
             string? _ErrorMessage = null;
 
+            // BackEnd Call Based On The Form Operation Type
             if (_FormType == FormType.Add)
             {
                 if (CurrentActiveUser.TryAddBuilding(_BuildingValues._Name, _BuildingValues._Width, _BuildingValues._Height, out _ErrorMessage))
@@ -483,11 +547,17 @@ namespace FrontEnd.Forms
             }
         }
 
+        /// <summary>
+        /// Handles BuildingInfo Cancel Clicked Event
+        /// </summary>
+        /// <param name="_CurrentControl">The Current Control That Sent The Event</param>
         private void BuildingInfo_CancelClicked(BuildingInfo _CurrentControl)
         {
+            // Unwire BuildingInfo Control Events 
             _CurrentControl.ConfirmClicked -= BuildingInfo_ConfirmClicked;
             _CurrentControl.CancelClicked -= BuildingInfo_CancelClicked;
 
+            // Reenable Selection Control And Remove And Clean Up BuildingInfo Control
             ViewPortPanel.Controls["BuildingSelection"].Enabled = true;
 
             ViewPortPanel.Controls.Remove(_CurrentControl);
