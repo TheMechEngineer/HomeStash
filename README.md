@@ -1,88 +1,134 @@
 # HomeStash
 
 ## Overview
-HomeStash is a desktop application designed to manage and organize items within a building.  
-It allows users to create buildings, rooms, containers, and items, and track where everything is stored.
+HomeStash is a Windows desktop application used to organize and track items within a hierarchical structure consisting of buildings, rooms, containers, and items.
 
-The system is built with a structured front-end and back-end architecture, using adapters to separate UI concerns from core data logic.
+The system is designed to model real-world storage layouts in a structured digital format.
+
+---
+
+## Core Concept
+
+The application represents storage using the following hierarchy:
+
+- **Building**
+  - Top-level container (e.g., House, Storage Unit)
+- **Room**
+  - Subdivision within a building (e.g., Garage, Bedroom)
+- **Container**
+  - Storage objects inside rooms or other containers (e.g., Boxes, Shelves)
+- **Item**
+  - Individual objects stored within containers or rooms
+
+Each level maintains a parent-child relationship to preserve location tracking.
 
 ---
 
 ## Features
 
-- Create and manage Users
-- Create and manage Buildings
-- Create and manage Rooms within Buildings
-- Create and manage Containers within Rooms or other Containers
-- Add, modify, and move Items
-- Visual Top-Down Building View with Grid Layout
-- Dynamic UI Controls with consistent layout behavior
-- Data persistence using JSON (via Data Continuity system)
-- Report generation for building contents
+### Data Organization
+- Create and manage users
+- Create buildings associated with users
+- Create rooms within buildings
+- Create containers within rooms or other containers
+- Add items with defined properties and locations
+
+### Item Management
+- Add, modify, and move items between locations
+- Track item metadata (name, description, value, quantity)
+- Assign items to any valid storage location
+
+### UI Behavior
+- Form-based input for all entity types
+- Add and modify modes supported across forms
+- Dynamic layout sizing based on control content
+- Consistent alignment across user controls
+
+### Data Handling
+- Uses a centralized backend model structure
+- Storage relationships maintained through interfaces and parent references
+- UI updates driven by event-based notifications from the backend
 
 ---
 
-## Architecture
+## Application Flow
 
-### Front End
-- Built using Windows Forms
-- Uses UserControls for all UI components (except Dashboard)
-- Consistent layout and sizing logic across all controls
-- Adapter pattern used to standardize UI data handling
-
-### Back End
-- Handles all core data models and business logic
-- Includes:
-  - RootManager
-  - User
-  - Building
-  - Room
-  - Container
-  - Item
-
-### Adapters
-Adapters are used to bridge UI and data:
-- `AdapterSelection`
-- `AdapterSelectionItem`
-- `ComboBoxLineItem`
-
-These ensure:
-- Separation of UI and domain logic
-- Consistent display formatting
-- Type-safe data handling
+1. Application starts at `Program.cs`
+2. Main dashboard is loaded
+3. A user context is selected or created
+4. Buildings are created under the user
+5. Rooms and containers are added to build structure
+6. Items are assigned to storage locations
+7. Modifications propagate through event updates
 
 ---
 
-## Key Design Decisions
+## UI Structure
 
-### 1. Separation of Concerns
-UI logic is completely separated from business logic:
-- FrontEnd handles display and interaction
-- BackEnd handles data and rules
+The application is built using Windows Forms with modular UserControls:
 
-### 2. Adapter Pattern
-Used to:
-- Avoid relying on `ToString()` for UI display
-- Provide consistent data structures to UI controls
-- Support multiple object types (User, Building, Room, Container)
+- `UserInfo` – User creation/modification
+- `BuildingInfo` – Building management
+- `RoomInfo` – Room management
+- `ItemInfo` – Item creation/modification/movement
+- `Dashboard` – Primary navigation interface
 
-### 3. Dynamic Layout System
-All UserControls:
-- Calculate their own layout at runtime
-- Use consistent spacing variables (`Gap`, `SmallGap`)
-- Align labels and inputs uniformly
+Each control handles:
+- Input validation
+- Layout sizing
+- Add/Modify state behavior via `FormType`
 
-### 4. Event-Driven Updates
-UI automatically updates based on backend changes:
-- UserListChanged
-- BuildingListChanged
-- Custom event wiring per control
+---
 
-### 5. Form Modes
-Forms operate in two modes:
-- Add
-- Modify
+## Data Model Relationships
 
-Controlled via:
-```csharp
-FormType
+- A **User** can own multiple **Buildings**
+- A **Building** contains multiple **Rooms** and top-level **Containers**
+- A **Room** can contain **Containers** and **Items**
+- A **Container** can contain nested **Containers** and **Items**
+- An **Item** references its immediate parent location via `IStorageHolder`
+
+---
+
+## Key Implementation Notes
+
+- Uses event-driven updates for UI synchronization
+- Adapter classes are used to bridge UI components and backend models
+- Custom combo box line items are used to associate display text with data objects
+- Recursive traversal is used for nested container resolution
+
+---
+
+## Project Structure
+
+- **FrontEnd**
+  - Forms (Dashboard)
+  - UserControls (UI components)
+  - Adapters (UI-data mapping utilities)
+  - Utilities (custom controls, helpers)
+
+- **BackEnd**
+  - ModelClasses (core entities)
+  - ModelInterfaces (shared contracts)
+  - Enumerations
+  - Data management logic
+
+---
+
+## Technologies
+
+- C#
+- Windows Forms (.NET)
+- Object-Oriented Design
+- Event-driven architecture
+- Interface-based hierarchy modeling
+
+---
+
+## Notes
+
+- The system assumes a strict hierarchical storage model
+- Items are always assigned to a single parent location
+- Containers support recursive nesting
+
+---
