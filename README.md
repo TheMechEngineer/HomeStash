@@ -104,6 +104,11 @@ Each control handles:
   - ModelClasses (core entities)
   - ModelInterfaces (shared contracts)
   - Enumerations
+ 
+- **Data Store**
+  - JSON file
+  - Locally stored
+  - Mirrors back-end hierarchical structure
 
 ---
 
